@@ -1,0 +1,48 @@
+version: "3.7"
+
+services:
+  servers:
+    build:
+      context: ./stakeholders
+      dockerfile: Dockerfile
+    image: students_web_server
+    container_name: student_server
+    restart: on-failure
+    networks:
+      - servers
+    ports:
+      - 8080:8080
+    depends_on:
+      database:
+        condition: service_healthy
+
+  database:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    networks:
+      - servers
+    ports:
+      - 4000:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: soadb
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - database-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      timeout: 20s
+      retries: 10
+      interval: 10s
+      start_period: 40s
+    command: --default-authentication-plugin=mysql_native_password
+
+volumes:
+  database-data:
+    name: server-database
+
+networks:
+  servers:
+    name: servers
+    driver: bridge
