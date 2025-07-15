@@ -5,8 +5,8 @@ services:
     build:
       context: ./stakeholders
       dockerfile: Dockerfile
-    image: students_web_server
-    container_name: student_server
+    image: stakeholder_web_server
+    container_name: stakeholder_server
     restart: on-failure
     networks:
       - servers
