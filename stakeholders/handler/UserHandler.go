@@ -29,3 +29,13 @@ func (handler *UserHandler) Register(writer http.ResponseWriter, req *http.Reque
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(map[string]string{"message": "User registered successfully"})
 }
+
+func (handler *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := handler.UserService.GetAllUsers()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
+}

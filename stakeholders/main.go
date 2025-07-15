@@ -5,6 +5,7 @@ import (
 	"database-example/model"
 	"database-example/repo"
 	"database-example/service"
+
 	"log"
 	"net/http"
 	"time"
@@ -65,6 +66,7 @@ func main() {
 	router.HandleFunc("/students/{id}", studentHandler.Get).Methods("GET")
 	router.HandleFunc("/students", studentHandler.Create).Methods("POST")
 	router.HandleFunc("/users/register", userHandler.Register).Methods("POST")
+	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
 
 	// Pokretanje servera
 	log.Println("Server pokrenut na portu 8080")
