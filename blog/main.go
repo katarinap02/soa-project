@@ -39,6 +39,7 @@ func initDB() *gorm.DB {
 
 	// Kreiraj tabelu
 	database.AutoMigrate(&model.BlogPost{})
+	database.AutoMigrate(&model.Comment{})
 
 	// Dodaj test podatke
 	//database.Exec("INSERT IGNORE INTO BlogPost (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
@@ -55,9 +56,14 @@ func main() {
 	blogPostService := &service.BlogPostService{BlogPostRepo: blogPostRepo}
 	blogPostHandler := &handler.BlogHandler{BlogPostService: blogPostService}
 
+	commentRepo := &repo.CommentRepository{DatabaseConnection: database}
+	commentService := &service.CommentService{CommentRepo: commentRepo}
+	commentHandler := &handler.CommentHandler{CommentService: commentService}
+
 	// Napravi rute
 	router := mux.NewRouter()
 	router.HandleFunc("/blog/create-post", blogPostHandler.CreateBlogPost).Methods("POST")
+	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST")
 
 	// Pokretanje servera
 	log.Println("Server pokrenut na portu 8080")
