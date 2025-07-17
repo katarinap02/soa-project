@@ -38,11 +38,10 @@ func initDB() *gorm.DB {
 	log.Println("Uspešno povezan sa bazom")
 
 	// Kreiraj tabelu
-	database.AutoMigrate(&model.Student{})
-	database.AutoMigrate(&model.User{})
+	database.AutoMigrate(&model.BlogPost{})
 
 	// Dodaj test podatke
-	database.Exec("INSERT IGNORE INTO students (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
+	//database.Exec("INSERT IGNORE INTO BlogPost (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
 
 	return database
 }
@@ -52,21 +51,13 @@ func main() {
 	database := initDB()
 
 	// Napravi sve komponente
-	studentRepo := &repo.StudentRepository{DatabaseConnection: database}
-	studentService := &service.StudentService{StudentRepo: studentRepo}
-	studentHandler := &handler.StudentHandler{StudentService: studentService}
-
-	//user
-	userRepo := &repo.UserRepository{DatabaseConnection: database}
-	userService := &service.UserService{UserRepo: userRepo}
-	userHandler := &handler.UserHandler{UserService: userService}
+	blogPostRepo := &repo.BlogPostRepository{DatabaseConnection: database}
+	blogPostService := &service.BlogPostService{BlogPostRepo: blogPostRepo}
+	blogPostHandler := &handler.BlogHandler{BlogPostService: blogPostService}
 
 	// Napravi rute
 	router := mux.NewRouter()
-	router.HandleFunc("/students/{id}", studentHandler.Get).Methods("GET")
-	router.HandleFunc("/students", studentHandler.Create).Methods("POST")
-	router.HandleFunc("/users/register", userHandler.Register).Methods("POST")
-	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
+	router.HandleFunc("/blog/create-post", blogPostHandler.CreateBlogPost).Methods("POST")
 
 	// Pokretanje servera
 	log.Println("Server pokrenut na portu 8080")

@@ -7,9 +7,8 @@ import (
 	"net/http"
 )
 
-
 type BlogHandler struct {
-	BlogService *service.BlogService
+	BlogPostService *service.BlogPostService
 }
 
 func (handler *BlogHandler) CreateBlogPost(writer http.ResponseWriter, req *http.Request) {
