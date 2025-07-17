@@ -3,7 +3,7 @@ package model
 type Role string
 
 const (
-	Admin   Role = "ADMIN"
-	Guide   Role = "GUIDE"
-	Tourist Role = "TOURIST"
+	Admin   Role = "Admin"
+	Guide   Role = "Guide"
+	Tourist Role = "Tourist"
 )

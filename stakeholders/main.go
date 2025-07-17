@@ -44,6 +44,10 @@ func initDB() *gorm.DB {
 
 	// Dodaj test podatke
 	database.Exec("INSERT IGNORE INTO students (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
+	database.Exec(`INSERT IGNORE INTO users (id, username, password, email, role)
+  VALUES ('11111111-1111-1111-1111-111111111111','admin','$2a$10$7g9kOKEjN5cYqK0zTGfn/OwWlOE0uR7m2Fz5oRtBoB4gI0KDuNYLa','admin@example.com','Administrator')`) //password je admin123
+	database.Exec(`INSERT IGNORE INTO users (id, username, password, email, role)
+  VALUES ('22222222-2222-2222-2222-222222222222','tourist1','$2a$10$wv7vUoW9tc/tXhVo3jkaEuAvMRrKO7CkR9iAnj6UYIh35exg5jXbS','tourist@example.com','Tourist')`) //sifra je test123
 
 	return database
 }
