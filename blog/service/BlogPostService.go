@@ -1,7 +1,6 @@
 package service
 
 import (
-	"database-example/dto"
 	"database-example/model"
 	"database-example/repo"
 )
