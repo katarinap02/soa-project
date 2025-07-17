@@ -37,9 +37,10 @@ func initDB() *gorm.DB {
 
 	log.Println("Uspešno povezan sa bazom")
 
-	// Kreiraj tabelu
+	// // Kreiraj tabelu
 	database.AutoMigrate(&model.Student{})
 	database.AutoMigrate(&model.User{})
+	database.AutoMigrate(&model.UserInfo{})
 
 	// Dodaj test podatke
 	database.Exec("INSERT IGNORE INTO students (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
@@ -61,12 +62,20 @@ func main() {
 	userService := &service.UserService{UserRepo: userRepo}
 	userHandler := &handler.UserHandler{UserService: userService}
 
+	//userinfo
+	userInfoRepo := &repo.UserInfoRepository{DatabaseConnection: database}
+	userInfoService := &service.UserInfoService{UserInfoRepo: userInfoRepo}
+	userInfoHandler := &handler.UserInfoHandler{UserInfoService: userInfoService}
+
 	// Napravi rute
 	router := mux.NewRouter()
 	router.HandleFunc("/students/{id}", studentHandler.Get).Methods("GET")
 	router.HandleFunc("/students", studentHandler.Create).Methods("POST")
 	router.HandleFunc("/users/register", userHandler.Register).Methods("POST")
 	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
+	router.HandleFunc("/profile/{id}", userInfoHandler.GetProfile).Methods("GET")
+	router.HandleFunc("/profile/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
+
 
 	// Pokretanje servera
 	log.Println("Server pokrenut na portu 8080")

@@ -37,11 +37,22 @@ func (repo *UserRepository) RegisterUser(user *model.User) error {
 	}
 	user.Password = string(hashedPassword)
 
+
+
 	dbResult := repo.DatabaseConnection.Create(user)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}
 	println("Rows affected: ", dbResult.RowsAffected)
+	
+	//doodoaodoaodoadoadoao tanja
+	userInfo := model.UserInfo{
+		UserId: user.Id,
+		// ostala polja po potrebi mogu ostati prazna
+	}
+	if err := repo.DatabaseConnection.Create(&userInfo).Error; err != nil {
+		return err
+	}
 	return nil
 }
 

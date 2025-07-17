@@ -6,11 +6,12 @@ import (
 )
 
 type User struct {
-	Id       uuid.UUID `json:"id"`
+	Id       uuid.UUID `gorm:"type:char(36);primaryKey"`
 	Username string    `json:"username" gorm:"not null;unique"`
 	Password string    `json:"password" gorm:"not null"`
 	Email    string    `json:"email" gorm:"not null;unique"`
 	Role     Role      `json:"role" gorm:"not null;type:string"`
+	UserInfo UserInfo `gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE;"`
 }
 
 func (user *User) BeforeCreate(scope *gorm.DB) error {
