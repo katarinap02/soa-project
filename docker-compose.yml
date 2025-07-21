@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  servers:
+  stakeholders:
     build:
       context: ./stakeholders
       dockerfile: Dockerfile
@@ -15,6 +15,23 @@ services:
     depends_on:
       database:
         condition: service_healthy
+    
+  
+  blog:
+    build:
+      context: ./blog
+      dockerfile: Dockerfile
+    image: blog_web_server
+    container_name: blog_server
+    restart: on-failure
+    networks:
+      - servers
+    ports:
+      - 8081:8081
+    depends_on:
+      database:
+        condition: service_healthy
+    
 
   database:
     image: mysql:8.0

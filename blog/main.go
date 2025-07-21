@@ -16,8 +16,8 @@ import (
 )
 
 func initDB() *gorm.DB {
-	//connectionStr := "root:root@tcp(database:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
-	connectionStr := "root:root@tcp(localhost:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
+	connectionStr := "root:root@tcp(database:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
+	//connectionStr := "root:root@tcp(localhost:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
 	var database *gorm.DB
 	var err error
 
@@ -66,6 +66,6 @@ func main() {
 	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST")
 
 	// Pokretanje servera
-	log.Println("Server pokrenut na portu 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Println("Server pokrenut na portu 8081")
+	log.Fatal(http.ListenAndServe(":8081", router))
 }
