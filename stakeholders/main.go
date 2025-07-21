@@ -17,6 +17,7 @@ import (
 
 func initDB() *gorm.DB {
 	connectionStr := "root:root@tcp(database:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
+	//connectionStr := "root:root@tcp(localhost:3306)/soadb?charset=utf8mb4&parseTime=True&loc=Local"
 
 	var database *gorm.DB
 	var err error
