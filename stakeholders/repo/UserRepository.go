@@ -36,7 +36,7 @@ func (repo *UserRepository) RegisterUser(user *model.User) error {
 		return err
 	}
 	user.Password = string(hashedPassword)
-
+	user.AccountStatus = model.Activated;
 
 
 	dbResult := repo.DatabaseConnection.Create(user)
@@ -63,4 +63,21 @@ func (repo *UserRepository) FindAll() ([]model.User, error) {
 		return nil, result.Error
 	}
 	return users, nil
+}
+
+func (repo *UserRepository) FindByUsername(username string) (*model.User, error) {
+	var user model.User
+	result := repo.DatabaseConnection.First(&user, "username = ?", username)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user, nil
+}
+
+func (repo *UserRepository) UpdateUser(user *model.User) error {
+	result := repo.DatabaseConnection.Save(user)
+	if result.Error != nil {
+		return result.Error
+	}
+	return nil
 }

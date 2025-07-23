@@ -39,3 +39,31 @@ func (handler *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
 }
+
+func (handler *UserHandler) BlockUser(writer http.ResponseWriter, req *http.Request) {
+	var request struct {
+		AdminUsername string `json:"adminUsername"`
+		UserToBlock   string `json:"userToBlock"`
+	}
+	
+	err := json.NewDecoder(req.Body).Decode(&request)
+	if err != nil {
+		println("Error while parsing json")
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	if request.AdminUsername == request.UserToBlock {
+		println("Cannot block yourself")
+		writer.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	
+	err = handler.UserService.BlockUser(request.AdminUsername, request.UserToBlock)
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	writer.WriteHeader(http.StatusOK)
+}
