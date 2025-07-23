@@ -40,10 +40,17 @@ func initDB() *gorm.DB {
 	// Kreiraj tabelu
 	database.AutoMigrate(&model.BlogPost{})
 	database.AutoMigrate(&model.Comment{})
+	database.AutoMigrate(&model.BlogLike{})
 
 	// Dodaj test podatke
 	//database.Exec("INSERT IGNORE INTO BlogPost (id, name, major) VALUES ('test-123', 'Marko Markovic', 'Graficki dizajn')")
-
+	
+	/*
+	database.Exec(`
+	  INSERT INTO blog_posts (id, username, title, description, date)
+	  VALUES ('11111111-1111-1111-1111-111111111111', 'user1', 'My First Post', 'This is the description', NOW())
+	`)
+	*/
 	return database
 }
 
@@ -64,7 +71,9 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/blog/create-post", blogPostHandler.CreateBlogPost).Methods("POST")
 	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST")
-
+	router.HandleFunc("/blog/like-blog", blogPostHandler.CreateBlogLike).Methods("POST")
+	router.HandleFunc("/blog/unlike-blog", blogPostHandler.DeleteBlogLike).Methods("POST")
+	
 	// Pokretanje servera
 	log.Println("Server pokrenut na portu 8081")
 	log.Fatal(http.ListenAndServe(":8081", router))

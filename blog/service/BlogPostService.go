@@ -3,6 +3,7 @@ package service
 import (
 	"database-example/model"
 	"database-example/repo"
+	"github.com/google/uuid"
 )
 
 type BlogPostService struct {
@@ -16,3 +17,21 @@ func (service *BlogPostService) CreateBlogPost(blogPost *model.BlogPost) error {
 	}
 	return nil
 }
+
+func (service *BlogPostService) CreateBlogLike(blogLike *model.BlogLike) error {
+	err := service.BlogPostRepo.CreateBlogLike(blogLike)
+	if err != nil {
+		return err
+	}
+
+	return nil
+} 
+
+func (service *BlogPostService) DeleteBlogLike(username string, blogId uuid.UUID) error {
+	err := service.BlogPostRepo.DeleteBlogLike(username, blogId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+} 
