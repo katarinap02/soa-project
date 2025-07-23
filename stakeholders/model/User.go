@@ -11,7 +11,7 @@ type User struct {
 	Password		string			`json:"password" gorm:"not null"`
 	Email			string			`json:"email" gorm:"not null;unique"`
 	Role			Role			`json:"role" gorm:"not null;type:string"`
-	AccountStatus 	AccountStatus	`json:"accountStatus" gorm:"not null; type:string"`		
+	AccountStatus 	AccountStatus	`json:"account_status" gorm:"not null; type:string"`		
 	UserInfo		UserInfo		`gorm:"foreignKey:UserId;constraint:OnDelete:CASCADE;"`
 }
 
