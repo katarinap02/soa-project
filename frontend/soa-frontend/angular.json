@@ -63,7 +63,8 @@
               "browserTarget": "soa-frontend:build:production"
             },
             "development": {
-              "browserTarget": "soa-frontend:build:development"
+              "browserTarget": "soa-frontend:build:development",
+               "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

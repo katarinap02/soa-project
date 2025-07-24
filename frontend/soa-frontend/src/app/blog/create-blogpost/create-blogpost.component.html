@@ -1,1 +1,22 @@
-<p>create-blogpost works!</p>
+<div class="container mt-4">
+  <h2>Kreiraj novi blog post</h2>
+
+  <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()">
+
+    <div class="form-group mb-3">
+      <label for="title">Naslov</label>
+      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Unesi naslov" />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="description">Opis</label>
+      <textarea id="description" formControlName="description" class="form-control" rows="5" placeholder="Unesi opis posta"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!blogPostForm.valid">Kreiraj</button>
+  </form>
+
+  <div *ngIf="message" class="alert alert-info mt-3">
+    {{ message }}
+  </div>
+</div>
