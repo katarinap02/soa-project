@@ -8,10 +8,12 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateBlogpostComponent } from './blog/create-blogpost/create-blogpost.component';
 
 import { ReactiveFormsModule } from '@angular/forms';
+import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
 @NgModule({
   declarations: [
     AppComponent,
-    CreateBlogpostComponent
+    CreateBlogpostComponent,
+    CreateCommentComponent
   ],
   imports: [
     BrowserModule,
