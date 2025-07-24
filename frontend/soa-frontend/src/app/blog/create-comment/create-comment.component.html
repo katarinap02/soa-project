@@ -1,0 +1,19 @@
+<div class="container mt-4">
+  <h2>Kreiraj novi komentar</h2>
+
+  <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+
+  
+
+    <div class="form-group mb-3">
+     
+      <textarea id="text" formControlName="text" class="form-control" rows="5" placeholder="Unesi komentar"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary" [disabled]="!commentForm.valid">Kreiraj</button>
+  </form>
+
+  <div *ngIf="message" class="alert alert-info mt-3">
+    {{ message }}
+  </div>
+</div>

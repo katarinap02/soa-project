@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/rs/cors"
 )
 
 func initDB() *gorm.DB {
@@ -62,10 +64,17 @@ func main() {
 
 	// Napravi rute
 	router := mux.NewRouter()
-	router.HandleFunc("/blog/create-post", blogPostHandler.CreateBlogPost).Methods("POST")
-	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST")
+	router.HandleFunc("/blog/create-post", blogPostHandler.CreateBlogPost).Methods("POST", "OPTIONS")
+	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST", "OPTIONS")
 
 	// Pokretanje servera
+
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"http://localhost:4200"},
+		AllowedMethods: []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
+		AllowedHeaders: []string{"Content-Type"},
+	})
+	handler := c.Handler(router)
 	log.Println("Server pokrenut na portu 8081")
-	log.Fatal(http.ListenAndServe(":8081", router))
+	log.Fatal(http.ListenAndServe(":8081", handler))
 }
