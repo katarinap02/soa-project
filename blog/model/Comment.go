@@ -12,8 +12,8 @@ type Comment struct {
 	Username     string    `json:"username" gorm:"not null"`
 	Text         string    `json:"text" gorm:"not null"`
 	PostId       uuid.UUID `json:"postId"`
-	DateCreated  time.Time `json:"dateCreated" gorm:"not null"`
-	DateModified time.Time `json:"dateModified" gorm:"not null"`
+	DateCreated  time.Time `json:"date_created" gorm:"not null"`
+	DateModified time.Time `json:"date_modified" gorm:"not null"`
 }
 
 func (comment *Comment) BeforeCreate(scope *gorm.DB) error {
