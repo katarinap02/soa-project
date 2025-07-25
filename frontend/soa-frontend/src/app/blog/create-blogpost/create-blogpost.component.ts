@@ -37,7 +37,7 @@ export class CreateBlogpostComponent implements OnInit {
 
   
       this.blogService.createPost(blogPostData).subscribe({
-        next: () => this.message = 'Uspešno kreiran post!',
+        next: () => this.message = 'Uspešno kreiran komentar!',
         error: err => this.message = 'Greška: ' + (err.error?.message || 'Nepoznata greška')
       });
   }
