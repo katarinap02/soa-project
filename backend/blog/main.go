@@ -13,8 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"github.com/rs/cors"
+	//"github.com/rs/cors"
 )
 
 func initDB() *gorm.DB {
@@ -69,12 +68,12 @@ func main() {
 
 	// Pokretanje servera
 
-	c := cors.New(cors.Options{
+	/*	c := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:4200"},
 		AllowedMethods: []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
-	})
-	handler := c.Handler(router)
+	})*/
+	//handler := c.Handler(router)
 	log.Println("Server pokrenut na portu 8081")
-	log.Fatal(http.ListenAndServe(":8081", handler))
+	log.Fatal(http.ListenAndServe(":8081", router))
 }
