@@ -13,6 +13,7 @@ type BlogPost struct {
 	Title       string    `json:"title" gorm:"not null"`
 	Description string    `json:"description" gorm:"not null"`
 	Date        time.Time `json:"date" gorm:"not null"`
+    Likes       []BlogLike `gorm:"foreignKey:BlogId"`
 }
 
 func (blogPost *BlogPost) BeforeCreate(scope *gorm.DB) error {
