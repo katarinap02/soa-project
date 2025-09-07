@@ -36,15 +36,14 @@ func (repo *UserRepository) RegisterUser(user *model.User) error {
 		return err
 	}
 	user.Password = string(hashedPassword)
-	user.AccountStatus = model.Activated;
-
+	user.AccountStatus = model.Activated
 
 	dbResult := repo.DatabaseConnection.Create(user)
 	if dbResult.Error != nil {
 		return dbResult.Error
 	}
 	println("Rows affected: ", dbResult.RowsAffected)
-	
+
 	//doodoaodoaodoadoadoao tanja
 	userInfo := model.UserInfo{
 		UserId: user.Id,

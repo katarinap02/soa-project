@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -57,7 +58,6 @@ func initDB() *gorm.DB {
 	  )
 	`) //password je admin123
 
-
 	database.Exec(`
 	  INSERT IGNORE INTO users (id, username, password, email, role, account_status)
 	  VALUES (
@@ -71,6 +71,28 @@ func initDB() *gorm.DB {
 	`) //sifra je test123
 
 	return database
+}
+
+func debugMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("🌐 %s %s - Origin: %s", r.Method, r.URL.Path, r.Header.Get("Origin"))
+
+		// Dodajte CORS headers eksplicitno
+		if origin := r.Header.Get("Origin"); origin == "http://localhost:4200" {
+			w.Header().Set("Access-Control-Allow-Origin", origin)
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			w.Header().Set("Access-Control-Allow-Credentials", "true")
+		}
+
+		// Handle preflight
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
 }
 
 func main() {
@@ -102,7 +124,34 @@ func main() {
 	router.HandleFunc("/profile/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
 	router.HandleFunc("/users/blockuser", userHandler.BlockUser).Methods("POST")
 
-	// Pokretanje servera
-	log.Println("Server pokrenut na portu 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	wrappedRouter := debugMiddleware(router)
+
+	headersOk := handlers.AllowedHeaders([]string{
+		"X-Requested-With",
+		"Content-Type",
+		"Authorization",
+		"Accept",
+		"Origin",
+	})
+
+	originsOk := handlers.AllowedOrigins([]string{
+		"http://localhost:4200",
+		"http://127.0.0.1:4200",
+	})
+
+	methodsOk := handlers.AllowedMethods([]string{
+		"GET", "POST", "PUT", "DELETE", "OPTIONS",
+	})
+
+	// Dodajte credentials support
+	credentialsOk := handlers.AllowCredentials()
+
+	// ISPRAVKA: log.Println IDE PRE log.Fatal
+	log.Println("🚀 Server pokrenut na portu 8080")
+	log.Println("🔗 CORS omogućen za: http://localhost:4200")
+
+	// Pokretanje servera sa CORS middleware-om
+	log.Fatal(http.ListenAndServe(":8080",
+		handlers.CORS(originsOk, headersOk, methodsOk, credentialsOk)(wrappedRouter)))
+
 }

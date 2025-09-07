@@ -28,10 +28,10 @@ func (service *UserService) GetAllUsers() ([]dto.UserDTO, error) {
 	var userDTOs []dto.UserDTO
 	for _, u := range users {
 		userDTOs = append(userDTOs, dto.UserDTO{
-			Id:       u.Id,
+			Id:       u.Id.String(),
 			Username: u.Username,
 			Email:    u.Email,
-			Role:     u.Role,
+			Role:     string(u.Role),
 		})
 	}
 	return userDTOs, nil
@@ -40,27 +40,27 @@ func (service *UserService) GetAllUsers() ([]dto.UserDTO, error) {
 func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	adminUser, err := service.UserRepo.FindByUsername(adminUsername)
 	if err != nil {
-		return err 
+		return err
 	}
-	
+
 	if adminUser.Role != model.Admin {
-		return errors.New("Only admins can block") 
+		return errors.New("Only admins can block")
 	}
-	
+
 	targetUser, err := service.UserRepo.FindByUsername(userToBlock)
 	if err != nil {
-		return err 
+		return err
 	}
-	
+
 	if targetUser.AccountStatus == model.Blocked {
-		return errors.New("User is already blocked") 
+		return errors.New("User is already blocked")
 	}
-	
+
 	targetUser.AccountStatus = model.Blocked
 	err = service.UserRepo.UpdateUser(targetUser)
 	if err != nil {
-		return err 
+		return err
 	}
-	
+
 	return nil
 }
