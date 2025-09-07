@@ -123,6 +123,7 @@ func main() {
 	router.HandleFunc("/profile/{id}", userInfoHandler.GetProfile).Methods("GET")
 	router.HandleFunc("/profile/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
 	router.HandleFunc("/users/blockuser", userHandler.BlockUser).Methods("POST")
+	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
 
 	wrappedRouter := debugMiddleware(router)
 

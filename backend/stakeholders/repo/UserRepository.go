@@ -80,3 +80,11 @@ func (repo *UserRepository) UpdateUser(user *model.User) error {
 	}
 	return nil
 }
+
+func (r *UserRepository) GetByUsername(username string) (*model.User, error) {
+	var user model.User
+	if err := r.DatabaseConnection.Where("username = ?", username).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database-example/dto"
 	"database-example/model"
 	"database-example/service"
 	"encoding/json"
@@ -101,4 +102,22 @@ func (handler *UserHandler) BlockUser(writer http.ResponseWriter, req *http.Requ
 	writer.WriteHeader(http.StatusOK)
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(map[string]string{"message": "User blocked successfully"})
+}
+
+func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var req dto.LoginUserDTO
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	userDTO, err := h.UserService.Authenticate(req.Username, req.Password)
+	if err != nil {
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		return
+	}
+
+	// Vrati u JSON-u DTO
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(userDTO)
 }

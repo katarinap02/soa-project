@@ -5,6 +5,10 @@ import (
 	"database-example/model"
 	"database-example/repo"
 	"errors"
+	"fmt"
+	"strings"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
@@ -63,4 +67,23 @@ func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	}
 
 	return nil
+}
+
+func (s *UserService) Authenticate(username, password string) (*dto.UserDTO, error) {
+	user, err := s.UserRepo.GetByUsername(username)
+	if err != nil {
+		return nil, fmt.Errorf("invalid credentials")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(strings.TrimSpace(password)))
+	if err != nil {
+		return nil, fmt.Errorf("invalid credentials")
+	}
+
+	return &dto.UserDTO{
+		Id:       user.Id.String(),
+		Username: user.Username,
+		Email:    user.Email,
+		Role:     string(user.Role),
+	}, nil
 }
