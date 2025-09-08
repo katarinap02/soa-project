@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type KeyTour struct{}
@@ -51,23 +53,32 @@ func (h *ToursHandler) GetAllTours(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
-	tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
-	if !ok {
-		http.Error(w, "Tour not found in context", http.StatusInternalServerError)
-		h.logger.Println("Tour object not found in context for creation")
-		return
-	}
+    tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
+    if !ok {
+        http.Error(w, "Tour not found in context", http.StatusInternalServerError)
+        h.logger.Println("Tour object not found in context for creation")
+        return
+    }
 
-	if err := h.service.CreateTour(r.Context(), tour); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		h.logger.Printf("Error creating tour: %v", err)
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("Content-Type", "application/json")
-	// Možeš vratiti kreirani tour ili samo status
-	json.NewEncoder(w).Encode(map[string]string{"message": "Tour created successfully"})
+    // Uzmi authorID iz header-a
+    authorID := r.Header.Get("X-Author-ID") // ili neki drugi header koji koristiš
+    if authorID == "" {
+        http.Error(w, "AuthorID not provided", http.StatusBadRequest)
+        h.logger.Println("AuthorID missing in tour creation request")
+        return
+    }
+
+    if err := h.service.CreateTour(r.Context(), tour, authorID); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        h.logger.Printf("Error creating tour: %v", err)
+        return
+    }
+
+    w.WriteHeader(http.StatusCreated)
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{"message": "Tour created successfully"})
 }
+
 
 // Ostale metode: GetTourByID, UpdateTour, DeleteTour...
 func (h *ToursHandler) GetTourByID(w http.ResponseWriter, r *http.Request) {
@@ -82,3 +93,27 @@ func (h *ToursHandler) DeleteTour(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 	w.Write([]byte("Not Implemented"))
 }
+func (h *ToursHandler) GetToursByAuthor(w http.ResponseWriter, r *http.Request) {
+	authorIDStr := r.URL.Query().Get("authorId")
+	if authorIDStr == "" {
+		http.Error(w, "authorId is required", http.StatusBadRequest)
+		return
+	}
+
+	authorID, err := primitive.ObjectIDFromHex(authorIDStr)
+	if err != nil {
+		http.Error(w, "Invalid authorId", http.StatusBadRequest)
+		return
+	}
+
+	tours, err := h.service.GetToursByAuthor(r.Context(), authorID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error fetching tours by author: %v", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tours)
+}
+

@@ -11,11 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type TourRepo interface {
 	GetAll(ctx context.Context) ([]*model.Tour, error)
 	Create(ctx context.Context, tour *model.Tour) error
+	GetByAuthor(ctx context.Context, authorID primitive.ObjectID) ([]*model.Tour, error)
 }
 
 type mongoTourRepo struct {
@@ -77,3 +79,25 @@ func (m *mongoTourRepo) Create(ctx context.Context, tour *model.Tour) error {
 	}
 	return nil
 }
+
+func (m *mongoTourRepo) GetByAuthor(ctx context.Context, authorID primitive.ObjectID) ([]*model.Tour, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{"authorId": authorID}
+	cursor, err := m.collection.Find(ctx, filter)
+	if err != nil {
+		m.logger.Println("Error fetching tours by author:", err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var tours []*model.Tour
+	if err := cursor.All(ctx, &tours); err != nil {
+		m.logger.Println("Error decoding tours by author:", err)
+		return nil, err
+	}
+
+	return tours, nil
+}
+
