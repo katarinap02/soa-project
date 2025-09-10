@@ -7,13 +7,17 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserService struct {
 	UserRepo *repo.UserRepository
 }
+
+var jwtSecret = []byte("y7G3hT9kP2sR8vQ1wE4mZ6bX0nL5aF3dJ8kC2pV7rQ9tS6uY1iH4oM0xB2zN7lE5")
 
 func (service *UserService) Register(user *model.User) error {
 	err := service.UserRepo.RegisterUser(user)
@@ -48,7 +52,7 @@ func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	}
 
 	if adminUser.Role != model.Admin {
-		return errors.New("Only admins can block")
+		return errors.New("only admins can block")
 	}
 
 	targetUser, err := service.UserRepo.FindByUsername(userToBlock)
@@ -57,7 +61,7 @@ func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	}
 
 	if targetUser.AccountStatus == model.Blocked {
-		return errors.New("User is already blocked")
+		return errors.New("user is already blocked")
 	}
 
 	targetUser.AccountStatus = model.Blocked
@@ -69,21 +73,36 @@ func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	return nil
 }
 
-func (s *UserService) Authenticate(username, password string) (*dto.UserDTO, error) {
+func (s *UserService) Authenticate(username, password string) (string, *dto.UserDTO, error) {
 	user, err := s.UserRepo.GetByUsername(username)
 	if err != nil {
-		return nil, fmt.Errorf("invalid credentials")
+		return "", nil, fmt.Errorf("invalid credentials")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(strings.TrimSpace(password)))
 	if err != nil {
-		return nil, fmt.Errorf("invalid credentials")
+		return "", nil, fmt.Errorf("invalid credentials")
 	}
 
-	return &dto.UserDTO{
+	claims := jwt.MapClaims{
+		"sub":      user.Id.String(),
+		"username": user.Username,
+		"role":     string(user.Role),
+		"exp":      time.Now().Add(time.Hour * 24).Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtSecret)
+	if err != nil {
+		return "", nil, fmt.Errorf("could not generate token")
+	}
+
+	dtoUser := &dto.UserDTO{
 		Id:       user.Id.String(),
 		Username: user.Username,
 		Email:    user.Email,
 		Role:     string(user.Role),
-	}, nil
+	}
+
+	return tokenString, dtoUser, nil
 }

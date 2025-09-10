@@ -4,6 +4,9 @@ import { CreateBlogpostComponent } from './blog/create-blogpost/create-blogpost.
 import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
 import { RegisterComponent } from './stakeholders/register/register.component';
 import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
+import { LoginComponent } from './stakeholders/login/login.component';
+import { HomeComponent } from './stakeholders/home/home.component';
+
 
 
 
@@ -12,6 +15,8 @@ const routes: Routes = [
   { path: 'create-comment', component: CreateCommentComponent },
   { path: 'register' , component: RegisterComponent},
   { path: 'view-users', component: ViewUsersComponent},
+  { path: '', component: LoginComponent },
+  {path: 'home', component: HomeComponent}
 ];
 
 @NgModule({

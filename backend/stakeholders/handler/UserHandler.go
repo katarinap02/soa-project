@@ -111,13 +111,18 @@ func (h *UserHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userDTO, err := h.UserService.Authenticate(req.Username, req.Password)
+	token, userDTO, err := h.UserService.Authenticate(req.Username, req.Password)
 	if err != nil {
 		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
 		return
 	}
 
+	response := map[string]interface{}{
+		"user":  userDTO,
+		"token": token,
+	}
+
 	// Vrati u JSON-u DTO
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(userDTO)
+	json.NewEncoder(w).Encode(response)
 }
