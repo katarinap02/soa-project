@@ -9,14 +9,14 @@ export class HomeComponent implements OnInit {
    ngOnInit(): void {
   
     const token = localStorage.getItem('token');
-
+    console.log(token)
     
     const userStr = localStorage.getItem('user');
     if (!token || !userStr) {
       alert('No user logged in');
       return;
     }
-
+    console.log(userStr);
     const user = JSON.parse(userStr);
 
     alert(`Token: ${token}\nUsername: ${user.username}\nRole: ${user.role}`);

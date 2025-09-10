@@ -17,4 +17,10 @@
   </form>
 
   <p *ngIf="errorMessage" style="color:red; margin-top: 1rem;">{{ errorMessage }}</p>
+  <p style="margin-top: 1rem; text-align: center;">
+    Don't have account? 
+    <a routerLink="/register" style="color: #1976d2; text-decoration: none; font-weight: 500;">
+      Register
+    </a>
+  </p>
 </div>
