@@ -9,17 +9,35 @@ import { CreateBlogpostComponent } from './blog/create-blogpost/create-blogpost.
 
 import { ReactiveFormsModule } from '@angular/forms';
 import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
+import { LoginComponent } from './stakeholders/login/login.component';
+
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HomeComponent } from './stakeholders/home/home.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     CreateBlogpostComponent,
-    CreateCommentComponent
+    CreateCommentComponent,
+    LoginComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+     BrowserAnimationsModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    HttpClientModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
