@@ -11,7 +11,10 @@ require (
 	gorm.io/gorm v1.23.3
 )
 
-require github.com/felixge/httpsnoop v1.0.3 // indirect
+require (
+	github.com/felixge/httpsnoop v1.0.3 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.0
+)
 
 require (
 	github.com/go-sql-driver/mysql v1.6.0 // indirect

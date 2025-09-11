@@ -14,6 +14,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
 import { CreateTourComponent } from './tour/create-tour/create-tour.component';
 import { ToursOverviewComponent } from './tour/tour-overview/tour-overview.component';
+import { RegisterComponent } from './stakeholders/register/register.component';
+import { MatSelectModule } from '@angular/material/select';
+import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
+import { LoginComponent } from './stakeholders/login/login.component';
+import { HomeComponent } from './stakeholders/home/home.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +26,11 @@ import { ToursOverviewComponent } from './tour/tour-overview/tour-overview.compo
     CreateBlogpostComponent,
     CreateCommentComponent,
     CreateTourComponent,
-    ToursOverviewComponent
+    ToursOverviewComponent,
+    RegisterComponent,
+    ViewUsersComponent,
+    LoginComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -35,6 +44,14 @@ import { ToursOverviewComponent } from './tour/tour-overview/tour-overview.compo
     BrowserAnimationsModule,
     MatCardModule,
     
+    ReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCardModule,
+    MatButtonModule,
+    MatSelectModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
