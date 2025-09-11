@@ -55,15 +55,17 @@ func main() {
 	toursHandler := handler.NewToursHandler(logger, tourService)
 
 
+//OTKOMENTARISI AKO TI TREBA JEDNA TURA AUTOMATSKI DA SE NAPRAVI, KAD TI SE JEDNOM NAPRAVI ZAKOMENTARISI POSTO CE SE PRAVITI PONOVO DUPLIKAT SVAKI PUT KAD POKRENES	
+
 	//authorID := "64f8f3a2b5e4c8d1a2f1b9c0"
-	_ = tourService.CreateTour(ctx, &model.Tour{
-    Name:        "Beogradska Tura",
-    Description: "Obilazak Kalemegdana i Knez Mihailove",
-    Price:       1500.0,
-    Weight:      "Medium",
-    Tags:        []string{"istorija", "grad", "obilazak"},
-    Status:      "draft",
-}, primitive.NewObjectID().Hex()) 
+// 	_ = tourService.CreateTour(ctx, &model.Tour{
+//     Name:        "Beogradska Tura",
+//     Description: "Obilazak Kalemegdana i Knez Mihailove",
+//     Price:       1500.0,
+//     Weight:      "Medium",
+//     Tags:        []string{"istorija", "grad", "obilazak"},
+//     Status:      "draft",
+// }, primitive.NewObjectID().Hex()) 
 
 	// Router
 	router := mux.NewRouter()
