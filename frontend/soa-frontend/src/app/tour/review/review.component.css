@@ -1,0 +1,76 @@
+/* Naslovi */
+h2 {
+  font-size: 1.6rem;
+  margin: 1rem 0;
+  font-weight: 600;
+  color: #3f51b5;
+}
+
+/* Kartice recenzija */
+.review-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Tekst u karticama */
+.review-card p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.review-card strong {
+  color: #3f51b5;
+}
+
+/* Separator */
+.review-card hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin-top: 1rem;
+}
+
+/* Slike u recenzijama */
+.review-card img {
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  margin-top: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.review-card img:hover {
+  transform: scale(1.05);
+}
+
+/* Dugme Add Review ispod liste */
+button[mat-raised-button] {
+  margin-top: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  text-transform: none;
+  background-color: #3f51b5; /* Material primary */
+  color: #fff;
+}
+
+button[mat-raised-button]:hover {
+  background-color: #303f9f;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .review-card {
+    padding: 0.8rem;
+  }
+  .review-card img {
+    width: 80px;
+  }
+}

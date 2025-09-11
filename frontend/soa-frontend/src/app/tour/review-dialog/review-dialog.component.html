@@ -1,23 +1,23 @@
 <h2>Add Review</h2>
 <form (ngSubmit)="submit()">
-  <mat-form-field class="full-width">
+  <mat-form-field class="full-width" appearance="outline">
     <mat-label>Rating</mat-label>
     <input matInput type="number" [(ngModel)]="review.rating" name="rating" min="1" max="5" required>
   </mat-form-field>
 
-  <mat-form-field class="full-width">
+  <mat-form-field class="full-width" appearance="outline">
     <mat-label>Comment</mat-label>
     <textarea matInput [(ngModel)]="review.comment" name="comment"></textarea>
   </mat-form-field>
 
-  <mat-form-field class="full-width">
+  <mat-form-field class="full-width" appearance="outline">
     <mat-label>Visit Date</mat-label>
     <input matInput [matDatepicker]="picker1" [(ngModel)]="review.visitDate" name="visitDate" required>
     <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
     <mat-datepicker #picker1></mat-datepicker>
   </mat-form-field>
 
-  <mat-form-field class="full-width">
+  <mat-form-field class="full-width" appearance="outline">
     <mat-label>Comment Date</mat-label>
     <input matInput [matDatepicker]="picker2" [(ngModel)]="review.commentDate" name="commentDate" required>
     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
