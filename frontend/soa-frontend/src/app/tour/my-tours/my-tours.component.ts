@@ -36,7 +36,7 @@ export class MyToursComponent implements OnInit {
   }
 
   addKeyPoints(tourId: string) {
-    this.router.navigate(['tour-keypoints', tourId]);
+    this.router.navigate(['home/tour-keypoints', tourId]);
   }
 
 }

@@ -4,7 +4,13 @@ import * as L from 'leaflet';
 import { KeyPointService } from '../service/key-points.service';
 import { KeyPoint } from '../model/keyPoint.model';
 
+delete (L.Icon.Default.prototype as any)._getIconUrl;
 
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 @Component({
   selector: 'app-tour-keypoints',
@@ -34,7 +40,25 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.initMap();
+    this.loadExistingKeyPoints();
   }
+
+  loadExistingKeyPoints(): void {
+  if (!this.tourId) return;
+
+  this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
+    next: (keyPoints: KeyPoint[]) => {
+      keyPoints.forEach(kp => {
+        L.marker([kp.latitude, kp.longitude])
+          .addTo(this.map)
+          .bindPopup(`<b>${kp.name}</b><br>${kp.description}`);
+      });
+    },
+    error: (err) => {
+      console.error('Error loading key points', err);
+    }
+  });
+}
 
   initMap(): void {
     this.map = L.map('map').setView([44.8176, 20.4569], 13); // Beograd primer
@@ -51,24 +75,24 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
       L.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
     });
   }
+addKeyPoint(): void {
+  if (!this.tourId) return;
 
-  addKeyPoint(): void {
-    if (!this.tourId) return;
+  // Marker koji je dodat klikom
+  const newMarker = L.marker([this.keyPoint.latitude, this.keyPoint.longitude]).addTo(this.map);
 
-    this.keyPointService.addKeyPoint(this.keyPoint).subscribe({
-      next: () => {
-        alert('Key point added successfully');
-        this.keyPoint = { tourId: this.tourId, name: '', description: '', latitude: 0, longitude: 0, imageUrl: '' };
-        this.map.eachLayer((layer) => {
-          if (layer instanceof L.Marker) {
-            this.map.removeLayer(layer);
-          }
-        });
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Error adding key point');
-      }
-    });
-  }
+  this.keyPointService.addKeyPoint(this.keyPoint).subscribe({
+    next: () => {
+      alert('Key point added successfully');
+      this.keyPoint = { tourId: this.tourId, name: '', description: '', latitude: 0, longitude: 0, imageUrl: '' };
+    },
+    error: (err) => {
+      console.error(err);
+      alert('Error adding key point');
+      // U slučaju greške ukloni marker
+      this.map.removeLayer(newMarker);
+    }
+  });
+}
+
 }

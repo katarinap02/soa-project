@@ -17,7 +17,7 @@ import { KeyPointsComponent } from './tour/key-points/key-points.component';
 const routes: Routes = [
   { path: 'create-blogpost', component: CreateBlogpostComponent },
   { path: 'create-comment', component: CreateCommentComponent },
-  { path: 'tour-keypoints/:id', component: KeyPointsComponent },
+  
 
   // opcionalno: redirect sa početne strane
   { path: 'register' , component: RegisterComponent},
@@ -28,6 +28,7 @@ const routes: Routes = [
       { path: 'tours-overview', component: ToursOverviewComponent },
       { path: 'my-tours', component: MyToursComponent },
       { path: 'create-tour', component: CreateTourComponent },
+      { path: 'tour-keypoints/:id', component: KeyPointsComponent },
      
     ]
   }
