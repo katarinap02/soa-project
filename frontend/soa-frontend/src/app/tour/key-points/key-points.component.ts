@@ -2,7 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 import { KeyPointService } from '../service/key-points.service';
-import { KeyPoint } from '../model/keyPoint';
+import { KeyPoint } from '../model/keyPoint.model';
+
 
 
 @Component({

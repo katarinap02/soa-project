@@ -36,21 +36,32 @@ createTour() {
   const authorId = user.id;
 
   this.tour.tags = this.selectedTags;
-  this.tour.difficulty = this.selectedDifficulty; // ranije weight
+  this.tour.difficulty = this.selectedDifficulty;
+  this.tour.authorId = authorId;
 
-  this.tourService.createTour(this.tour, authorId).subscribe({
+  // --- LOGOVANJE ---
+  console.log('User object from localStorage:', user);
+  console.log('Author ID:', authorId);
+  console.log('Tour object before sending:', this.tour);
+  console.log('Selected tags:', this.selectedTags);
+  console.log('Selected difficulty:', this.selectedDifficulty);
+  // ------------------
+
+  this.tourService.createTour(this.tour).subscribe({
     next: res => {
+      console.log('Response from backend:', res);
       alert('Tour created successfully');
       this.tour = { name: '', description: '', price: 0, difficulty: '', tags: [], status: 'draft' };
       this.selectedTags = [];
       this.selectedDifficulty = '';
     },
     error: err => {
-      console.error(err);
+      console.error('Error creating tour:', err);
       alert('Error creating tour');
     }
   });
 }
+
 
 onTagChange(event: any, tag: string) {
   if (event.checked) {

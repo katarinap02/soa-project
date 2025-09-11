@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Review } from '../model/review';
+import { Review } from '../model/review.model';
 import { ReviewService } from '../service/review.service';
 import { ReviewDialogComponent } from '../review-dialog/review-dialog.component';
 

@@ -32,8 +32,8 @@ func main() {
 	// Mongo URI
 	mongoURI := os.Getenv("MONGO_DB_URI")
 	if mongoURI == "" {
-		//mongoURI = "mongodb://root:pass@mongo:27017/soadb"
-		mongoURI = "mongodb://localhost:27017/soadb"
+		mongoURI = "mongodb://root:pass@mongo:27017/soadb"
+		//mongoURI = "mongodb://localhost:27017/soadb"
 
 	}
 
@@ -77,10 +77,11 @@ func main() {
 
 	// GET ruta
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
-	router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
-	router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
-	router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
+	// router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
+	// router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
+	// router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
+
 
 
 	//KeyPoints
@@ -116,7 +117,7 @@ func main() {
 
 
 	// CORS
-	corsHandler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), handlers.AllowedHeaders([]string{"Content-Type", "Authorization","X-Author-ID"}))
+	corsHandler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}))
 
 	// Server
 	server := &http.Server{
