@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"database-example/handler"
-	"database-example/model"
+	//"database-example/model"
 	"database-example/repo"
 	"database-example/service"
 	"log"
@@ -17,7 +17,7 @@ import (
 
 	//"go.mongodb.org/mongo-driver/mongo"
 	//"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	//"go.mongodb.org/mongo-driver/bson/primitive"
 
 )
 
