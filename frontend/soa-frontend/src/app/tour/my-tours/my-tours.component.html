@@ -1,0 +1,14 @@
+<div class="my-tours">
+  <button (click)="createTour()">Create New Tour</button>
+
+  <div *ngFor="let tour of tours" class="tour-card">
+    <h3>{{ tour.name }}</h3>
+    <p>{{ tour.description }}</p>
+    <p>Status: {{ tour.status }}, Price: {{ tour.price | currency:'RSD' }}</p>
+    <p class="difficulty">Difficulty: {{ tour.difficulty }}</p>
+    <div class="tags">
+      <span class="tag" *ngFor="let tag of tour.tags">{{ tag }}</span>
+    </div>
+    <button (click)="addKeyPoints(tour.id)">Add Key Points</button>
+  </div>
+</div>

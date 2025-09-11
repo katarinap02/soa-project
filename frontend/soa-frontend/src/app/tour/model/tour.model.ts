@@ -3,7 +3,7 @@ export interface Tour {
   name: string;
   description?: string;
   price?: number;
-  weight?: string;
+  difficulty?: string;
   tags?: string[];
   status?: string;
   authorId?: string;

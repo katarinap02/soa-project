@@ -13,12 +13,21 @@ import { CreateBlogpostComponent } from './blog/create-blogpost/create-blogpost.
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
 import { CreateTourComponent } from './tour/create-tour/create-tour.component';
-import { ToursOverviewComponent } from './tour/tour-overview/tour-overview.component';
+import { ToursOverviewComponent } from './tour/tours-overview/tour-overview.component';
 import { RegisterComponent } from './stakeholders/register/register.component';
 import { MatSelectModule } from '@angular/material/select';
 import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
+import { MyToursComponent } from './tour/my-tours/my-tours.component';
+import { KeyPointsComponent } from './tour/key-points/key-points.component';
+import { ReviewDialogComponent } from './tour/review-dialog/review-dialog.component';
+import { ReviewComponent } from './tour/review/review.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +39,12 @@ import { HomeComponent } from './stakeholders/home/home.component';
     RegisterComponent,
     ViewUsersComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    MyToursComponent,
+    KeyPointsComponent,
+    ReviewDialogComponent,
+    ReviewComponent,
+   
   ],
   imports: [
     BrowserModule,
@@ -43,7 +57,8 @@ import { HomeComponent } from './stakeholders/home/home.component';
     MatButtonModule,
     BrowserAnimationsModule,
     MatCardModule,
-    
+    MatDatepickerModule,
+    MatNativeDateModule,
     ReactiveFormsModule,
     FormsModule,
     MatFormFieldModule,
@@ -52,6 +67,8 @@ import { HomeComponent } from './stakeholders/home/home.component';
     MatButtonModule,
     MatSelectModule,
     BrowserAnimationsModule,
+    MatDialogModule,
+     MatCheckboxModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

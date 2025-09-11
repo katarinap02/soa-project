@@ -18,14 +18,24 @@
     </mat-form-field>
 
     <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Weight</mat-label>
-      <input matInput type="text" [(ngModel)]="tour.weight" name="weight" />
+      <mat-label>Difficulty</mat-label>
+      <mat-select [(ngModel)]="selectedDifficulty" name="difficulty" required>
+        <mat-option *ngFor="let w of difficultyOptions" [value]="w">{{ w }}</mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Tags (comma separated)</mat-label>
-      <input matInput type="text" [(ngModel)]="tagsString" name="tags" />
-    </mat-form-field>
+    <div class="tags-container">
+      <label>Tags:</label>
+      <div class="checkboxes">
+        <mat-checkbox 
+          *ngFor="let tag of availableTags"
+          [checked]="selectedTags.includes(tag)"
+          (change)="onTagChange($event, tag)">
+          {{ tag }}
+        </mat-checkbox>
+      </div>
+    </div>
+
 
     <button mat-raised-button color="primary" type="submit" [disabled]="!tourForm.form.valid">
       Create Tour

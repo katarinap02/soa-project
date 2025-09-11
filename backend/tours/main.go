@@ -15,9 +15,9 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
-	//"go.mongodb.org/mongo-driver/mongo"
-	//"go.mongodb.org/mongo-driver/mongo/options"
-	//"go.mongodb.org/mongo-driver/bson/primitive"
+	//  "go.mongodb.org/mongo-driver/mongo"
+	//  "go.mongodb.org/mongo-driver/mongo/options"
+	//  "go.mongodb.org/mongo-driver/bson/primitive"
 
 )
 
@@ -81,6 +81,39 @@ func main() {
 	router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
 	router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
+
+
+	//KeyPoints
+	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize KeyPoint repo: %v", err)
+	}
+	keyPointService := service.NewKeyPointService(keyPointRepo)
+	keyPointsHandler := handler.NewKeyPointsHandler(logger, keyPointService)
+
+	postKP := router.Methods(http.MethodPost).Subrouter()
+	postKP.Use(keyPointsHandler.MiddlewareKeyPointDeserialization)
+	postKP.HandleFunc("/keypoints", keyPointsHandler.AddKeyPoint)
+
+	router.HandleFunc("/keypoints/by-tour", keyPointsHandler.GetKeyPointsByTour).Methods(http.MethodGet)
+
+	//review
+
+	reviewRepo, err := repo.NewMongoReviewRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize Review repo: %v", err)
+	}
+	reviewService := service.NewReviewService(reviewRepo)
+	reviewHandler := handler.NewReviewHandler( reviewService)
+
+	// POST review sa middleware
+	reviewRouter := router.Methods(http.MethodPost).Subrouter()
+	reviewRouter.Use(reviewHandler.MiddlewareReviewDeserialization)
+	reviewRouter.HandleFunc("/reviews", reviewHandler.AddReview)
+
+	// GET reviews by tour
+	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
+
 
 	// CORS
 	corsHandler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), handlers.AllowedHeaders([]string{"Content-Type", "Authorization","X-Author-ID"}))

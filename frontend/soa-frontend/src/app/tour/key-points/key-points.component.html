@@ -1,0 +1,25 @@
+<div class="container">
+  <h2>Add Key Point to Tour</h2>
+
+  <form (ngSubmit)="addKeyPoint()">
+    <mat-form-field class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput [(ngModel)]="keyPoint.name" name="name" required>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput [(ngModel)]="keyPoint.description" name="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field class="full-width">
+      <mat-label>Image URL</mat-label>
+      <input matInput [(ngModel)]="keyPoint.imageUrl" name="imageUrl">
+    </mat-form-field>
+
+    <p>Click on the map to select location:</p>
+    <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+
+    <button mat-raised-button color="primary" type="submit">Add Key Point</button>
+  </form>
+</div>

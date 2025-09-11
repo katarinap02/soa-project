@@ -27,4 +27,6 @@ export class TourService {
   getToursByAuthor(authorId: string): Observable<Tour[]> {
     return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
   }
+
+
 }
