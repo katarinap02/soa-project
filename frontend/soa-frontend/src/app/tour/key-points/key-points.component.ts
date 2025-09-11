@@ -43,7 +43,24 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
     this.loadExistingKeyPoints();
   }
 
-  loadExistingKeyPoints(): void {
+//   loadExistingKeyPoints(): void {
+//   if (!this.tourId) return;
+
+//   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
+//     next: (keyPoints: KeyPoint[]) => {
+//       keyPoints.forEach(kp => {
+//         L.marker([kp.latitude, kp.longitude])
+//           .addTo(this.map)
+//           .bindPopup(`<b>${kp.name}</b><br>${kp.description}`);
+//       });
+//     },
+//     error: (err) => {
+//       console.error('Error loading key points', err);
+//     }
+//   });
+// }
+
+loadExistingKeyPoints(): void {
   if (!this.tourId) return;
 
   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
@@ -51,7 +68,10 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
       keyPoints.forEach(kp => {
         L.marker([kp.latitude, kp.longitude])
           .addTo(this.map)
-          .bindPopup(`<b>${kp.name}</b><br>${kp.description}`);
+          .bindTooltip(
+            `<b>${kp.name}</b><br>${kp.description}`, 
+            { permanent: false, direction: 'top' } // tooltip iznad markera
+          );
       });
     },
     error: (err) => {
@@ -59,6 +79,7 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
     }
   });
 }
+
 
   initMap(): void {
     this.map = L.map('map').setView([44.8176, 20.4569], 13); // Beograd primer
@@ -75,6 +96,7 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
       L.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
     });
   }
+
 addKeyPoint(): void {
   if (!this.tourId) return;
 
