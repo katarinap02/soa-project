@@ -1,0 +1,43 @@
+.profile-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.profile-card {
+  width: 380px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-avatar {
+  background-color: #6d2c2c; /* ista tamna bordo koju smo koristili */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+}
+
+mat-card-title {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+mat-card-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+mat-card-content p {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  margin: 12px 0 0 0;
+}
+
+mat-card-content mat-icon {
+  margin-right: 8px;
+  color: #6d2c2c;
+}
+

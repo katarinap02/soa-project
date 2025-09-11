@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserView } from '../model/UserView.model';
 
 @Component({
   selector: 'app-home',
@@ -6,6 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+    user: UserView | null = null;
+
    ngOnInit(): void {
   
     const token = localStorage.getItem('token');
@@ -18,8 +21,13 @@ export class HomeComponent implements OnInit {
     }
     console.log(userStr);
     const user = JSON.parse(userStr);
+    this.user = user;
 
-    alert(`Token: ${token}\nUsername: ${user.username}\nRole: ${user.role}`);
+    
+  }
+
+  isAdmin(): boolean {
+    return this.user?.role === 'Administrator';
   }
 
 }

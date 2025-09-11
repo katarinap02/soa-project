@@ -6,6 +6,7 @@ import { RegisterComponent } from './stakeholders/register/register.component';
 import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
+import { FollowComponent } from './followers/follow/follow.component';
 
 
 
@@ -16,7 +17,8 @@ const routes: Routes = [
   { path: 'register' , component: RegisterComponent},
   { path: 'view-users', component: ViewUsersComponent},
   { path: '', component: LoginComponent },
-  {path: 'home', component: HomeComponent}
+  {path: 'home', component: HomeComponent},
+  {path: 'follow', component:FollowComponent}
 ];
 
 @NgModule({

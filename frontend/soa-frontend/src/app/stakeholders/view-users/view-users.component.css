@@ -1,9 +1,58 @@
 .users-container {
-  max-width: 800px;
-  margin: 20px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+}
+
+h2 {
+  margin-bottom: 24px;
+  font-size: 26px;
+  font-weight: 600;
+  color: #333;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  width: 100%;
+  max-width: 1000px;
 }
 
 .user-card {
-  margin-bottom: 15px;
-  padding: 15px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+.user-avatar {
+  background-color: #6d2c2c; /* ista bordo kao na profilu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+}
+
+mat-card-title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+mat-card-subtitle {
+  font-size: 14px;
+  color: #777;
+}
+
+mat-card-content p {
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  margin: 8px 0 0 0;
+}
+
+mat-card-content mat-icon {
+  margin-right: 8px;
+  color: #6d2c2c;
+}
+

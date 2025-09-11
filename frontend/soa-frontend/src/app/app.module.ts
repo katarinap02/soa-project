@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 
 import { HttpClientModule } from '@angular/common/http';
 import { CreateBlogpostComponent } from './blog/create-blogpost/create-blogpost.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreateCommentComponent } from './blog/create-comment/create-comment.component';
@@ -19,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
+import { FollowComponent } from './followers/follow/follow.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,8 @@ import { HomeComponent } from './stakeholders/home/home.component';
     RegisterComponent,
     ViewUsersComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    FollowComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +43,8 @@ import { HomeComponent } from './stakeholders/home/home.component';
     MatFormFieldModule,
     MatInputModule,
     MatCardModule,
+    MatIconModule,
+    MatDividerModule,
     MatButtonModule,
     MatSelectModule,
     BrowserAnimationsModule,
