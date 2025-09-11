@@ -1,5 +1,14 @@
-FROM golang:alpine AS builder
+FROM golang:alpine
+
 WORKDIR /app
+
+RUN apk add --no-cache git
+COPY go.mod go.sum ./
+
+RUN go mod download
+
 COPY . .
+
 EXPOSE 8084
-ENTRYPOINT ["go", "run", "main.go"]
+
+CMD ["go", "run", "main.go"]

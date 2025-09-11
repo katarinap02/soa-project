@@ -3,11 +3,13 @@ package main
 import (
 	"context"
 	handlers "database-example/handler"
+	"database-example/repo"
 	"database-example/service"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	gorillaHandlers "github.com/gorilla/handlers"
@@ -29,7 +31,7 @@ func main() {
 	storeLogger := log.New(os.Stdout, "[followers-store] ", log.LstdFlags)
 
 	// Initialize NoSQL store (Neo4j)
-	store, err := data.New(storeLogger)
+	store, err := repo.New(storeLogger)
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -40,7 +42,7 @@ func main() {
 	followerService := service.NewFollowerService(store, logger)
 
 	// Initialize handler and inject logger + service
-	followersHandler := handlers.NewFollowersHandler(logger, followerService)
+	followersHandler := handlers.NewFollowerHandler(logger, followerService)
 
 	// Initialize router
 	router := mux.NewRouter()
@@ -49,12 +51,12 @@ func main() {
 	// 1. User A follows User B
 	followSubrouter := router.Methods(http.MethodPost).Subrouter()
 	followSubrouter.HandleFunc("/follow", followersHandler.FollowUser)
-	followSubrouter.Use(followersHandler.MiddlewareFollowDeserialization)
+	followSubrouter.Use(followersHandler.MiddlewareFollowRequestDeserialization)
 
 	// 2. User A unfollows User B
 	unfollowSubrouter := router.Methods(http.MethodDelete).Subrouter()
 	unfollowSubrouter.HandleFunc("/unfollow", followersHandler.UnfollowUser)
-	unfollowSubrouter.Use(followersHandler.MiddlewareFollowDeserialization)
+	unfollowSubrouter.Use(followersHandler.MiddlewareFollowRequestDeserialization)
 
 	// 3. Get list of users a given user follows
 	getFollowing := router.Methods(http.MethodGet).Subrouter()
@@ -66,11 +68,19 @@ func main() {
 
 	// 5. Get recommendations for a user
 	getRecommendations := router.Methods(http.MethodGet).Subrouter()
-	getRecommendations.HandleFunc("/recommendations/{userId}", followersHandler.GetRecommendations)
+	getRecommendations.HandleFunc("/recommendations/{userId}/{limit}", followersHandler.GetRecommendations)
 
 	// 6. Check if one user follows another
 	checkFollowing := router.Methods(http.MethodGet).Subrouter()
-	checkFollowing.HandleFunc("/is-following/{followerId}/{followedId}", followersHandler.IsFollowing)
+	checkFollowing.HandleFunc("/is-following/{followerId}/{followeeId}", followersHandler.IsFollowing)
+
+	// 7. Get following count for a user
+	getFollowingCount := router.Methods(http.MethodGet).Subrouter()
+	getFollowingCount.HandleFunc("/following-count/{userId}", followersHandler.GetFollowingCount)
+
+	// 8. Get followers count for a user
+	getFollowersCount := router.Methods(http.MethodGet).Subrouter()
+	getFollowersCount.HandleFunc("/followers-count/{userId}", followersHandler.GetFollowersCount)
 
 	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
 
@@ -83,6 +93,8 @@ func main() {
 		WriteTimeout: 5 * time.Second,
 	}
 
+	logger.Println("Server listening on port", port)
+
 	go func() {
 		err := server.ListenAndServe()
 		if err != nil && err != http.ErrServerClosed {
@@ -93,7 +105,7 @@ func main() {
 	// Graceful shutdown
 	sigCh := make(chan os.Signal, 1)
 	signal.Notify(sigCh, os.Interrupt)
-	signal.Notify(sigCh, os.Kill)
+	signal.Notify(sigCh, syscall.SIGTERM)
 	sig := <-sigCh
 	logger.Println("Received terminate, graceful shutdown", sig)
 
