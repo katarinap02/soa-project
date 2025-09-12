@@ -4,7 +4,7 @@ import { Profile } from '../model/profile.model';
 import { FollowService } from '../follow.service';
 import { UserService } from 'src/app/stakeholders/user.service';
 import { RecommendationResponse } from '../model/recommendation-response.model';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 @Component({
   selector: 'app-follow',
@@ -24,64 +24,103 @@ export class FollowComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('user');
-    
-    if (!userStr) return;
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return;
 
-    const user = JSON.parse(userStr);
-    const userId = user.id;
-    console.log(userId)
+  const user = JSON.parse(userStr);
+  const userId = user.id;
 
-    // 1. Profil
-    this.profileService.getProfile(userId).subscribe({
-      next: (data) => (this.userProfile = data)
-    });
+  this.profileService.getProfile(userId).subscribe({
+    next: (data) => {
+      this.userProfile = { ...data, id: userId }; // dodaj id
+      this.refreshAllData();
+    },
+    error: (err) => console.error('Error fetching user profile', err)
+  });
+}
 
-    // 2. Following
-    this.followService.getFollowing(userId).subscribe({
-      next: (ids) => {
-        ids.forEach((id) =>
-          this.profileService.getProfile(id).subscribe({
-            next: (u) => this.following.push(u)
-          })
-        );
+refreshAllData() {
+  if (!this.userProfile) return;
+  const userId = this.userProfile.id;
+
+  // --- Following ---
+  this.followService.getFollowing(userId).subscribe({
+    next: (ids) => {
+      const requests = ids.map(id =>
+        this.profileService.getProfile(id).pipe(map(profile => ({ ...profile, id })))
+      );
+      if (requests.length > 0) {
+        forkJoin(requests).subscribe(users => this.following = users);
+      } else {
+        this.following = [];
       }
-    });
+    },
+    error: (err) => console.error('Error fetching following', err)
+  });
 
-    // 3. Followers
-    this.followService.getFollowers(userId).subscribe({
-      next: (ids) => {
-        ids.forEach((id) =>
-          this.profileService.getProfile(id).subscribe({
-            next: (u) => this.followers.push(u)
-          })
-        );
+  // --- Followers ---
+  this.followService.getFollowers(userId).subscribe({
+    next: (ids) => {
+      const requests = ids.map(id =>
+        this.profileService.getProfile(id).pipe(map(profile => ({ ...profile, id })))
+      );
+      if (requests.length > 0) {
+        forkJoin(requests).subscribe(users => this.followers = users);
+      } else {
+        this.followers = [];
       }
-    });
+    },
+    error: (err) => console.error('Error fetching followers', err)
+  });
 
-    // 4. Recommendations
-    this.followService.getRecommendations(userId, 5).subscribe({
-      next: (recommendations: RecommendationResponse[]) => {
-        if (!recommendations || recommendations.length === 0) return;
-
-        const requests = recommendations.map((rec) =>
-          this.profileService.getProfile(rec.user_id)
-        );
-        forkJoin(requests).subscribe({
-          next: (users) => (this.recommendations = users),
-          error: (err) => console.error('Error fetching recommendations', err),
-        });
-      },
-      error: (err) => console.error('Error fetching recommendations', err),
-    });
-  }
+  // --- Recommendations ---
+  this.followService.getRecommendations(userId, 5).subscribe({
+    next: (recs) => {
+      const validRecs = recs.filter(r => r.user_id && r.user_id !== '');
+      const requests = validRecs.map(r =>
+        this.profileService.getProfile(r.user_id).pipe(map(profile => ({ ...profile, id: r.user_id })))
+      );
+      if (requests.length > 0) {
+        forkJoin(requests).subscribe(users => this.recommendations = users);
+      } else {
+        this.recommendations = [];
+      }
+    },
+    error: (err) => console.error('Error fetching recommendations', err)
+  });
+}
 
   onImgError(event: Event) {
     const img = event.target as HTMLImageElement;
-    // ukloni handler da izbegnemo beskonačan loop ako i fallback padne
     img.onerror = null;
     img.src = this.DEFAULT_AVATAR;
   }
+
+  toggleFollow(target: Profile) {
+  if (!this.userProfile) return;
+
+  const followerId = this.userProfile.id;
+  const followeeId = target.id;
+
+  if (this.isFollowing(followeeId)) {
+    // Unfollow
+    this.followService.unfollowUser(followerId, followeeId).subscribe({
+      next: () => this.refreshAllData(),
+      error: (err) => console.error('Unfollow failed', err)
+    });
+  } else {
+    // Follow
+    this.followService.followUser(followerId, followeeId).subscribe({
+      next: () => this.refreshAllData(),
+      error: (err) => console.error('Follow failed', err)
+    });
+  }
+}
+
+// Helper funkcija
+isFollowing(userId: string): boolean {
+  return this.following.some(f => f.id === userId);
+}
 
 
  }

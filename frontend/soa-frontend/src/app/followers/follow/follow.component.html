@@ -32,6 +32,16 @@
   class="avatar-img-mini"
 />
         {{ f.firstName }} {{ f.lastName }}
+
+        <button
+  *ngIf="f.id !== userProfile?.id"
+  mat-button
+  color="primary"
+  (click)="toggleFollow(f)"
+>
+  {{ isFollowing(f.id) ? 'Unfollow' : 'Follow' }}
+</button>
+        
       </div>
     </mat-card-content>
   </mat-card>
@@ -51,6 +61,15 @@
 />
 
         {{ f.firstName }} {{ f.lastName }}
+
+        <button
+  *ngIf="f.id !== userProfile?.id"
+  mat-button
+  color="primary"
+  (click)="toggleFollow(f)"
+>
+  {{ isFollowing(f.id) ? 'Unfollow' : 'Follow' }}
+</button>
       </div>
     </mat-card-content>
   </mat-card>
@@ -69,6 +88,15 @@
   class="avatar-img-mini"
 />
         {{ r.firstName }} {{ r.lastName }}
+
+        <button
+  *ngIf="r.id !== userProfile?.id"
+  mat-button
+  color="primary"
+  (click)="toggleFollow(r)"
+>
+  {{ isFollowing(r.id) ? 'Unfollow' : 'Follow' }}
+</button>
       </div>
     </mat-card-content>
   </mat-card>

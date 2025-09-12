@@ -82,7 +82,13 @@ func main() {
 	getFollowersCount := router.Methods(http.MethodGet).Subrouter()
 	getFollowersCount.HandleFunc("/followers-count/{userId}", followersHandler.GetFollowersCount)
 
-	cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
+	//cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
+
+	cors := gorillaHandlers.CORS(
+		gorillaHandlers.AllowedOrigins([]string{"http://localhost:4200"}), // Angular origin
+		gorillaHandlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
+		gorillaHandlers.AllowedHeaders([]string{"Content-Type", "Authorization"}),
+	)
 
 	// Initialize server
 	server := http.Server{
