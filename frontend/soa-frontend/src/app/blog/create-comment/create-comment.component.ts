@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BlogService } from '../blog.service';
 import { Comment } from '../model/Comment.model';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-comment',
@@ -12,10 +13,11 @@ export class CreateCommentComponent implements OnInit {
    commentForm!: FormGroup;
     message = '';
   
-    constructor(private fb: FormBuilder, private blogService: BlogService)
+    constructor(private fb: FormBuilder, private blogService: BlogService, private route: ActivatedRoute, private router: Router)
     {}
     
     ngOnInit() {
+     
       this.commentForm = this.fb.group({
         text: ['', Validators.required]
     
@@ -25,20 +27,27 @@ export class CreateCommentComponent implements OnInit {
     onSubmit()
     {
       if(this.commentForm.invalid) return;
-  
+
+        const currentUser = localStorage.getItem('user');
+       if (currentUser) {
+            const userObj = JSON.parse(currentUser);   
+          const username = userObj.username;   
+    const id = this.route.snapshot.paramMap.get('id');
       let commentData : Comment = {  
-        Username: "petar123",
-        Text: this.commentForm.value.text,
-        PostId: "4663d4c2-8f26-4ce0-8172-677abc51d0b8", //zakucano za sad
-        DateCreated: new Date().toISOString(),
-        DateModified: new Date().toISOString()
+        
+        username: username,
+        text: this.commentForm.value.text,
+        postId: id, //zakucano za sad
+        date_created: new Date().toISOString(),
+        date_modified: new Date().toISOString()
       }
   
+      console.log(commentData)
     
         this.blogService.createComment(commentData).subscribe({
-          next: () => this.message = 'Uspešno kreiran post!',
+          next: () => this.router.navigate(['/post-details', id]),
           error: err => this.message = 'Greška: ' + (err.error?.message || 'Nepoznata greška')
         });
     }
-
+  }
 }

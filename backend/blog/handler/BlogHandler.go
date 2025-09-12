@@ -126,3 +126,23 @@ func (handler *BlogHandler) GetBlogPostsByUsername(writer http.ResponseWriter, r
 	writer.WriteHeader(http.StatusOK)
 	json.NewEncoder(writer).Encode(posts)
 }
+
+func (handler *BlogHandler) GetBlogPostByID(w http.ResponseWriter, r *http.Request) {
+	// get query param ?id=...
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing id parameter"})
+		return
+	}
+
+	post, err := handler.BlogPostService.GetBlogPostByID(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Blog post not found"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(post)
+}

@@ -87,3 +87,12 @@ func (repo *BlogPostRepository) GetBlogPostsByUsername(username string) ([]model
 	}
 	return posts, nil
 }
+
+func (repo *BlogPostRepository) GetBlogPostByID(id string) (*model.BlogPost, error) {
+	var post model.BlogPost
+	result := repo.DatabaseConnection.First(&post, "id = ?", id)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &post, nil
+}

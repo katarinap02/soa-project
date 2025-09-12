@@ -37,13 +37,15 @@ export class CreateBlogpostComponent implements OnInit {
           
 
     let blogPostData : BlogPost = {
-   
+    
       username: username,
       title: this.blogPostForm.value.title,
       description: this.blogPostForm.value.description,
       date: new Date().toISOString()
     }
+    
 
+     console.log(blogPostData);
   
       this.blogService.createPost(blogPostData).subscribe({
         next: () =>  this.router.navigate(['/view-my-blogposts']),

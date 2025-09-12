@@ -44,3 +44,7 @@ func (service *BlogPostService) GetAllBlogPosts() ([]model.BlogPost, error) {
 func (service *BlogPostService) GetBlogPostsByUsername(username string) ([]model.BlogPost, error) {
 	return service.BlogPostRepo.GetBlogPostsByUsername(username)
 }
+
+func (service *BlogPostService) GetBlogPostByID(id string) (*model.BlogPost, error) {
+	return service.BlogPostRepo.GetBlogPostByID(id)
+}

@@ -9,20 +9,22 @@ import { HomeComponent } from './stakeholders/home/home.component';
 import { FollowComponent } from './followers/follow/follow.component';
 import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
 import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
+import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
 
 
 
 
 const routes: Routes = [
   { path: 'create-blogpost', component: CreateBlogpostComponent },
-  { path: 'create-comment', component: CreateCommentComponent },
+  { path: 'create-comment/:id', component: CreateCommentComponent },
   { path: 'register' , component: RegisterComponent},
   { path: 'view-users', component: ViewUsersComponent},
   { path: '', component: LoginComponent },
   {path: 'home', component: HomeComponent},
   {path: 'follow', component:FollowComponent},
   { path: 'view-blogposts', component: ViewBlogPostsComponent},
-   { path: 'view-my-blogposts', component: MyBlogPostsComponent}
+   { path: 'view-my-blogposts', component: MyBlogPostsComponent},
+    { path: 'post-details/:id', component: BlogPostDetailsComponent }
 ];
 
 @NgModule({

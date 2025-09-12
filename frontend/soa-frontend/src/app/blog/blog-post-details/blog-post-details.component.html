@@ -1,0 +1,39 @@
+<mat-card *ngIf="post">
+  <mat-card-header>
+    <mat-card-title>{{ post.title }}</mat-card-title>
+    <mat-card-subtitle>
+      {{ post.username }} • {{ post.date | date:'medium' }}
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p>{{ post.description }}</p>
+  </mat-card-content>
+
+  
+</mat-card>
+
+<button mat-button color="primary" (click)="createComment(post.id)">
+    Create comment
+  </button>
+
+  <h1> Comments </h1>
+<div class="blog-grid">
+
+     
+  <mat-card *ngFor="let comment of comments" class="blog-card">
+    <mat-card-header>
+  
+      <mat-card-subtitle>
+        {{ comment.username }} • {{ comment.date_modified | date:'medium' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>{{ comment.text }}</p>
+    </mat-card-content>
+
+  
+  </mat-card>
+</div>
+

@@ -16,3 +16,7 @@ func (service *CommentService) CreateComment(comment *model.Comment) error {
 	}
 	return nil
 }
+
+func (service *CommentService) GetCommentsByPostID(postId string) ([]model.Comment, error) {
+	return service.CommentRepo.GetCommentsByPostID(postId)
+}

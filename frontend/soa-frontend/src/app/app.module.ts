@@ -25,6 +25,7 @@ import { FollowComponent } from './followers/follow/follow.component';
 import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
 import { BlogDetailsComponent } from './blog/blog-details/blog-details.component';
 import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
+import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.compone
     FollowComponent,
     ViewBlogPostsComponent,
     BlogDetailsComponent,
-    MyBlogPostsComponent
+    MyBlogPostsComponent,
+    BlogPostDetailsComponent
   ],
   imports: [
     BrowserModule,
