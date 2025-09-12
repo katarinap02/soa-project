@@ -184,54 +184,6 @@ func (f *FollowerHandler) IsFollowing(rw http.ResponseWriter, h *http.Request) {
 	json.NewEncoder(rw).Encode(response)
 }
 
-// GET /following-count/{userId}
-func (f *FollowerHandler) GetFollowingCount(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	userIDStr := vars["userId"]
-
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		f.logger.Printf("Invalid UUID format: %s", userIDStr)
-		http.Error(rw, "Invalid user ID format", http.StatusBadRequest)
-		return
-	}
-
-	count, err := f.service.GetFollowingCount(userID)
-	if err != nil {
-		f.logger.Print("Service exception: ", err)
-		http.Error(rw, "Unable to get following count", http.StatusInternalServerError)
-		return
-	}
-
-	response := map[string]int{"following_count": count}
-	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(response)
-}
-
-// GET /followers-count/{userId}
-func (f *FollowerHandler) GetFollowersCount(rw http.ResponseWriter, h *http.Request) {
-	vars := mux.Vars(h)
-	userIDStr := vars["userId"]
-
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		f.logger.Printf("Invalid UUID format: %s", userIDStr)
-		http.Error(rw, "Invalid user ID format", http.StatusBadRequest)
-		return
-	}
-
-	count, err := f.service.GetFollowersCount(userID)
-	if err != nil {
-		f.logger.Print("Service exception: ", err)
-		http.Error(rw, "Unable to get followers count", http.StatusInternalServerError)
-		return
-	}
-
-	response := map[string]int{"followers_count": count}
-	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(response)
-}
-
 // Middleware for deserializing FollowRequest
 func (f *FollowerHandler) MiddlewareFollowRequestDeserialization(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, h *http.Request) {

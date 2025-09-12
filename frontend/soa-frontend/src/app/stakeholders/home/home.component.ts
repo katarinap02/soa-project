@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit {
   }
 
   isAdmin(): boolean {
-    return this.user?.role === 'Administrator';
+    return this.user?.role === 'Admin';
   }
 
 }

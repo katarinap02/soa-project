@@ -93,21 +93,3 @@ func (s *FollowerService) GetRecommendations(userID uuid.UUID, limit int) ([]dto
 
 	return s.repo.GetRecommendations(userID, limit)
 }
-
-// GetFollowingCount - get count of users that a user follows
-func (s *FollowerService) GetFollowingCount(userID uuid.UUID) (int, error) {
-	if userID == uuid.Nil {
-		return 0, errors.New("invalid user ID provided")
-	}
-
-	return s.repo.GetFollowingCount(userID)
-}
-
-// GetFollowersCount - get count of users who follow a user
-func (s *FollowerService) GetFollowersCount(userID uuid.UUID) (int, error) {
-	if userID == uuid.Nil {
-		return 0, errors.New("invalid user ID provided")
-	}
-
-	return s.repo.GetFollowersCount(userID)
-}

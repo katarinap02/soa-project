@@ -74,16 +74,6 @@ func main() {
 	checkFollowing := router.Methods(http.MethodGet).Subrouter()
 	checkFollowing.HandleFunc("/is-following/{followerId}/{followeeId}", followersHandler.IsFollowing)
 
-	// 7. Get following count for a user
-	getFollowingCount := router.Methods(http.MethodGet).Subrouter()
-	getFollowingCount.HandleFunc("/following-count/{userId}", followersHandler.GetFollowingCount)
-
-	// 8. Get followers count for a user
-	getFollowersCount := router.Methods(http.MethodGet).Subrouter()
-	getFollowersCount.HandleFunc("/followers-count/{userId}", followersHandler.GetFollowersCount)
-
-	//cors := gorillaHandlers.CORS(gorillaHandlers.AllowedOrigins([]string{"*"}))
-
 	cors := gorillaHandlers.CORS(
 		gorillaHandlers.AllowedOrigins([]string{"http://localhost:4200"}), // Angular origin
 		gorillaHandlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),

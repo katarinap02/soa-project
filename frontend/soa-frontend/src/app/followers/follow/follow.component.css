@@ -42,3 +42,29 @@
   margin-right: 8px;
 }
 
+.profile-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+.mini-profile button {
+  padding: 4px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 12px;
+  text-transform: none;
+  transition: background-color 0.2s, color 0.2s;
+  margin-left: 5px;
+}
+
+.mini-profile button[color="primary"] {
+  background-color: #6d2c2c;
+  color: #fff;
+}
+
+.mini-profile button[color="primary"]:hover {
+  background-color: #843838;
+}
