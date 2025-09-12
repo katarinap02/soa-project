@@ -22,6 +22,8 @@ import { ViewUsersComponent } from './stakeholders/view-users/view-users.compone
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
 import { FollowComponent } from './followers/follow/follow.component';
+import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
+import { BlogDetailsComponent } from './blog/blog-details/blog-details.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { FollowComponent } from './followers/follow/follow.component';
     ViewUsersComponent,
     LoginComponent,
     HomeComponent,
-    FollowComponent
+    FollowComponent,
+    ViewBlogPostsComponent,
+    BlogDetailsComponent
   ],
   imports: [
     BrowserModule,
