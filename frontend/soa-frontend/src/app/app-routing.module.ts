@@ -7,6 +7,8 @@ import { ViewUsersComponent } from './stakeholders/view-users/view-users.compone
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
 import { FollowComponent } from './followers/follow/follow.component';
+import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
+import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
 
 
 
@@ -18,7 +20,9 @@ const routes: Routes = [
   { path: 'view-users', component: ViewUsersComponent},
   { path: '', component: LoginComponent },
   {path: 'home', component: HomeComponent},
-  {path: 'follow', component:FollowComponent}
+  {path: 'follow', component:FollowComponent},
+  { path: 'view-blogposts', component: ViewBlogPostsComponent},
+   { path: 'view-my-blogposts', component: MyBlogPostsComponent}
 ];
 
 @NgModule({

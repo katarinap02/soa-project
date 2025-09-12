@@ -3,6 +3,7 @@ package service
 import (
 	"database-example/model"
 	"database-example/repo"
+
 	"github.com/google/uuid"
 )
 
@@ -25,7 +26,7 @@ func (service *BlogPostService) CreateBlogLike(blogLike *model.BlogLike) error {
 	}
 
 	return nil
-} 
+}
 
 func (service *BlogPostService) DeleteBlogLike(username string, blogId uuid.UUID) error {
 	err := service.BlogPostRepo.DeleteBlogLike(username, blogId)
@@ -34,4 +35,12 @@ func (service *BlogPostService) DeleteBlogLike(username string, blogId uuid.UUID
 	}
 
 	return nil
-} 
+}
+
+func (service *BlogPostService) GetAllBlogPosts() ([]model.BlogPost, error) {
+	return service.BlogPostRepo.GetAllBlogPosts()
+}
+
+func (service *BlogPostService) GetBlogPostsByUsername(username string) ([]model.BlogPost, error) {
+	return service.BlogPostRepo.GetBlogPostsByUsername(username)
+}

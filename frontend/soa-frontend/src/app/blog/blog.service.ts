@@ -22,4 +22,12 @@ export class BlogService {
   {
     return this.http.post<any>(this.apiUrl + '/create-comment', comment);
   }
+
+   getAllBlogPosts(): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(this.apiUrl);
+  }
+
+  getBlogPostsByUsername(username: string): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(`${this.apiUrl}/by-username?username=${username}`);
+  }
 }

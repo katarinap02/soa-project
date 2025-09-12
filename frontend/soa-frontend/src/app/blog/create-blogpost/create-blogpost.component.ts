@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BlogService } from '../blog.service';
 import { BlogPost } from '../model/BlogPost.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-blogpost',
@@ -13,7 +14,7 @@ export class CreateBlogpostComponent implements OnInit {
   blogPostForm!: FormGroup;
   message = '';
 
-  constructor(private fb: FormBuilder, private blogService: BlogService)
+  constructor(private fb: FormBuilder, private blogService: BlogService, private router: Router)
   {}
   
   ngOnInit() {
@@ -23,23 +24,32 @@ export class CreateBlogpostComponent implements OnInit {
     });
   }
 
+
+
   onSubmit()
   {
     if(this.blogPostForm.invalid) return;
 
+       const currentUser = localStorage.getItem('user');
+       if (currentUser) {
+            const userObj = JSON.parse(currentUser);   
+          const username = userObj.username;    
+          
+
     let blogPostData : BlogPost = {
    
-      Username: "marko123",
-      Title: this.blogPostForm.value.title,
-      Description: this.blogPostForm.value.description,
-      Date: new Date().toISOString()
+      username: username,
+      title: this.blogPostForm.value.title,
+      description: this.blogPostForm.value.description,
+      date: new Date().toISOString()
     }
 
   
       this.blogService.createPost(blogPostData).subscribe({
-        next: () => this.message = 'Uspešno kreiran komentar!',
+        next: () =>  this.router.navigate(['/view-my-blogposts']),
         error: err => this.message = 'Greška: ' + (err.error?.message || 'Nepoznata greška')
       });
   }
+}
 
 }
