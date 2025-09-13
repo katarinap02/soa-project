@@ -3,6 +3,7 @@ import { Tour } from '../model/tour.model';
 import { TourService } from '../service/tour-service.service';
 import { ReviewComponent } from '../review/review.component';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 export class ToursOverviewComponent implements OnInit {
   tours: Tour[] = [];
 
-  constructor(private tourService: TourService, private dialog: MatDialog) { }
+  constructor(private tourService: TourService, private dialog: MatDialog, private router: Router) { }
 
   ngOnInit(): void {
     this.tourService.getAllTours().subscribe({
@@ -27,4 +28,9 @@ export class ToursOverviewComponent implements OnInit {
     width: '600px',
     data: { tourId }
   });}
+
+      viewMap(tourId: string) {
+    this.router.navigate(['home/view-map-tourist', tourId]);
+  }
+
 }
