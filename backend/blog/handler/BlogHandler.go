@@ -5,8 +5,9 @@ import (
 	"database-example/service"
 	"encoding/json"
 	"net/http"
+	"time"
+
 	"github.com/google/uuid"
-	"time"	
 )
 
 type BlogHandler struct {
@@ -33,63 +34,115 @@ func (handler *BlogHandler) CreateBlogPost(writer http.ResponseWriter, req *http
 }
 
 func (handler *BlogHandler) CreateBlogLike(w http.ResponseWriter, r *http.Request) {
-    var req struct {
-        Username  string `json:"username"`
-        BlogId   uuid.UUID `json:"blogId"`
-    }
+	var req struct {
+		Username string    `json:"username"`
+		BlogId   uuid.UUID `json:"blogId"`
+	}
 
-    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-        http.Error(w, "Invalid request payload", http.StatusBadRequest)
-        return
-    }
-	
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
+
 	//Za sada verujemo na rec da je username validan
 	// TODO: pogoditi endpoint stakeholder servisa da se dobije username
-	
+
 	/*
-    user, err := handler.UserService.GetUserByUsername(req.Username)
-    if err != nil {
-        http.Error(w, "User not found", http.StatusNotFound)
-        return
-    }*/
-	// Isto treba validirati i za blogId ali je za sada ovako ok 
+	   user, err := handler.UserService.GetUserByUsername(req.Username)
+	   if err != nil {
+	       http.Error(w, "User not found", http.StatusNotFound)
+	       return
+	   }*/
+	// Isto treba validirati i za blogId ali je za sada ovako ok
 
-    blogLike := model.BlogLike{
-        Id:        uuid.New(),
-        BlogId:    req.BlogId,
+	blogLike := model.BlogLike{
+		Id:        uuid.New(),
+		BlogId:    req.BlogId,
 		Username:  req.Username, // TODO: povezan sa onim gore
-        CreatedAt: time.Now(),
-    }
+		CreatedAt: time.Now(),
+	}
 
-    if err := handler.BlogPostService.CreateBlogLike(&blogLike); err != nil {
-        http.Error(w, "Failed to like blog: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	if err := handler.BlogPostService.CreateBlogLike(&blogLike); err != nil {
+		http.Error(w, "Failed to like blog: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    w.WriteHeader(http.StatusCreated)
-    json.NewEncoder(w).Encode(blogLike)
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(blogLike)
 }
 
-
 func (handler *BlogHandler) DeleteBlogLike(w http.ResponseWriter, r *http.Request) {
-    var req struct {
-        Username string    `json:"username"`
-        BlogId   uuid.UUID `json:"blogId"`
-    }
+	var req struct {
+		Username string    `json:"username"`
+		BlogId   uuid.UUID `json:"blogId"`
+	}
 
-    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-        http.Error(w, "Invalid request payload", http.StatusBadRequest)
-        return
-    }
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		return
+	}
 
-    // TODO: isto kao gore 
+	// TODO: isto kao gore
 
-    err := handler.BlogPostService.DeleteBlogLike(req.Username, req.BlogId)
-    if err != nil {
-        http.Error(w, "Failed to unlike blog: "+err.Error(), http.StatusInternalServerError)
-        return
-    }
+	err := handler.BlogPostService.DeleteBlogLike(req.Username, req.BlogId)
+	if err != nil {
+		http.Error(w, "Failed to unlike blog: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
 
-    w.WriteHeader(http.StatusOK)
-    w.Write([]byte("Like removed successfully"))
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Like removed successfully"))
+}
+
+func (handler *BlogHandler) GetAllBlogPosts(writer http.ResponseWriter, req *http.Request) {
+	posts, err := handler.BlogPostService.GetAllBlogPosts()
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(map[string]string{"error": "Failed to fetch blog posts"})
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(posts)
+}
+
+func (handler *BlogHandler) GetBlogPostsByUsername(writer http.ResponseWriter, req *http.Request) {
+	username := req.URL.Query().Get("username")
+	if username == "" {
+		writer.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(writer).Encode(map[string]string{"error": "Missing username query param"})
+		return
+	}
+
+	posts, err := handler.BlogPostService.GetBlogPostsByUsername(username)
+	if err != nil {
+		writer.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(writer).Encode(map[string]string{"error": "Failed to fetch blog posts"})
+		return
+	}
+
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	json.NewEncoder(writer).Encode(posts)
+}
+
+func (handler *BlogHandler) GetBlogPostByID(w http.ResponseWriter, r *http.Request) {
+	// get query param ?id=...
+	id := r.URL.Query().Get("id")
+	if id == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing id parameter"})
+		return
+	}
+
+	post, err := handler.BlogPostService.GetBlogPostByID(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Blog post not found"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(post)
 }

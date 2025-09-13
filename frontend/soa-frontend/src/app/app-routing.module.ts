@@ -8,14 +8,22 @@ import { RegisterComponent } from './stakeholders/register/register.component';
 import { ViewUsersComponent } from './stakeholders/view-users/view-users.component';
 import { LoginComponent } from './stakeholders/login/login.component';
 import { HomeComponent } from './stakeholders/home/home.component';
+
 import { MyToursComponent } from './tour/my-tours/my-tours.component';
 import { KeyPointsComponent } from './tour/key-points/key-points.component';
+
+import { FollowComponent } from './followers/follow/follow.component';
+import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
+import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
+import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
+
 
 
 
 
 const routes: Routes = [
   { path: 'create-blogpost', component: CreateBlogpostComponent },
+
   { path: 'create-comment', component: CreateCommentComponent },
   
 
@@ -32,6 +40,17 @@ const routes: Routes = [
      
     ]
   }
+
+  { path: 'create-comment/:id', component: CreateCommentComponent },
+  { path: 'register' , component: RegisterComponent},
+  { path: 'view-users', component: ViewUsersComponent},
+  { path: '', component: LoginComponent },
+  {path: 'home', component: HomeComponent},
+  {path: 'follow', component:FollowComponent},
+  { path: 'view-blogposts', component: ViewBlogPostsComponent},
+   { path: 'view-my-blogposts', component: MyBlogPostsComponent},
+    { path: 'post-details/:id', component: BlogPostDetailsComponent }
+
 ];
 
 @NgModule({

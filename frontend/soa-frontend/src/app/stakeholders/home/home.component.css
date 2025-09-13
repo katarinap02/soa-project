@@ -1,3 +1,4 @@
+
 /* Navbar pozadina i raspored */
 .navbar {
   display: flex;
@@ -41,3 +42,33 @@
   min-height: calc(100vh - 60px); /* prostor ispod navbar-a */
   background-color: #f5f5f5;
 }
+
+.home-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  gap: 16px;
+}
+
+.follow-btn,
+.admin-btn {
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 12px;
+  border: none;
+  background-color: #6d2c2c;
+  color: #f5f5f5;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.follow-btn:hover,
+.admin-btn:hover {
+  background-color: #853737;
+  transform: scale(1.05);
+}
+
+
+

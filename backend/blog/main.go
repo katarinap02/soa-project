@@ -74,6 +74,10 @@ func main() {
 	router.HandleFunc("/blog/create-comment", commentHandler.CreateComment).Methods("POST", "OPTIONS")
 	router.HandleFunc("/blog/like-blog", blogPostHandler.CreateBlogLike).Methods("POST")
 	router.HandleFunc("/blog/unlike-blog", blogPostHandler.DeleteBlogLike).Methods("POST")
+	router.HandleFunc("/blog", blogPostHandler.GetAllBlogPosts).Methods("GET")
+	router.HandleFunc("/blog/by-username", blogPostHandler.GetBlogPostsByUsername).Methods("GET")
+	router.HandleFunc("/blog/by-id", blogPostHandler.GetBlogPostByID).Methods("GET")
+	router.HandleFunc("/blog/comments", commentHandler.GetCommentsByPostID).Methods("GET")
 
 	// Pokretanje servera
 

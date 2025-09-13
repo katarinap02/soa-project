@@ -1,3 +1,4 @@
+
 <nav class="navbar">
   <button *ngIf="userRole === 'Tourist'" (click)="goToTours()">Tours</button>
   <button *ngIf="userRole === 'Guide'" (click)="goToMyTours()">My Tours</button>
@@ -8,3 +9,21 @@
 <div class="home-content">
   <router-outlet></router-outlet>
 </div>
+
+<div class="home-container">
+  <button *ngIf="!isAdmin()" routerLink="/follow" class="follow-btn">
+    View profile
+  </button>
+
+  <button *ngIf="isAdmin()" routerLink="/view-users" class="admin-btn">
+    View All Users
+  </button>
+
+    <button routerLink="/view-blogposts" class="admin-btn">
+    View All Blog posts
+  </button>
+
+ 
+</div>
+
+

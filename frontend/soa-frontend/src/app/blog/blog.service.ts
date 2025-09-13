@@ -22,4 +22,22 @@ export class BlogService {
   {
     return this.http.post<any>(this.apiUrl + '/create-comment', comment);
   }
+
+   getAllBlogPosts(): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(this.apiUrl);
+  }
+
+  getBlogPostsByUsername(username: string): Observable<BlogPost[]> {
+    return this.http.get<BlogPost[]>(`${this.apiUrl}/by-username?username=${username}`);
+  }
+
+  getBlogPostById(id: string): Observable<BlogPost> {
+      return this.http.get<BlogPost>(`${this.apiUrl}/by-id?id=${id}`);
+}
+
+getCommentsByPostId(postId: string): Observable<Comment[]> {
+  return this.http.get<Comment[]>(`${this.apiUrl}/comments?postId=${postId}`);
+}
+
+
 }

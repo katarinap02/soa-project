@@ -1,6 +1,5 @@
 package dto
 
-
 type UserInfoDTO struct {
 	FirstName      string `json:"firstName"`
 	LastName       string `json:"lastName"`

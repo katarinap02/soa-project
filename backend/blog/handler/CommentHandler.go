@@ -29,3 +29,22 @@ func (handler *CommentHandler) CreateComment(writer http.ResponseWriter, req *ht
 	writer.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(writer).Encode(map[string]string{"message": "Comment created successfully"})
 }
+
+func (handler *CommentHandler) GetCommentsByPostID(w http.ResponseWriter, r *http.Request) {
+	postId := r.URL.Query().Get("postId")
+	if postId == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing postId parameter"})
+		return
+	}
+
+	comments, err := handler.CommentService.GetCommentsByPostID(postId)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to fetch comments"})
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(comments)
+}

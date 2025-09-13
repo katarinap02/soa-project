@@ -19,3 +19,12 @@ func (repo *CommentRepository) CreateComment(comment *model.Comment) error {
 	println("Rows affected: ", dbResult.RowsAffected)
 	return nil
 }
+
+func (repo *CommentRepository) GetCommentsByPostID(postId string) ([]model.Comment, error) {
+	var comments []model.Comment
+	result := repo.DatabaseConnection.Where("post_id = ?", postId).Find(&comments)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return comments, nil
+}

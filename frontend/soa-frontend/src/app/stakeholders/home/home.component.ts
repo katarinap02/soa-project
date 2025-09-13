@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
 import { Router } from '@angular/router'; 
+
+import { UserView } from '../model/UserView.model';
+
 
 @Component({
   selector: 'app-home',
@@ -8,9 +12,13 @@ import { Router } from '@angular/router';
 })
 export class HomeComponent implements OnInit {
 
+
    constructor(private router: Router) {}
 
    userRole = '';
+
+    user: UserView | null = null;
+
 
    ngOnInit(): void {
   
@@ -24,10 +32,19 @@ export class HomeComponent implements OnInit {
     }
     console.log(userStr);
     const user = JSON.parse(userStr);
+    this.user = user;
+
+    
+  }
+
 
     this.userRole = user.role;
 
     alert(`Token: ${token}\nUsername: ${user.username}\nRole: ${user.role}`);
+
+  isAdmin(): boolean {
+    return this.user?.role === 'Admin';
+
   }
  logout(): void {
     localStorage.clear();           
