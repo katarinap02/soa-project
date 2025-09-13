@@ -16,6 +16,7 @@ import { FollowComponent } from './followers/follow/follow.component';
 import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.component';
 import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
 import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
+import { ViewTourMapComponent } from './tour/view-tour-map/view-tour-map.component';
 
 
 
@@ -37,9 +38,10 @@ const routes: Routes = [
       { path: 'my-tours', component: MyToursComponent },
       { path: 'create-tour', component: CreateTourComponent },
       { path: 'tour-keypoints/:id', component: KeyPointsComponent },
+      { path: 'view-map/:id', component: ViewTourMapComponent}
      
     ]
-  }
+  },
 
   { path: 'create-comment/:id', component: CreateCommentComponent },
   { path: 'register' , component: RegisterComponent},

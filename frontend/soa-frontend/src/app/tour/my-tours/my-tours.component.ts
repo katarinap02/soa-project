@@ -39,4 +39,8 @@ export class MyToursComponent implements OnInit {
     this.router.navigate(['home/tour-keypoints', tourId]);
   }
 
+    viewMap(tourId: string) {
+    this.router.navigate(['home/view-map', tourId]);
+  }
+
 }

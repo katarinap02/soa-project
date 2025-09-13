@@ -1,0 +1,11 @@
+.keypoint-form{
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.keypoint-data{
+    display: flex;
+    gap: 5vh;
+    justify-content: center;
+}

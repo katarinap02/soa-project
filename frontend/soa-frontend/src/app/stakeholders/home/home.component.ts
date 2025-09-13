@@ -34,16 +34,17 @@ export class HomeComponent implements OnInit {
     const user = JSON.parse(userStr);
     this.user = user;
 
-    
+    this.userRole = this.user?.role || '';
   }
 
 
-    this.userRole = user.role;
-
-    alert(`Token: ${token}\nUsername: ${user.username}\nRole: ${user.role}`);
-
   isAdmin(): boolean {
     return this.user?.role === 'Admin';
+
+  }
+
+    isGuide(): boolean {
+    return this.user?.role === 'Guide';
 
   }
  logout(): void {

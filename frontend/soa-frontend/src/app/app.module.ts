@@ -40,7 +40,8 @@ import { ViewBlogPostsComponent } from './blog/view-blog-posts/view-blog-posts.c
 import { BlogDetailsComponent } from './blog/blog-details/blog-details.component';
 import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.component';
 import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
-
+import { ViewTourMapComponent } from './tour/view-tour-map/view-tour-map.component';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   declarations: [
@@ -61,7 +62,9 @@ import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-det
     ViewBlogPostsComponent,
     BlogDetailsComponent,
     MyBlogPostsComponent,
-    BlogPostDetailsComponent
+    BlogPostDetailsComponent,
+    ViewTourMapComponent,
+ 
   ],
   imports: [
     BrowserModule,
@@ -88,6 +91,9 @@ import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-det
     BrowserAnimationsModule,
     MatDialogModule,
      MatCheckboxModule,
+     MatCardModule,
+     MatButtonModule,
+     MatTableModule
   ],
   providers: [],
   bootstrap: [AppComponent]
