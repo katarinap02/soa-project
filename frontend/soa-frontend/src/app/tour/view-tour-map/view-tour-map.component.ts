@@ -41,6 +41,9 @@ keyPoints: KeyPoint[] = [];
           this.loadKeyPointsTable();
       }
 
+      editingKeyPoint: KeyPoint | null = null; // currently editing keypoint
+editingMarker!: L.Marker; // marker being moved
+
 loadExistingKeyPoints(): void {
   if (!this.tourId) return;
 
@@ -99,11 +102,25 @@ loadExistingKeyPoints(): void {
           }).addTo(this.map);
       
           this.map.on('click', (e: any) => {
-            this.keyPoint.latitude = e.latlng.lat;
-            this.keyPoint.longitude = e.latlng.lng;
-      
-            // Dodavanje markera
-            L.marker([e.latlng.lat, e.latlng.lng]).addTo(this.map);
+         const lat = e.latlng.lat;
+  const lng = e.latlng.lng;
+
+  if (this.editingKeyPoint) {
+    // Update coordinates of the key point being edited
+    this.editingKeyPoint.latitude = lat;
+    this.editingKeyPoint.longitude = lng;
+
+    // Move the editing marker to the new position
+    if (this.editingMarker) {
+      this.editingMarker.setLatLng(e.latlng);
+    }
+  } else {
+    // Add new key point
+    this.keyPoint.latitude = lat;
+    this.keyPoint.longitude = lng;
+
+    L.marker([lat, lng]).addTo(this.map);
+  }
           });
         }
       
@@ -156,5 +173,54 @@ deleteKeyPoint(kp: KeyPoint): void {
       error: (err) => console.error('Delete failed', err)
     });
   }
+
+  get currentKeyPoint(): KeyPoint {
+  return this.editingKeyPoint || this.keyPoint;
+}
+
+editKeyPoint(kp: KeyPoint) {
+  this.editingKeyPoint = { ...kp }; // clone to avoid direct changes
+  this.map.setView([kp.latitude, kp.longitude], 15);
+
+  // optionally add a draggable marker for editing
+  if (this.editingMarker) {
+    this.map.removeLayer(this.editingMarker);
+  }
+
+  this.editingMarker = L.marker([kp.latitude, kp.longitude], { draggable: true })
+    .addTo(this.map)
+    .bindTooltip(`${kp.name}`, { permanent: true })
+    .on('dragend', (e: any) => {
+      this.editingKeyPoint!.latitude = e.target.getLatLng().lat;
+      this.editingKeyPoint!.longitude = e.target.getLatLng().lng;
+    });
+
+
+}
+
+cancelEdit() {
+  this.editingKeyPoint = null;
+  if (this.editingMarker) {
+    this.map.removeLayer(this.editingMarker);
+  }
+}
+
+
+updateKeyPoint() {
+  if (!this.editingKeyPoint) return;
+
+  this.keyPointService.updateKeyPoint(this.editingKeyPoint.id!, this.editingKeyPoint).subscribe({
+    next: () => {
+      alert('KeyPoint updated!');
+      this.cancelEdit();
+      this.loadExistingKeyPoints();
+      this.loadKeyPointsTable();
+      window.location.reload();
+    },
+    error: (err) => console.error('Update failed', err)
+  });
+}
+
+
 
 }
