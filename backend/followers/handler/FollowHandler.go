@@ -179,9 +179,8 @@ func (f *FollowerHandler) IsFollowing(rw http.ResponseWriter, h *http.Request) {
 		return
 	}
 
-	response := map[string]bool{"is_following": isFollowing}
 	rw.WriteHeader(http.StatusOK)
-	json.NewEncoder(rw).Encode(response)
+	json.NewEncoder(rw).Encode(isFollowing)
 }
 
 // Middleware for deserializing FollowRequest

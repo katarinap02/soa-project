@@ -39,5 +39,9 @@ followUser(followerId: string, followeeId: string): Observable<string> {
     return this.http.request<string>('delete', `${this.apiUrl}/unfollow`, { body });
   }
 
+  isFollowing(followerId: string, followeeId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiUrl}/is-following/${followerId}/${followeeId}`);
+  }
+
 }
 

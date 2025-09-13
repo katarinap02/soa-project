@@ -26,4 +26,9 @@ export class UserService {
   getProfile(userId: string): Observable<Profile> {
     return this.http.get<Profile>(`${this.apiUrl1}/profile/${userId}`);
   }
+
+  getUserByUsername(username: string): Observable<UserView> {
+  return this.http.post<UserView>(`${this.apiUrl}/by-username`, { username });
+}
+
 }

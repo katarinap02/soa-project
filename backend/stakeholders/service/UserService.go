@@ -45,6 +45,26 @@ func (service *UserService) GetAllUsers() ([]dto.UserDTO, error) {
 	return userDTOs, nil
 }
 
+func (service *UserService) GetUserByUsername(username string) (*dto.UserDTO, error) {
+	if strings.TrimSpace(username) == "" {
+		return nil, errors.New("username cannot be empty")
+	}
+
+	user, err := service.UserRepo.GetByUsername(username)
+	if err != nil {
+		return nil, fmt.Errorf("user with username '%s' not found", username)
+	}
+
+	userDTO := &dto.UserDTO{
+		Id:       user.Id.String(),
+		Username: user.Username,
+		Email:    user.Email,
+		Role:     string(user.Role),
+	}
+
+	return userDTO, nil
+}
+
 func (service *UserService) BlockUser(adminUsername, userToBlock string) error {
 	adminUser, err := service.UserRepo.FindByUsername(adminUsername)
 	if err != nil {

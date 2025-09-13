@@ -124,6 +124,7 @@ func main() {
 	router.HandleFunc("/profile/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
 	router.HandleFunc("/users/blockuser", userHandler.BlockUser).Methods("POST")
 	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
+	router.HandleFunc("/users/by-username", userHandler.GetUserByUsername).Methods("POST")
 
 	wrappedRouter := debugMiddleware(router)
 

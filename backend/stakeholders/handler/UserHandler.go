@@ -62,6 +62,45 @@ func (handler *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(users)
 }
 
+func (handler *UserHandler) GetUserByUsername(w http.ResponseWriter, r *http.Request) {
+	log.Println("GetUserByUsername endpoint hit")
+
+	var request struct {
+		Username string `json:"username"`
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		log.Printf("Error parsing JSON: %v", err)
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid JSON format"})
+		return
+	}
+
+	if request.Username == "" {
+		log.Println("Username is required")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"error": "Username is required"})
+		return
+	}
+
+	userDTO, err := handler.UserService.GetUserByUsername(request.Username)
+	if err != nil {
+		log.Printf("Error getting user by username: %v", err)
+		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"error": "User not found"})
+		return
+	}
+
+	log.Printf("User %s found successfully", request.Username)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(userDTO)
+}
+
 func (handler *UserHandler) BlockUser(writer http.ResponseWriter, req *http.Request) {
 	log.Println("BlockUser endpoint hit")
 

@@ -154,9 +154,9 @@ func (repo *FollowerRepository) IsFollowing(followerID, followeeID uuid.UUID) (b
 
 	result, err := session.ExecuteRead(ctx,
 		func(transaction neo4j.ManagedTransaction) (any, error) {
-			result, err := transaction.Run(ctx,
+			res, err := transaction.Run(ctx,
 				`MATCH (follower:User {id: $followerId})-[:FOLLOWS]->(followee:User {id: $followeeId})
-				 RETURN true as follows`,
+				 RETURN count(*) > 0 AS follows`,
 				map[string]any{
 					"followerId": followerID.String(),
 					"followeeId": followeeID.String(),
@@ -165,7 +165,13 @@ func (repo *FollowerRepository) IsFollowing(followerID, followeeID uuid.UUID) (b
 				return false, err
 			}
 
-			return result.Next(ctx), nil
+			if res.Next(ctx) {
+				// uzimamo vrednost iz record-a
+				follows, _ := res.Record().Get("follows")
+				return follows.(bool), nil
+			}
+
+			return false, nil
 		})
 
 	if err != nil {
