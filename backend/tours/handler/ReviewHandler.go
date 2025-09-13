@@ -7,7 +7,6 @@ import (
 
 	"database-example/model"
 	"database-example/service"
-
 	// "github.com/gorilla/mux"
 )
 

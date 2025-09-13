@@ -1,4 +1,5 @@
 export interface KeyPoint {
+  id?: string;
   tourId: string;
   name: string;
   description: string;

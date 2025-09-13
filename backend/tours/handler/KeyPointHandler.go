@@ -73,3 +73,61 @@ func (h *KeyPointsHandler) GetKeyPointsByTour(w http.ResponseWriter, r *http.Req
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(kps)
 }
+
+func (handler *KeyPointsHandler) UpdateKeyPoint(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing id parameter"})
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid id"})
+		return
+	}
+
+	var kp model.KeyPoint
+	if err := json.NewDecoder(r.Body).Decode(&kp); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request body"})
+		return
+	}
+
+	kp.ID = id
+	if err := handler.service.UpdateKeyPoint(r.Context(), &kp); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "KeyPoint updated successfully"})
+}
+
+func (handler *KeyPointsHandler) DeleteKeyPoint(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	if idStr == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Missing id parameter"})
+		return
+	}
+
+	id, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid id"})
+		return
+	}
+
+	if err := handler.service.DeleteKeyPoint(r.Context(), id); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "KeyPoint deleted successfully"})
+}

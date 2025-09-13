@@ -8,15 +8,17 @@ import (
 	"database-example/model"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type KeyPointRepo interface {
 	Create(ctx context.Context, kp *model.KeyPoint) error
 	GetByTour(ctx context.Context, tourID primitive.ObjectID) ([]*model.KeyPoint, error)
+	Update(ctx context.Context, id primitive.ObjectID, kp *model.KeyPoint) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
 type mongoKeyPointRepo struct {
@@ -75,4 +77,16 @@ func (m *mongoKeyPointRepo) GetByTour(ctx context.Context, tourID primitive.Obje
 	}
 
 	return kps, nil
+}
+
+func (m *mongoKeyPointRepo) Update(ctx context.Context, id primitive.ObjectID, kp *model.KeyPoint) error {
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": kp}
+	_, err := m.collection.UpdateOne(ctx, filter, update)
+	return err
+}
+
+func (m *mongoKeyPointRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
+	_, err := m.collection.DeleteOne(ctx, bson.M{"_id": id})
+	return err
 }

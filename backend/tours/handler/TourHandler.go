@@ -11,8 +11,6 @@ import (
 
 	"database-example/model"
 	"database-example/service"
-
-	
 )
 
 type KeyTour struct{}
@@ -70,9 +68,6 @@ func (h *ToursHandler) MiddlewareTourDeserialization(next http.Handler) http.Han
 	})
 }
 
-
-
-
 func (h *ToursHandler) GetAllTours(w http.ResponseWriter, r *http.Request) {
 	h.logger.Println("INFO: GetAllTours handler hit!") // ADD THIS LINE
 	tours, err := h.service.GetAllTours(r.Context())
@@ -89,32 +84,30 @@ func (h *ToursHandler) GetAllTours(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
-    tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
-    if !ok {
-        http.Error(w, "Tour not found in context", http.StatusInternalServerError)
-        h.logger.Println("Tour object not found in context for creation")
-        return
-    }
+	tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
+	if !ok {
+		http.Error(w, "Tour not found in context", http.StatusInternalServerError)
+		h.logger.Println("Tour object not found in context for creation")
+		return
+	}
 
-    // Uzmi authorID iz tela (već je deserializovan u tour)
-    if tour.AuthorID == "" {
-        http.Error(w, "AuthorID not provided in tour body", http.StatusBadRequest)
-        h.logger.Println("AuthorID missing in tour creation request body")
-        return
-    }
+	// Uzmi authorID iz tela (već je deserializovan u tour)
+	if tour.AuthorID == "" {
+		http.Error(w, "AuthorID not provided in tour body", http.StatusBadRequest)
+		h.logger.Println("AuthorID missing in tour creation request body")
+		return
+	}
 
-    if err := h.service.CreateTour(r.Context(), tour, tour.AuthorID); err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        h.logger.Printf("Error creating tour: %v", err)
-        return
-    }
+	if err := h.service.CreateTour(r.Context(), tour, tour.AuthorID); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error creating tour: %v", err)
+		return
+	}
 
-    w.WriteHeader(http.StatusCreated)
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(map[string]string{"message": "Tour created successfully"})
+	w.WriteHeader(http.StatusCreated)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"message": "Tour created successfully"})
 }
-
-
 
 // Ostale metode: GetTourByID, UpdateTour, DeleteTour...
 func (h *ToursHandler) GetTourByID(w http.ResponseWriter, r *http.Request) {
@@ -130,26 +123,23 @@ func (h *ToursHandler) DeleteTour(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Not Implemented"))
 }
 
-
 func (h *ToursHandler) GetToursByAuthor(w http.ResponseWriter, r *http.Request) {
-    authorID := r.URL.Query().Get("authorId")
-    if authorID == "" {
-        http.Error(w, "authorId is required", http.StatusBadRequest)
-        return
-    }
+	authorID := r.URL.Query().Get("authorId")
+	if authorID == "" {
+		http.Error(w, "authorId is required", http.StatusBadRequest)
+		return
+	}
 
-    tours, err := h.service.GetToursByAuthor(r.Context(), authorID)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        h.logger.Printf("Error fetching tours by author: %v", err)
-        return
-    }
+	tours, err := h.service.GetToursByAuthor(r.Context(), authorID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error fetching tours by author: %v", err)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    if tours == nil {
-        tours = []*model.Tour{} // vrati prazan niz umesto null
-    }
-    json.NewEncoder(w).Encode(tours)
+	w.Header().Set("Content-Type", "application/json")
+	if tours == nil {
+		tours = []*model.Tour{} // vrati prazan niz umesto null
+	}
+	json.NewEncoder(w).Encode(tours)
 }
-
-

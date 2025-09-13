@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { KeyPoint, KeyPointService } from '../service/key-points.service';
+import {  KeyPointService } from '../service/key-points.service';
 import { ActivatedRoute } from '@angular/router';
 import * as L from 'leaflet';
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 import 'leaflet-routing-machine';
+import { KeyPoint } from '../model/keyPoint.model';
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -40,18 +41,18 @@ keyPoints: KeyPoint[] = [];
           this.loadKeyPointsTable();
       }
 
-  loadExistingKeyPoints(): void {
+loadExistingKeyPoints(): void {
   if (!this.tourId) return;
 
   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
     next: (keyPoints: KeyPoint[]) => {
-      if (!keyPoints || keyPoints.length < 2) {
-        console.warn('Not enough key points to draw a route.');
+      if (!keyPoints || keyPoints.length === 0) {
+        console.warn('No key points to display.');
         return;
       }
 
       // Add markers
-      const waypoints = keyPoints.map(kp => {
+      const waypoints: L.LatLng[] = keyPoints.map(kp => {
         const marker = L.marker([kp.latitude, kp.longitude])
           .addTo(this.map)
           .bindTooltip(
@@ -62,22 +63,23 @@ keyPoints: KeyPoint[] = [];
         return L.latLng(kp.latitude, kp.longitude);
       });
 
-      // Draw realistic walking route with Mapbox
-      const routeControl = L.Routing.control({
-        waypoints: waypoints,
-        router: L.Routing.mapbox('pk.eyJ1IjoidmVsam9vMDIiLCJhIjoiY20yaGV5OHU4MDFvZjJrc2Q4aGFzMTduNyJ9.vSQUDO5R83hcw1hj70C-RA', { profile: 'mapbox/walking' }),
-        lineOptions: {
-          styles: [{ color: '#1E90FF', weight: 5, opacity: 0.9 }]
-        } as any,
-        routeWhileDragging: false,
-        showAlternatives: false
-      }).addTo(this.map);
+      // Draw route only if there are 2 or more points
+      if (waypoints.length >= 2) {
+        const routeControl = L.Routing.control({
+          waypoints: waypoints,
+          router: L.Routing.mapbox('pk.eyJ1IjoidmVsam9vMDIiLCJhIjoiY20yaGV5OHU4MDFvZjJrc2Q4aGFzMTduNyJ9.vSQUDO5R83hcw1hj70C-RA', { profile: 'mapbox/walking' }),
+          lineOptions: {
+            styles: [{ color: '#1E90FF', weight: 5, opacity: 0.9 }]
+          } as any,
+          routeWhileDragging: false,
+          showAlternatives: false
+        }).addTo(this.map);
 
-      // Show summary
-      routeControl.on('routesfound', (e: any) => {
-        const summary = e.routes[0].summary;
-    
-      });
+        routeControl.on('routesfound', (e: any) => {
+          const summary = e.routes[0].summary;
+          console.log(`Total distance: ${summary.totalDistance / 1000} km`);
+        });
+      }
     },
     error: (err) => {
       console.error('Error loading key points', err);
@@ -139,5 +141,20 @@ keyPoints: KeyPoint[] = [];
     error: (err) => console.error('Error loading key points', err)
   });
 }
+
+deleteKeyPoint(kp: KeyPoint): void {
+
+ 
+    this.keyPointService.deleteKeyPoint(kp.id!).subscribe({
+      next: () => {
+        alert('KeyPoint deleted!');
+        this.loadExistingKeyPoints();
+        this.loadKeyPointsTable(); 
+         window.location.reload();
+   
+      },
+      error: (err) => console.error('Delete failed', err)
+    });
+  }
 
 }
