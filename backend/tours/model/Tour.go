@@ -4,15 +4,20 @@ import (
 	"encoding/json"
 	"io"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	 "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Tour struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	ID          primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
 	Name        string             `bson:"name" json:"name"`
 	Description string             `bson:"description,omitempty" json:"description"`
 	Price       float64            `bson:"price,omitempty" json:"price"`
+	Difficulty  string             `bson:"difficulty,omitempty" json:"difficulty"`
+	Tags        []string           `bson:"tags,omitempty" json:"tags"`
+	Status      string             `bson:"status,omitempty" json:"status"`
+	AuthorID    string             `bson:"authorId,omitempty" json:"authorId"`
 }
+
 
 type Tours []*Tour
 

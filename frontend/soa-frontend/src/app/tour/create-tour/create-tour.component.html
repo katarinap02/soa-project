@@ -1,0 +1,44 @@
+<div class="container">
+  <h2>Create New Tour</h2>
+  <form (ngSubmit)="createTour()" #tourForm="ngForm">
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput type="text" [(ngModel)]="tour.name" name="name" required />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Description</mat-label>
+      <textarea matInput [(ngModel)]="tour.description" name="description"></textarea>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Price</mat-label>
+      <input matInput type="number" [(ngModel)]="tour.price" name="price" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Difficulty</mat-label>
+      <mat-select [(ngModel)]="selectedDifficulty" name="difficulty" required>
+        <mat-option *ngFor="let w of difficultyOptions" [value]="w">{{ w }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="tags-container">
+      <label>Tags:</label>
+      <div class="checkboxes">
+        <mat-checkbox 
+          *ngFor="let tag of availableTags"
+          [checked]="selectedTags.includes(tag)"
+          (change)="onTagChange($event, tag)">
+          {{ tag }}
+        </mat-checkbox>
+      </div>
+    </div>
+
+
+    <button mat-raised-button color="primary" type="submit" [disabled]="!tourForm.form.valid">
+      Create Tour
+    </button>
+  </form>
+</div>

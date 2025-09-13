@@ -1,0 +1,75 @@
+package handler
+
+import (
+	"context"
+	"database-example/model"
+	"database-example/service"
+	"encoding/json"
+	"log"
+	"net/http"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+type KeyPointsHandler struct {
+	logger  *log.Logger
+	service *service.KeyPointService
+}
+
+func NewKeyPointsHandler(l *log.Logger, s *service.KeyPointService) *KeyPointsHandler {
+	return &KeyPointsHandler{logger: l, service: s}
+}
+
+func (h *KeyPointsHandler) MiddlewareKeyPointDeserialization(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		kp := &model.KeyPoint{}
+		if err := json.NewDecoder(r.Body).Decode(kp); err != nil {
+			http.Error(w, "Unable to decode JSON", http.StatusBadRequest)
+			h.logger.Printf("Error decoding keypoint JSON: %v", err)
+			return
+		}
+		ctx := context.WithValue(r.Context(), "keypoint", kp)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (h *KeyPointsHandler) AddKeyPoint(w http.ResponseWriter, r *http.Request) {
+	kp, ok := r.Context().Value("keypoint").(*model.KeyPoint)
+	if !ok {
+		http.Error(w, "KeyPoint not found in context", http.StatusInternalServerError)
+		return
+	}
+
+	if err := h.service.AddKeyPoint(r.Context(), kp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error adding keypoint: %v", err)
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(map[string]string{"message": "KeyPoint added successfully"})
+}
+
+func (h *KeyPointsHandler) GetKeyPointsByTour(w http.ResponseWriter, r *http.Request) {
+	tourIDStr := r.URL.Query().Get("tourId")
+	if tourIDStr == "" {
+		http.Error(w, "tourId is required", http.StatusBadRequest)
+		return
+	}
+
+	tourID, err := primitive.ObjectIDFromHex(tourIDStr)
+	if err != nil {
+		http.Error(w, "Invalid tourId", http.StatusBadRequest)
+		return
+	}
+
+	kps, err := h.service.GetKeyPointsByTour(r.Context(), tourID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error fetching keypoints: %v", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(kps)
+}

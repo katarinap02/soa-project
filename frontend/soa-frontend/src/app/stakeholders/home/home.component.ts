@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
+import { Router } from '@angular/router'; 
+
 import { UserView } from '../model/UserView.model';
+
 
 @Component({
   selector: 'app-home',
@@ -7,7 +11,14 @@ import { UserView } from '../model/UserView.model';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
+
+
+   constructor(private router: Router) {}
+
+   userRole = '';
+
     user: UserView | null = null;
+
 
    ngOnInit(): void {
   
@@ -26,8 +37,25 @@ export class HomeComponent implements OnInit {
     
   }
 
+
+    this.userRole = user.role;
+
+    alert(`Token: ${token}\nUsername: ${user.username}\nRole: ${user.role}`);
+
   isAdmin(): boolean {
     return this.user?.role === 'Admin';
+
+  }
+ logout(): void {
+    localStorage.clear();           
+    this.router.navigate(['']);     
   }
 
+  goToTours(): void {
+    this.router.navigate(['home/tours-overview']);
+  }
+
+ goToMyTours(): void {
+     this.router.navigate(['home/my-tours']);
+   }
 }

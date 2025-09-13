@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"database-example/handler"
-	"database-example/model"
+	//"database-example/model"
 	"database-example/repo"
 	"database-example/service"
 	"log"
@@ -14,7 +14,13 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	//  "go.mongodb.org/mongo-driver/mongo"
+	//  "go.mongodb.org/mongo-driver/mongo/options"
+	//  "go.mongodb.org/mongo-driver/bson/primitive"
+
 )
+
 
 func main() {
 	// PORT
@@ -27,6 +33,8 @@ func main() {
 	mongoURI := os.Getenv("MONGO_DB_URI")
 	if mongoURI == "" {
 		mongoURI = "mongodb://root:pass@mongo:27017/soadb"
+		//mongoURI = "mongodb://localhost:27017/soadb"
+
 	}
 
 	// Context sa timeout-om
@@ -35,6 +43,7 @@ func main() {
 
 	// Logger
 	logger := log.New(os.Stdout, "[tours-server] ", log.LstdFlags)
+
 
 	// Inicijalizacija Mongo repo
 	tourRepo, err := repo.NewMongoTourRepo(ctx, mongoURI, logger)
@@ -45,7 +54,18 @@ func main() {
 	tourService := service.NewTourService(tourRepo)
 	toursHandler := handler.NewToursHandler(logger, tourService)
 
-	_ = tourService.CreateTour(ctx, &model.Tour{Name: "Beogradska Tura", Description: "Obilazak Kalemegdana i Knez Mihailove"})
+
+//OTKOMENTARISI AKO TI TREBA JEDNA TURA AUTOMATSKI DA SE NAPRAVI, KAD TI SE JEDNOM NAPRAVI ZAKOMENTARISI POSTO CE SE PRAVITI PONOVO DUPLIKAT SVAKI PUT KAD POKRENES	
+
+	//authorID := "64f8f3a2b5e4c8d1a2f1b9c0"
+// 	_ = tourService.CreateTour(ctx, &model.Tour{
+//     Name:        "Beogradska Tura",
+//     Description: "Obilazak Kalemegdana i Knez Mihailove",
+//     Price:       1500.0,
+//     Weight:      "Medium",
+//     Tags:        []string{"istorija", "grad", "obilazak"},
+//     Status:      "draft",
+// }, primitive.NewObjectID().Hex()) 
 
 	// Router
 	router := mux.NewRouter()
@@ -57,9 +77,44 @@ func main() {
 
 	// GET ruta
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
-	router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
-	router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
-	router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
+	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
+	// router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
+	// router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
+	// router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
+
+
+
+	//KeyPoints
+	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize KeyPoint repo: %v", err)
+	}
+	keyPointService := service.NewKeyPointService(keyPointRepo)
+	keyPointsHandler := handler.NewKeyPointsHandler(logger, keyPointService)
+
+	postKP := router.Methods(http.MethodPost).Subrouter()
+	postKP.Use(keyPointsHandler.MiddlewareKeyPointDeserialization)
+	postKP.HandleFunc("/keypoints", keyPointsHandler.AddKeyPoint)
+
+	router.HandleFunc("/keypoints/by-tour", keyPointsHandler.GetKeyPointsByTour).Methods(http.MethodGet)
+
+	//review
+
+	reviewRepo, err := repo.NewMongoReviewRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize Review repo: %v", err)
+	}
+	reviewService := service.NewReviewService(reviewRepo)
+	reviewHandler := handler.NewReviewHandler( reviewService)
+
+	// POST review sa middleware
+	reviewRouter := router.Methods(http.MethodPost).Subrouter()
+	reviewRouter.Use(reviewHandler.MiddlewareReviewDeserialization)
+	reviewRouter.HandleFunc("/reviews", reviewHandler.AddReview)
+
+	// GET reviews by tour
+	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
+
 
 	// CORS
 	corsHandler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}))
