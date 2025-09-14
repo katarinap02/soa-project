@@ -1,0 +1,31 @@
+.tours-container {
+  padding: 20px;
+  background-color: #f5f5f5; /* svetla pozadina koja se slaže sa tvojim prethodnim stilom */
+}
+
+.tours-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.tour-card {
+  background-color: #ffffff; /* bela kartica */
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.tour-card:hover {
+  transform: translateY(-5px);
+}
+
+.tags {
+  display: inline-block;
+  background-color: #1976d2; /* plava boja kao primarna */
+  color: #fff;
+  padding: 2px 8px;
+  margin-right: 5px;
+  border-radius: 5px;
+  font-size: 0.8em;
+}

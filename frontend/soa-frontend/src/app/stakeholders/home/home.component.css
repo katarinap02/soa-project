@@ -1,3 +1,48 @@
+
+/* Navbar pozadina i raspored */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #1976d2; /* plava pozadina */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 12px 12px;
+}
+
+/* Dugmadi unutar navbar-a */
+.navbar button {
+  margin-left: 10px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: #2196f3;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover efekat za dugmadi */
+.navbar button:hover {
+  background-color: #1565c0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Aktivni ili selektovani dugmadi (opciono) */
+.navbar button.active {
+  background-color: #0d47a1;
+}
+
+/* Home content (ispod navbar-a) */
+.home-content {
+  padding: 20px;
+  min-height: calc(100vh - 60px); /* prostor ispod navbar-a */
+  background-color: #f5f5f5;
+}
+
 .home-container {
   display: flex;
   flex-direction: column;
