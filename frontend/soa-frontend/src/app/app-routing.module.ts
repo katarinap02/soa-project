@@ -40,18 +40,19 @@ const routes: Routes = [
       { path: 'create-tour', component: CreateTourComponent },
       { path: 'tour-keypoints/:id', component: KeyPointsComponent },
       { path: 'view-map/:id', component: ViewTourMapComponent},
-        { path: 'view-map-tourist/:id', component: TouristViewTourComponent}
-
+        { path: 'view-map-tourist/:id', component: TouristViewTourComponent},
+        {path: 'follow', component:FollowComponent},
+        { path: 'view-users', component: ViewUsersComponent}
      
     ]
   },
 
   { path: 'create-comment/:id', component: CreateCommentComponent },
   { path: 'register' , component: RegisterComponent},
-  { path: 'view-users', component: ViewUsersComponent},
+  
   { path: '', component: LoginComponent },
   {path: 'home', component: HomeComponent},
-  {path: 'follow', component:FollowComponent},
+  
   { path: 'view-blogposts', component: ViewBlogPostsComponent},
    { path: 'view-my-blogposts', component: MyBlogPostsComponent},
     { path: 'post-details/:id', component: BlogPostDetailsComponent }
