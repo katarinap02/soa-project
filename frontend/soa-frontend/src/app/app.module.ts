@@ -43,6 +43,7 @@ import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-det
 import { ViewTourMapComponent } from './tour/view-tour-map/view-tour-map.component';
 import { MatTableModule } from '@angular/material/table';
 import { TouristViewTourComponent } from './tour/tourist-view-tour/tourist-view-tour.component';
+import { PositionSimulatorComponent } from './tour/position-simulator/position-simulator.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { TouristViewTourComponent } from './tour/tourist-view-tour/tourist-view-
     BlogPostDetailsComponent,
     ViewTourMapComponent,
     TouristViewTourComponent,
+    PositionSimulatorComponent,
  
   ],
   imports: [
