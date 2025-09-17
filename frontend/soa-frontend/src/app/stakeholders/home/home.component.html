@@ -1,6 +1,7 @@
 
 <nav class="navbar">
   <button *ngIf="userRole === 'Tourist'" (click)="goToTours()">Tours</button>
+  <button *ngIf="userRole === 'Tourist'" (click)="goToPositionSimulator()">Position Simulator</button>
   <button *ngIf="userRole === 'Guide'" (click)="goToMyTours()">My Tours</button>
  
    <button *ngIf="!isAdmin()" routerLink="/home/follow" class="follow-btn">
