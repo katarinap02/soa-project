@@ -8,7 +8,7 @@ import { FollowRequest } from './model/follow-request.model';
   providedIn: 'root'
 })
 export class FollowService {
-  private apiUrl = 'http://localhost:8084';
+  private apiUrl = 'http://localhost:8085/followers';
 
   constructor(private http: HttpClient) {}
 

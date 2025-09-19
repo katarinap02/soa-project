@@ -9,8 +9,8 @@ import { Profile } from '../followers/model/profile.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/users'; 
-  private apiUrl1 = 'http://localhost:8080';
+  private apiUrl = 'http://localhost:8085/stakeholders/users'; 
+  private apiUrl1 = 'http://localhost:8085/stakeholders';
   
 
   constructor(private http: HttpClient) {}
