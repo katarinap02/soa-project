@@ -18,8 +18,7 @@ import { MyBlogPostsComponent } from './blog/my-blog-posts/my-blog-posts.compone
 import { BlogPostDetailsComponent } from './blog/blog-post-details/blog-post-details.component';
 import { ViewTourMapComponent } from './tour/view-tour-map/view-tour-map.component';
 import { TouristViewTourComponent } from './tour/tourist-view-tour/tourist-view-tour.component';
-
-
+import { PositionSimulatorComponent } from './tour/position-simulator/position-simulator.component';
 
 
 
@@ -42,7 +41,8 @@ const routes: Routes = [
       { path: 'view-map/:id', component: ViewTourMapComponent},
         { path: 'view-map-tourist/:id', component: TouristViewTourComponent},
         {path: 'follow', component:FollowComponent},
-        { path: 'view-users', component: ViewUsersComponent}
+        { path: 'view-users', component: ViewUsersComponent},
+        { path: 'position-simulator', component: PositionSimulatorComponent }
      
     ]
   },

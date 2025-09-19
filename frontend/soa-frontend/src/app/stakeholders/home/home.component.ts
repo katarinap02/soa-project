@@ -59,4 +59,9 @@ export class HomeComponent implements OnInit {
  goToMyTours(): void {
      this.router.navigate(['home/my-tours']);
    }
+  
+  goToPositionSimulator(): void {
+    this.router.navigate(['home/position-simulator']);
+  }
+
 }
