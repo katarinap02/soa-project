@@ -1,0 +1,42 @@
+<div class="container">
+      <div id="map" style="height: 400px; margin-bottom: 20px;"></div>
+
+      <div class="keypoint-data">
+
+
+
+  <div class="table-div">
+  <h3>Existing Key Points</h3>
+  <table mat-table [dataSource]="keyPoints" class="mat-elevation-z8 full-width">
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let kp"> {{kp.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <th mat-header-cell *matHeaderCellDef> Description </th>
+      <td mat-cell *matCellDef="let kp"> {{kp.description}} </td>
+    </ng-container>
+
+    
+    <ng-container matColumnDef="latitude">
+      <th mat-header-cell *matHeaderCellDef> Latitude </th>
+      <td mat-cell *matCellDef="let kp"> {{kp.latitude}} </td>
+    </ng-container>
+        <ng-container matColumnDef="longitude">
+      <th mat-header-cell *matHeaderCellDef> Longitude </th>
+      <td mat-cell *matCellDef="let kp"> {{kp.longitude }} </td>
+    </ng-container>
+
+     
+
+    
+
+    <tr mat-header-row *matHeaderRowDef="['name', 'description', 'latitude', 'longitude']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'description', 'latitude', 'longitude'];"></tr>
+  </table>
+  </div>
+  </div>
+</div>

@@ -13,26 +13,64 @@ export class CreateTourComponent {
     name: '',
     description: '',
     price: 0,
-    weight: '',
+    difficulty: '',
     tags: [],
     status: 'draft'
   };
-   tagsString: string = '';
+  difficultyOptions: string[] = ['Lak', 'Srednji', 'Težak'];
+  availableTags: string[] = ['Planinarenje', 'Grad', 'Istorija', 'Avantura', 'Priroda', 'Kultura'];
 
-  authorId = '64f8f3a2b5e4c8d1a2f1b9c0'; // primer, kasnije može iz login-a
+  selectedDifficulty: string = '';
+  selectedTags: string[] = [];
+
+
+
 
   constructor(private tourService: TourService) { }
+  
+createTour() {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return;
 
-  createTour() {
-    this.tourService.createTour(this.tour, this.authorId).subscribe({
-      next: res => {
-        alert('Tour created successfully');
-        this.tour = { name: '', description: '', price: 0, weight: '', tags: [], status: 'draft' };
-      },
-      error: err => {
-        console.error(err);
-        alert('Error creating tour');
-      }
-    });
+  const user = JSON.parse(userStr);
+  const authorId = user.id;
+
+  this.tour.tags = this.selectedTags;
+  this.tour.difficulty = this.selectedDifficulty;
+  this.tour.authorId = authorId;
+
+  // --- LOGOVANJE ---
+  console.log('User object from localStorage:', user);
+  console.log('Author ID:', authorId);
+  console.log('Tour object before sending:', this.tour);
+  console.log('Selected tags:', this.selectedTags);
+  console.log('Selected difficulty:', this.selectedDifficulty);
+  // ------------------
+
+  this.tourService.createTour(this.tour).subscribe({
+    next: res => {
+      console.log('Response from backend:', res);
+      alert('Tour created successfully');
+      this.tour = { name: '', description: '', price: 0, difficulty: '', tags: [], status: 'draft' };
+      this.selectedTags = [];
+      this.selectedDifficulty = '';
+    },
+    error: err => {
+      console.error('Error creating tour:', err);
+      alert('Error creating tour');
+    }
+  });
+}
+
+
+onTagChange(event: any, tag: string) {
+  if (event.checked) {
+    if (!this.selectedTags.includes(tag)) {
+      this.selectedTags.push(tag);
+    }
+  } else {
+    this.selectedTags = this.selectedTags.filter(t => t !== tag);
   }
+}
+
 }

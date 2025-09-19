@@ -3,16 +3,13 @@ package service
 import (
 	"context"
 	"database-example/model"
-
-	"fmt"
-    "errors"
-
-    "go.mongodb.org/mongo-driver/bson/primitive"
+	"errors"
 )
 
 type TourRepo interface {
 	GetAll(ctx context.Context) ([]*model.Tour, error)
-	Create(ctx context.Context, tour *model.Tour) error // Dodata Create metoda
+	Create(ctx context.Context, tour *model.Tour) error
+	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
 }
 
 type TourService struct {
@@ -23,31 +20,27 @@ func NewTourService(r TourRepo) *TourService {
 	return &TourService{repo: r}
 }
 
+// Vrati sve ture
 func (s *TourService) GetAllTours(ctx context.Context) ([]*model.Tour, error) {
 	return s.repo.GetAll(ctx)
 }
 
+// Kreiraj turu
 func (s *TourService) CreateTour(ctx context.Context, tour *model.Tour, authorID string) error {
-    if tour.Status == "" {
-        tour.Status = "draft"
-    }
-    if tour.Price == 0 {
-        tour.Price = 0
-    }
+	if tour.Status == "" {
+		tour.Status = "draft"
+	}
 
-    oid, err := primitive.ObjectIDFromHex(authorID)
-    if err != nil {
-        return fmt.Errorf("invalid authorID: %v", err)
-    }
-    tour.AuthorID = oid
+	// UUID authorID kao string
+	tour.AuthorID = authorID
 
-    return s.repo.Create(ctx, tour)
+	return s.repo.Create(ctx, tour)
 }
 
-
-func (s *TourService) GetToursByAuthor(ctx context.Context, authorID primitive.ObjectID) ([]*model.Tour, error) {
+// Vrati ture po authorID
+func (s *TourService) GetToursByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error) {
 	if repo, ok := s.repo.(interface {
-		GetByAuthor(ctx context.Context, authorID primitive.ObjectID) ([]*model.Tour, error)
+		GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
 	}); ok {
 		return repo.GetByAuthor(ctx, authorID)
 	}

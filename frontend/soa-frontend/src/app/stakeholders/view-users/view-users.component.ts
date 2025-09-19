@@ -13,9 +13,12 @@ export class ViewUsersComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.getAllUsers().subscribe({
-      next: (data) => this.users = data,
-      error: (err) => console.error('Error loading users', err)
-    });
-  }
+  this.userService.getAllUsers().subscribe({
+    next: (data) => {
+      this.users = data.filter(user => user.role !== 'Admin');
+    },
+    error: (err) => console.error('Error loading users', err)
+  });
+}
+
 }

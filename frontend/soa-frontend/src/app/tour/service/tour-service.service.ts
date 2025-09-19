@@ -16,10 +16,9 @@ export class TourService {
     return this.http.get<Tour[]>(this.apiUrl);
   }
 
-  createTour(tour: Tour, authorId: string): Observable<any> {
+  createTour(tour: Tour): Observable<any> {
     const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'X-Author-ID': authorId
+      'Content-Type': 'application/json'
     });
     return this.http.post(this.apiUrl, tour, { headers });
   }
@@ -27,4 +26,6 @@ export class TourService {
   getToursByAuthor(authorId: string): Observable<Tour[]> {
     return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
   }
+
+
 }
