@@ -1,0 +1,24 @@
+<div class="cart-container">
+  <h2>Shopping Cart</h2>
+
+  <div *ngIf="cartTours.length === 0">
+    <p>Your cart is empty.</p>
+  </div>
+
+  <div *ngIf="cartTours.length > 0">
+    <mat-card *ngFor="let tour of cartTours" class="tour-card">
+      <mat-card-header>
+        <mat-card-title>{{ tour.name }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ tour.description }}</p>
+        <p><strong>Price:</strong> {{ tour.price | currency:'RSD':'symbol':'1.0-0' }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <div class="cart-footer">
+      <p><strong>Total Price:</strong> {{ totalPrice | currency:'RSD':'symbol':'1.0-0' }}</p>
+      <button mat-raised-button color="primary" (click)="checkout()">Checkout</button>
+    </div>
+  </div>
+</div>

@@ -9,6 +9,7 @@ import { Review } from '../model/review.model';
 })
 export class ReviewService {
   private apiUrl = 'http://localhost:8082/reviews';
+  //private apiUrl = 'http://localhost:8085/tours/reviews';
 
   constructor(private http: HttpClient) {}
 

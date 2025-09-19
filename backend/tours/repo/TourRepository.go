@@ -19,6 +19,7 @@ type TourRepo interface {
 	GetAll(ctx context.Context) ([]*model.Tour, error)
 	Create(ctx context.Context, tour *model.Tour) error
 	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
+	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error)
 }
 
 // Mongo implementacija
@@ -104,4 +105,13 @@ func (m *mongoTourRepo) GetByAuthor(ctx context.Context, authorID string) ([]*mo
 		return nil, err
 	}
 	return tours, nil
+}
+
+func (r *mongoTourRepo) GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) {
+	var tour model.Tour
+	err := r.collection.FindOne(ctx, bson.M{"_id": id}).Decode(&tour)
+	if err != nil {
+		return nil, err
+	}
+	return &tour, nil
 }

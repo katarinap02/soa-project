@@ -14,6 +14,9 @@
     <button routerLink="/view-blogposts" class="admin-btn">
     View All Blog posts
   </button>
+
+  <button *ngIf="userRole === 'Tourist'" routerLink="/home/purchased-tours">My Purchased Tours</button>
+
  <button (click)="logout()">Logout</button>
 </nav>
 

@@ -9,6 +9,7 @@ import { Tour } from '../model/tour.model';
 })
 export class TourService {
   private apiUrl = 'http://localhost:8082/tours';
+  //private apiUrl = 'http://localhost:8085/tours/tours';
 
   constructor(private http: HttpClient) { }
 
