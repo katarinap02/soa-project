@@ -5,13 +5,17 @@ import (
 	"database-example/model"
 	"database-example/repo"
 	"database-example/service"
-
+	pb "database-example/proto"
+	stakeholderGrpc "database-example/grpc"
+	
 	"log"
+	"net"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"google.golang.org/grpc"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -95,10 +99,43 @@ func debugMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func startGRPCServer(database *gorm.DB) {
+	log.Println("Starting gRPC server on port 9090...")
+	
+	// Create user service for gRPC
+	userRepo := &repo.UserRepository{DatabaseConnection: database}
+	userService := &service.UserService{UserRepo: userRepo}
+
+	// Create gRPC listener
+	lis, err := net.Listen("tcp", ":9090")
+	if err != nil {
+		log.Fatalf("Failed to listen on port 9090: %v", err)
+	}
+
+	// Create gRPC server
+	grpcSrv := grpc.NewServer()
+	
+	// Register our gRPC service
+	stakeholderGrpcServer := stakeholderGrpc.NewStakeholderGrpcServer(userService)
+	pb.RegisterStakeholderServiceServer(grpcSrv, stakeholderGrpcServer)
+
+	log.Println("gRPC server ready on port 9090")
+	log.Println("Available gRPC methods:")
+	log.Println("- GetAllUsers")
+	log.Println("- LoginUser")
+	
+	// This will block, so run in goroutine
+	if err := grpcSrv.Serve(lis); err != nil {
+		log.Fatalf("Failed to serve gRPC: %v", err)
+	}
+}
+
 func main() {
 	// Poveži se sa bazom
 	database := initDB()
 
+	go startGRPCServer(database)
+	
 	// Napravi sve komponente
 	studentRepo := &repo.StudentRepository{DatabaseConnection: database}
 	studentService := &service.StudentService{StudentRepo: studentRepo}
@@ -119,11 +156,11 @@ func main() {
 	router.HandleFunc("/students/{id}", studentHandler.Get).Methods("GET")
 	router.HandleFunc("/students", studentHandler.Create).Methods("POST")
 	router.HandleFunc("/users/register", userHandler.Register).Methods("POST")
-	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
+//	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
 	router.HandleFunc("/profile/{id}", userInfoHandler.GetProfile).Methods("GET")
 	router.HandleFunc("/profile/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
 	router.HandleFunc("/users/blockuser", userHandler.BlockUser).Methods("POST")
-	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
+//	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
 	router.HandleFunc("/users/by-username", userHandler.GetUserByUsername).Methods("POST")
 
 	wrappedRouter := debugMiddleware(router)

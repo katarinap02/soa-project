@@ -40,10 +40,10 @@ public class StakeholderRpcClient {
         }
     }
 
-    public String loginUser(String email, String password) throws Exception {
+    public String loginUser(String username, String password) throws Exception {
         try {
             LoginUserRequest request = LoginUserRequest.newBuilder()
-                .setEmail(email)
+                .setUsername(username)
                 .setPassword(password)
                 .build();
                 
@@ -51,13 +51,8 @@ public class StakeholderRpcClient {
             
             // Convert protobuf response to JSON
             Map<String, Object> result = new HashMap<>();
-            result.put("success", response.getSuccess());
-            result.put("message", response.getMessage());
-            
-            if (response.getSuccess()) {
-                result.put("token", response.getToken());
-                result.put("user", convertUserToMap(response.getUser()));
-            }
+            result.put("token", response.getToken());
+            result.put("user", convertUserToMap(response.getUser()));
             
             return objectMapper.writeValueAsString(result);
             
@@ -72,7 +67,6 @@ public class StakeholderRpcClient {
         userMap.put("email", user.getEmail());
         userMap.put("name", user.getName());
         userMap.put("role", user.getRole());
-        userMap.put("created_at", user.getCreatedAt());
         return userMap;
     }
 }

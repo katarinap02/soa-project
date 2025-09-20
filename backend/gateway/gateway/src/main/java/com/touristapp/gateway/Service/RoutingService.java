@@ -70,11 +70,11 @@ public class RoutingService {
             } else if ("/stakeholders/users/login".equals(fullPath) && "POST".equals(method)) {
                 // Parse login credentials from request body
                 JsonNode loginData = objectMapper.readTree(body);
-                String email = loginData.get("email").asText();
+                String username = loginData.get("username").asText();
                 String password = loginData.get("password").asText();
                 
                 // RPC call for user login
-                result = stakeholderRpcClient.loginUser(email, password);
+                result = stakeholderRpcClient.loginUser(username, password);
                 
             } else {
                 return ResponseEntity.badRequest()

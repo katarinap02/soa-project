@@ -11,7 +11,7 @@ public class GrpcClientConfig {
 
     @Bean
     public ManagedChannel stakeholderChannel() {
-        return ManagedChannelBuilder.forAddress("localhost", 9090)
+        return ManagedChannelBuilder.forAddress("stakeholders", 9090)
                 .usePlaintext()
                 .keepAliveWithoutCalls(true)
                 .build();
