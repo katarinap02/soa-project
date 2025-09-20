@@ -23,13 +23,17 @@ public class RoutingService {
 
     public ResponseEntity<?> forwardRequest(HttpServletRequest request, String body) {
         String serviceName = determineTargetService(request.getRequestURI());
-        String remainingPath = extractRemainingPath(request.getRequestURI(), serviceName);
+        String remainingPath = extractRemainingPath(request.getRequestURI(), serviceName, request);
         String targetUrl = serviceRoutes.get(serviceName) + remainingPath;
         
         HttpHeaders headers = new HttpHeaders();
         Collections.list(request.getHeaderNames()).forEach(headerName ->
             headers.set(headerName, request.getHeader(headerName))
         );
+        if (!headers.containsKey("Content-Type")) {
+            headers.setContentType(MediaType.APPLICATION_JSON);
+        }
+
         
         HttpEntity<String> entity = new HttpEntity<>(body, headers);
         
@@ -54,11 +58,14 @@ public class RoutingService {
         return "default";
     }
     
-    private String extractRemainingPath(String uri, String serviceName) {
-        String prefix = "/" + serviceName;
-        if (uri.startsWith(prefix)) {
-            return uri.substring(prefix.length());
-        }
-        return uri;
+    private String extractRemainingPath(String uri, String serviceName, HttpServletRequest request) {
+    String prefix = "/" + serviceName;
+    String path = uri.startsWith(prefix) ? uri.substring(prefix.length()) : uri;
+    String query = request.getQueryString();
+    if (query != null && !query.isEmpty()) {
+        path += "?" + query;
     }
+    return path;
+    }
+
 }

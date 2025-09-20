@@ -21,7 +21,11 @@
         *ngIf="tour.id" 
         (click)="openReviews(tour.id)">Reviews</button>
          <button mat-raised-button color="primary" (click)="viewMap(tour.id!)">View map</button>
-
+        <button mat-raised-button color="warn"
+          *ngIf="user?.role === 'Tourist'"
+          (click)="startTour(tour.id!)">
+    Start Tour
+  </button>
       </mat-card-actions>
     </mat-card>
   </div>

@@ -29,3 +29,28 @@
   border-radius: 5px;
   font-size: 0.8em;
 }
+
+mat-card-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+mat-card-actions button {
+  flex: 1;
+  min-width: 120px;
+  border-radius: 10px; /* manje zaobljene ivice */
+  font-weight: 500;
+  text-transform: none; /* normalan tekst, ne CAPS */
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover efekat - samo senka i blago povećanje */
+mat-card-actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+
