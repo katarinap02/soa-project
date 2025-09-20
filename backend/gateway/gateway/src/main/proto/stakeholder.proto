@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+// Java options for Gateway (Java)
+option java_multiple_files = true;
+option java_package = "com.touristapp.gateway.grpc";
+option java_outer_classname = "StakeholderProto";
+
+// Go options for Stakeholder service (Go)
+option go_package = "./proto";
+
+package stakeholder;
+
+// Service definition
+service StakeholderService {
+  rpc GetAllUsers(GetAllUsersRequest) returns (GetAllUsersResponse);
+  rpc LoginUser(LoginUserRequest) returns (LoginUserResponse);
+}
+
+// Messages for GetAllUsers
+message GetAllUsersRequest {
+  // Empty request, could add pagination later
+}
+
+message GetAllUsersResponse {
+  repeated User users = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+// Messages for LoginUser
+message LoginUserRequest {
+  string username = 1;  // Changed from email to username
+  string password = 2;
+}
+
+message LoginUserResponse {
+  User user = 1;
+  string token = 2;
+}
+
+// User model
+message User {
+  string id = 1;
+  string email = 2;
+  string name = 3;
+  string role = 4;
+}
