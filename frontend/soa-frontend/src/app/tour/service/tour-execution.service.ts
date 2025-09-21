@@ -25,9 +25,10 @@ export class TourExecutionService {
   }
 
 
-  updateActivity(id: string, activity: any): Observable<TourExecution> {
-    return this.http.put<TourExecution>(`${this.apiUrl}/${id}/activity`, activity);
-  }
+  updateActivity(id: string): Observable<TourExecution> {
+  return this.http.put<TourExecution>(`${this.apiUrl}/${id}/activity`, null);
+}
+
 
   completeTour(id: string): Observable<TourExecution> {
     return this.http.put<TourExecution>(`${this.apiUrl}/${id}/complete`, {});

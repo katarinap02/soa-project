@@ -1,1 +1,35 @@
-<div id="map" style="height: 500px; width: 100%;"></div>
+<div id="map" style="height: 500px; width: 100%; margin-bottom: 20px;"></div>
+
+<div class="tour-container" style="display: flex; gap: 20px;">
+
+<div class="tour-info">
+  <h3>{{ tour?.name }}</h3>
+  <p>Status: {{ tourExecution?.status }}</p>
+  <p>Last Activity: {{ tourExecution?.lastActivity | date:'short' }}</p>
+  <div class="tour-buttons">
+    <button mat-raised-button color="primary" (click)="completeTour()">Complete</button>
+    <button mat-raised-button color="warn" (click)="abandonTour()">Abandon</button>
+  </div>
+
+</div>
+
+<div class="table-container">
+  <table mat-table [dataSource]="completedKeyPoints" class="mat-elevation-z8 full-width">
+
+    <!-- Key Point Name -->
+    <ng-container matColumnDef="keyPointName">
+      <th mat-header-cell *matHeaderCellDef> Key Point </th>
+      <td mat-cell *matCellDef="let cp"> {{ cp.keyPointName }} </td>
+    </ng-container>
+
+    <!-- Completed At -->
+    <ng-container matColumnDef="completedAt">
+      <th mat-header-cell *matHeaderCellDef> Completed At </th>
+      <td mat-cell *matCellDef="let cp"> {{ cp.completedAt | date:'short' }} </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="['keyPointName', 'completedAt']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['keyPointName', 'completedAt']"></tr>
+  </table>
+</div>
+</div>

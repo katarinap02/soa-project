@@ -1,10 +1,14 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { TourExecution } from '../model/tourExecution.model';
 import { ActivatedRoute } from '@angular/router';
 import { TourExecutionService } from '../service/tour-execution.service';
 import { KeyPoint } from '../model/keyPoint.model';
 import { KeyPointService } from '../service/key-points.service';
+import { TourService } from '../service/tour-service.service';
+import { Tour } from '../model/tour.model';
+import { CompletedKeyPoint } from '../model/completedKeyPoint.model';
+import { forkJoin, interval, Subscription } from 'rxjs';
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -18,47 +22,73 @@ L.Icon.Default.mergeOptions({
   templateUrl: './tour-execution.component.html',
   styleUrls: ['./tour-execution.component.css'],
 })
-export class TourExecutionComponent implements OnInit, AfterViewInit {
+export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy {
+
 
   private map!: L.Map;
   private marker?: L.Marker;
+  private positionCheckSub?: Subscription;
 
   tourExecution?: TourExecution;
-  keyPoints?: KeyPoint[];
+  keyPoints: KeyPoint[] = [];
+  tour?: Tour;
+  completedKeyPoints: CompletedKeyPoint[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private tourExecutionService: TourExecutionService,
-    private tourKeyPointService: KeyPointService
+    private tourKeyPointService: KeyPointService,
+    private tourService: TourService
   ) {}
 
   ngOnInit(): void {
   const id = this.route.snapshot.paramMap.get('id');
-  if (id) {
-    this.tourExecutionService.getTourExecution(id).subscribe({
-      next: (data: TourExecution) => {
-        this.tourExecution = data;
-        console.log('Loaded tour execution:', data);
+  if (!id) return;
 
-        // Kada dobijemo execution, povucemo i keypoints
-        this.tourKeyPointService.getKeyPointsByTour(data.tourId.toString())
-          .subscribe({
-            next: (keyPoints: KeyPoint[]) => {
-              console.log('Loaded key points:', keyPoints);
-              this.keyPoints = keyPoints;
-              this.addKeyPointMarkers(keyPoints);
-            },
-            error: err => {
-              console.error('Error fetching key points:', err);
-            }
-          });
-      },
-      error: err => {
-        console.error('Error fetching tour execution:', err);
-      }
-    });
-  }
+  // 1. Dobavi TourExecution
+  this.tourExecutionService.getTourExecution(id).subscribe({
+    next: (execution: TourExecution) => {
+      this.tourExecution = execution;
+      console.log('Loaded tour execution:', execution);
+
+      // 2. Dobavi odgovarajuću turu iz svih tura
+      this.tourService.getAllTours().subscribe({
+        next: (tours) => {
+          const tour = tours.find(t => t.id === execution.tourId);
+          if (tour) {
+            console.log('Loaded corresponding tour:', tour);
+           this.tour = tour;
+          } else {
+            console.warn('Tour not found for this execution');
+          }
+        },
+        error: err => console.error('Error fetching all tours:', err)
+      });
+
+     forkJoin({
+        keyPoints: this.tourKeyPointService.getKeyPointsByTour(execution.tourId.toString()),
+        completed: this.tourExecutionService.getCompletedKeyPoints(id)
+      }).subscribe({
+        next: ({ keyPoints, completed }) => {
+          this.keyPoints = keyPoints;
+          this.completedKeyPoints = completed;
+
+          this.addKeyPointMarkers(this.keyPoints);
+
+          this.startPositionCheck(); 
+        },
+        error: err => console.error('Error loading key points or completed KP:', err)
+      });
+
+    },
+    error: err => console.error('Error fetching tour execution:', err)
+  });
 }
+
+  ngOnDestroy(): void {
+    this.positionCheckSub?.unsubscribe(); 
+  }
+
 
 
   ngAfterViewInit(): void {
@@ -138,6 +168,45 @@ export class TourExecutionComponent implements OnInit, AfterViewInit {
       }).addTo(this.map);
     }
   }
+
+  completeTour() {
+  throw new Error('Method not implemented.');
+  }
+  abandonTour() {
+  throw new Error('Method not implemented.');
+  }
+
+  private startPositionCheck() {
+  if (!this.keyPoints || this.keyPoints.length === 0) return;
+
+  this.positionCheckSub = interval(10000).subscribe(() => {
+    // Uzmi poslednju poziciju iz localStorage
+    const storedPos = localStorage.getItem('touristPosition');
+    if (!storedPos) return;
+
+    const { lat, lng } = JSON.parse(storedPos);
+
+    // Filtriraj KT koje nisu još kompletirane
+    const incompleteKeyPoints = this.keyPoints.filter(kp =>
+      !this.completedKeyPoints.some(ckp => ckp.keyPointId === kp.id)
+    );
+
+    if(this.tourExecution?.id !== undefined)
+    {
+        this.tourExecutionService.updateActivity(this.tourExecution.id!).subscribe({
+    next: (updatedExecution) => {
+      console.log('TourExecution updated:', updatedExecution);
+      if (this.tourExecution) {
+      this.tourExecution.lastActivity = new Date();
+    }
+    },
+    error: (err) => console.error('Error updating activity:', err)
+  });
+    }
+
+  });
+}
+
 
 
   
