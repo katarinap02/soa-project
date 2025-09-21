@@ -105,9 +105,9 @@ public class RoutingService {
         String targetUrl = serviceRoutes.get(serviceName) + remainingPath;
         
         // Add query parameters if present
-        if (request.getQueryString() != null) {
-            targetUrl += "?" + request.getQueryString();
-        }
+       // if (request.getQueryString() != null) {
+          //  targetUrl += "?" + request.getQueryString();
+       // }
         
         // Copy headers from original request
         HttpHeaders headers = new HttpHeaders();
@@ -115,6 +115,10 @@ public class RoutingService {
             headers.set(headerName, request.getHeader(headerName))
         );
         
+        if (!headers.containsKey("Content-Type")) {
+            headers.setContentType(MediaType.APPLICATION_JSON);
+        }
+
         // Add gateway identification headers
         headers.set("X-Gateway-Method", "HTTP");
         headers.set("X-Gateway-Source", "tourist-gateway");
@@ -153,3 +157,4 @@ public class RoutingService {
     return path;
     }
 }
+
