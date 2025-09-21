@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import { UserView } from 'src/app/stakeholders/model/UserView.model';
 import { TourExecutionService } from '../service/tour-execution.service';
 import { TourExecution } from '../model/tourExecution.model';
+import { KeyPoint } from '../model/keyPoint.model';
+import { KeyPointService } from '../service/key-points.service';
 
 
 @Component({
@@ -18,7 +20,7 @@ export class ToursOverviewComponent implements OnInit {
   tours: Tour[] = [];
   user: UserView | null = null;
 
-  constructor(private tourService: TourService, private dialog: MatDialog, private router: Router, private tourExecutionService: TourExecutionService) { }
+  constructor(private tourService: TourService, private dialog: MatDialog, private router: Router, private tourExecutionService: TourExecutionService, private keyPointService: KeyPointService) { }
 
   ngOnInit(): void {
   this.loadLoggedUser();
@@ -60,32 +62,44 @@ export class ToursOverviewComponent implements OnInit {
       return;
     }
 
-    const touristId = this.user.id;
-    this.tourExecutionService.getActiveToursByTourist(touristId).subscribe({
-      next: (executions: TourExecution[]) => {
-        const existing = executions.find(te => te.tourId === tourId && te.status === 'active');
-
-        if (existing) {
-          console.log("Already active tour execution:", existing);
-          //this.router.navigate(['home/view-map-tourist', existing.tourId]);
-        } else {
-          // ako ne postoji, kreiraj novu
-          this.tourExecutionService.startTour(tourId, touristId).subscribe({
-            next: (newExecution: TourExecution) => {
-              console.log("Started new tour execution:", newExecution);
-             // this.router.navigate(['home/view-map-tourist', newExecution.tourId]);
-            },
-            error: err => {
-              console.error("Error starting tour:", err);
-              alert("Could not start the tour.");
-            }
-          });
-        }
-      },
-      error: err => {
-        console.error("Error fetching active tours:", err);
+  this.keyPointService.getKeyPointsByTour(tourId).subscribe({
+    next: (keyPoints: KeyPoint[]) => {
+      if (!keyPoints || keyPoints.length === 0) {
+        alert('This tour cannot be started because it has no key points.');
+        return;
       }
-    });
+
+    const touristId = this.user!.id;
+      this.tourExecutionService.getActiveToursByTourist(touristId).subscribe({
+        next: (executions: TourExecution[]) => {
+          const existing = executions.find(te => te.tourId === tourId && te.status === 'active');
+
+          if (existing) {
+            console.log("Already active tour execution:", existing);
+           this.router.navigate(['home/tour-execution', existing.id]);
+          } else {
+            this.tourExecutionService.startTour(tourId, touristId).subscribe({
+              next: (newExecution: TourExecution) => {
+                console.log("Started new tour execution:", newExecution);
+                this.router.navigate(['home/tour-execution', newExecution.id]);
+              },
+              error: err => {
+                console.error("Error starting tour:", err);
+                alert("Could not start the tour.");
+              }
+            });
+          }
+        },
+        error: err => {
+          console.error("Error fetching active tours:", err);
+        }
+      });
+    },
+    error: err => {
+      console.error("Error fetching key points:", err);
+      alert('Could not check tour key points.');
+    }
+  });
   }
 
 
