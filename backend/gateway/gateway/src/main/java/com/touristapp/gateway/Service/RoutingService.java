@@ -30,11 +30,10 @@ public class RoutingService {
         Collections.list(request.getHeaderNames()).forEach(headerName ->
             headers.set(headerName, request.getHeader(headerName))
         );
-        if (!headers.containsKey("Content-Type")) {
+         if (!headers.containsKey("Content-Type")) {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
-
-        
+    
         HttpEntity<String> entity = new HttpEntity<>(body, headers);
         
         try {
@@ -67,5 +66,4 @@ public class RoutingService {
     }
     return path;
     }
-
 }
