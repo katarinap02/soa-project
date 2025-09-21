@@ -1,5 +1,13 @@
 version: "3.7"
 
+
+
+x-logging: &fluent-bit
+  driver: fluentd
+  options:
+    fluentd-address: ${FLUENT_BIT_ADDRESS}:24224
+
+
 services:
   gateway:
     build:
@@ -17,6 +25,8 @@ services:
       - blog
       - tours
       - followers
+   
+    
   
   
   stakeholders:
@@ -34,7 +44,7 @@ services:
     depends_on:
       database:
         condition: service_healthy
-    
+    logging: *fluent-bit
   
   blog:
     build:
@@ -50,7 +60,7 @@ services:
     depends_on:
       database:
         condition: service_healthy
-
+    logging: *fluent-bit
   tours:
     build:
       context: ./tours
@@ -68,7 +78,7 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-
+    logging: *fluent-bit
   followers:
     build:
       context: ./followers
@@ -88,7 +98,7 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
-  
+    logging: *fluent-bit
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -98,10 +108,20 @@ services:
       - "9090:9090"
     networks:
       - servers
-
+    
+  loki:
+    image: grafana/loki:2.9.1
+    ports:
+      - "3100:3100"
+    networks:
+      - servers
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    environment:
+      GF_RENDERING_SERVER_URL: http://renderer:8081/render
+      GF_RENDERING_CALLBACK_URL: http://grafana:3000/
+      GF_LOG_FILTERS: rendering:debug
     ports:
       - "3000:3000"
     networks:
@@ -109,6 +129,24 @@ services:
     volumes:
       - grafana-storage:/var/lib/grafana
 
+  
+  renderer:
+    image: grafana/grafana-image-renderer:3.10.5
+    environment:
+      ENABLE_METRICS: "true"
+    networks:
+      - servers
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:main
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    networks:
+      - servers
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
@@ -243,6 +281,8 @@ volumes:
   neo4j_data:
   neo4j_logs:
   grafana-storage:
+  grafana_data:
+  loki_data:
 
 networks:
   servers:
