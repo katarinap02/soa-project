@@ -12,7 +12,6 @@ type TourExecution struct {
 	ID           primitive.ObjectID  `bson:"_id,omitempty" json:"id,omitempty"`
 	TourID       string              `bson:"tourId" json:"tourId"`
 	TouristID    string              `bson:"touristId" json:"touristId"`
-	LocationID   string              `bson:"locationId" json:"locationId"`
 	LastActivity time.Time           `bson:"lastActivity" json:"lastActivity"`
 	Status       TourExecutionStatus `bson:"status" json:"status"`
 }

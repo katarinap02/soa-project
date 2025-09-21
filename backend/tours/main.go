@@ -114,6 +114,25 @@ func main() {
 	// GET reviews by tour
 	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
 
+	//tour-execution
+
+	tourExecutionRepo, err := repo.NewMongoTourExecutionRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize TourExecution repo: %v", err)
+	}
+	tourExecutionService := service.NewTourExecutionService(tourExecutionRepo)
+	tourExecutionHandler := handler.NewTourExecutionHandler(logger, tourExecutionService)
+
+	router.HandleFunc("/tour-executions/start", tourExecutionHandler.StartTour).Methods(http.MethodPost)
+	router.HandleFunc("/tour-executions/active", tourExecutionHandler.GetActiveToursByTourist).Methods(http.MethodGet)
+
+	router.HandleFunc("/tour-executions/{id}", tourExecutionHandler.GetTourExecution).Methods(http.MethodGet)
+	router.HandleFunc("/tour-executions/{id}/activity", tourExecutionHandler.UpdateActivity).Methods(http.MethodPut)
+	router.HandleFunc("/tour-executions/{id}/complete", tourExecutionHandler.CompleteTour).Methods(http.MethodPut)
+	router.HandleFunc("/tour-executions/{id}/abandon", tourExecutionHandler.AbandonTour).Methods(http.MethodPut)
+	router.HandleFunc("/tour-executions/{id}/keypoints", tourExecutionHandler.CompleteKeyPoint).Methods(http.MethodPost)
+	router.HandleFunc("/tour-executions/{id}/keypoints", tourExecutionHandler.GetCompletedKeyPoints).Methods(http.MethodGet)
+
 	// CORS
 	corsHandler := handlers.CORS(handlers.AllowedOrigins([]string{"*"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}), handlers.AllowedHeaders([]string{"Content-Type", "Authorization"}))
 

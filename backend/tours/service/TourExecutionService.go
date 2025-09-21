@@ -28,7 +28,7 @@ func NewTourExecutionService(r TourExecutionRepo) *TourExecutionService {
 	return &TourExecutionService{repo: r}
 }
 
-func (s *TourExecutionService) StartTour(ctx context.Context, tourID, touristID, locationID string) (*model.TourExecution, error) {
+func (s *TourExecutionService) StartTour(ctx context.Context, tourID, touristID string) (*model.TourExecution, error) {
 	// Proveri da li turista već ima aktivnu turu
 	activeTours, err := s.repo.GetActiveByTouristId(ctx, touristID)
 	if err != nil {
@@ -42,7 +42,6 @@ func (s *TourExecutionService) StartTour(ctx context.Context, tourID, touristID,
 	tourExecution := &model.TourExecution{
 		TourID:       tourID,
 		TouristID:    touristID,
-		LocationID:   locationID,
 		LastActivity: time.Now().UTC(),
 		Status:       model.StatusActive,
 	}

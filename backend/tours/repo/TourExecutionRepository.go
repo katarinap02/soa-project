@@ -60,6 +60,11 @@ func (m *mongoTourExecutionRepo) Create(ctx context.Context, te *model.TourExecu
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
+	// Validacija da tourID i touristID nisu prazni
+	if te.TourID == "" || te.TouristID == "" {
+		return errors.New("tourID and touristID are required")
+	}
+
 	result, err := m.executionCollection.InsertOne(ctx, te)
 	if err != nil {
 		m.logger.Println("Error creating tour execution:", err)
@@ -172,13 +177,10 @@ func (m *mongoTourExecutionRepo) CreateCompletedKeyPoint(ctx context.Context, ck
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	// Validacija tour execution ID formata
-	_, err := primitive.ObjectIDFromHex(ckp.TourExecutionID)
-	if err != nil {
-		return errors.New("invalid tour execution ID format")
+	if ckp.TourExecutionID == "" {
+		return errors.New("tour execution ID is required")
 	}
 
-	// Jedan poziv za validaciju postojanja i statusa
 	te, err := m.GetByID(ctx, ckp.TourExecutionID)
 	if err != nil {
 		return errors.New("tour execution not found")
@@ -212,6 +214,7 @@ func (m *mongoTourExecutionRepo) GetCompletedKeyPointsByExecution(ctx context.Co
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
+	// tourExecutionID se čuva kao string u completed_key_points kolekciji
 	filter := bson.M{"tourExecutionId": tourExecutionID}
 	cursor, err := m.completedKeyPointCollection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "completedTime", Value: 1}}))
 	if err != nil {
@@ -233,9 +236,14 @@ func (m *mongoTourExecutionRepo) GetByTourAndTouristId(ctx context.Context, tour
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
+	// Validacija da parametri nisu prazni
+	if tourID == "" || touristID == "" {
+		return nil, errors.New("tourID and touristID are required")
+	}
+
 	filter := bson.M{
-		"tourId":    tourID,
-		"touristId": touristID,
+		"tourId":    tourID,    // String UUID
+		"touristId": touristID, // String UUID
 	}
 
 	cursor, err := m.executionCollection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "lastActivity", Value: -1}}))
@@ -259,7 +267,7 @@ func (m *mongoTourExecutionRepo) GetActiveByTouristId(ctx context.Context, touri
 	defer cancel()
 
 	filter := bson.M{
-		"touristId": touristID,
+		"touristId": touristID, // String UUID
 		"status":    model.StatusActive,
 	}
 
