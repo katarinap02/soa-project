@@ -96,6 +96,7 @@ func main() {
 
 	// Delete a keypoint by ID
 	router.HandleFunc("/keypoints", keyPointsHandler.DeleteKeyPoint).Methods(http.MethodDelete)
+	router.HandleFunc("/keypoints/closest", keyPointsHandler.GetClosestKeyPoint).Methods(http.MethodGet)
 
 	//review
 

@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"strconv"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -130,4 +131,63 @@ func (handler *KeyPointsHandler) DeleteKeyPoint(w http.ResponseWriter, r *http.R
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "KeyPoint deleted successfully"})
+}
+
+func (h *KeyPointsHandler) GetClosestKeyPoint(w http.ResponseWriter, r *http.Request) {
+	// Pribavi tourId
+	tourIDStr := r.URL.Query().Get("tourId")
+	if tourIDStr == "" {
+		http.Error(w, "tourId is required", http.StatusBadRequest)
+		return
+	}
+
+	tourID, err := primitive.ObjectIDFromHex(tourIDStr)
+	if err != nil {
+		http.Error(w, "Invalid tourId", http.StatusBadRequest)
+		return
+	}
+
+	// Pribavi latitude
+	latStr := r.URL.Query().Get("latitude")
+	if latStr == "" {
+		http.Error(w, "latitude is required", http.StatusBadRequest)
+		return
+	}
+
+	latitude, err := strconv.ParseFloat(latStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid latitude", http.StatusBadRequest)
+		return
+	}
+
+	// Pribavi longitude
+	lonStr := r.URL.Query().Get("longitude")
+	if lonStr == "" {
+		http.Error(w, "longitude is required", http.StatusBadRequest)
+		return
+	}
+
+	longitude, err := strconv.ParseFloat(lonStr, 64)
+	if err != nil {
+		http.Error(w, "Invalid longitude", http.StatusBadRequest)
+		return
+	}
+
+	// Pozovi service metodu
+	closestKP, err := h.service.GetClosestKeyPoint(r.Context(), tourID, latitude, longitude)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		h.logger.Printf("Error finding closest keypoint: %v", err)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if closestKP == nil {
+		// Nema ključnih tačaka u blizini - vrati prazan objekat ili null
+		json.NewEncoder(w).Encode(map[string]interface{}{"keyPoint": nil, "message": "No key points found nearby"})
+	} else {
+		// Vrati pronađenu ključnu tačku
+		json.NewEncoder(w).Encode(map[string]interface{}{"keyPoint": closestKP})
+	}
 }

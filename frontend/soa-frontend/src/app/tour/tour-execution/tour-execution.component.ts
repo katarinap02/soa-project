@@ -75,7 +75,11 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
 
           this.addKeyPointMarkers(this.keyPoints);
 
-          this.startPositionCheck(); 
+          if(this.tourExecution?.status === 'active')
+          {
+            this.startPositionCheck(); 
+          }
+          
         },
         error: err => console.error('Error loading key points or completed KP:', err)
       });
@@ -190,6 +194,19 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
     const incompleteKeyPoints = this.keyPoints.filter(kp =>
       !this.completedKeyPoints.some(ckp => ckp.keyPointId === kp.id)
     );
+
+    if (this.tour?.id) {
+      this.tourKeyPointService.getClosestKeyPoint(this.tour.id.toString(), lat, lng).subscribe({
+        next: (response) => {
+          if (response.keyPoint) {
+            console.log('Najbliža ključna tačka:', response.keyPoint);
+          } else {
+            console.log('Nema ključnih tačaka u blizini');
+          }
+        },
+        error: (err) => console.error('Greška pri proveri najbliže ključne tačke:', err)
+      });
+    }
 
     if(this.tourExecution?.id !== undefined)
     {
