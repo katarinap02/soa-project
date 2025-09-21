@@ -65,24 +65,7 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
         error: err => console.error('Error fetching all tours:', err)
       });
 
-     forkJoin({
-        keyPoints: this.tourKeyPointService.getKeyPointsByTour(execution.tourId.toString()),
-        completed: this.tourExecutionService.getCompletedKeyPoints(id)
-      }).subscribe({
-        next: ({ keyPoints, completed }) => {
-          this.keyPoints = keyPoints;
-          this.completedKeyPoints = completed;
-
-          this.addKeyPointMarkers(this.keyPoints);
-
-          if(this.tourExecution?.status === 'active')
-          {
-            this.startPositionCheck(); 
-          }
-          
-        },
-        error: err => console.error('Error loading key points or completed KP:', err)
-      });
+    this.loadKeyPointsAndCompleted(execution.tourId.toString(), id);
 
     },
     error: err => console.error('Error fetching tour execution:', err)
@@ -92,6 +75,31 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
   ngOnDestroy(): void {
     this.positionCheckSub?.unsubscribe(); 
   }
+
+  private loadKeyPointsAndCompleted(tourId: string, executionId: string): void {
+  forkJoin({
+    keyPoints: this.tourKeyPointService.getKeyPointsByTour(tourId),
+    completed: this.tourExecutionService.getCompletedKeyPoints(executionId)
+  }).subscribe({
+    next: ({ keyPoints, completed }) => {
+      this.keyPoints = keyPoints;
+      this.completedKeyPoints = completed.map(cp => {
+        const kp = keyPoints.find(k => k.id === cp.keyPointId);
+        return {
+          ...cp,
+          keyPointName: kp ? kp.name : 'Unknown'
+        };
+      });
+
+      this.addKeyPointMarkers(this.keyPoints);
+
+      if (this.tourExecution?.status === 'active') {
+        this.startPositionCheck();
+      }
+    },
+    error: err => console.error('Error loading key points or completed KP:', err)
+  });
+}
 
 
 
@@ -200,6 +208,28 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
         next: (response) => {
           if (response.keyPoint) {
             console.log('Najbliža ključna tačka:', response.keyPoint);
+
+            // Proveri da li je pronađena tačka već kompletirana
+            const alreadyCompleted = this.completedKeyPoints.some(
+              ckp => ckp.keyPointId === response.keyPoint!.id 
+            );
+
+            if (!alreadyCompleted && this.tourExecution?.id && response.keyPoint.id !== undefined) {
+              this.tourExecutionService.completeKeyPoint(
+                this.tourExecution.id.toString(),
+                response.keyPoint.id.toString()
+              ).subscribe({
+                next: (completedKP) => {
+                  console.log('KeyPoint completed:', completedKP);
+                  if(this.tour?.id !== undefined && this.tourExecution?.id !== undefined)
+                  {
+                       this.loadKeyPointsAndCompleted(this.tour.id.toString(), this.tourExecution.id.toString());
+                  }
+                 
+                },
+                error: (err) => console.error('Greška pri kompletiranju tačke:', err)
+              });
+            }
           } else {
             console.log('Nema ključnih tačaka u blizini');
           }
