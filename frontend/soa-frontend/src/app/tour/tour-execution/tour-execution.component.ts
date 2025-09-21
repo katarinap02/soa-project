@@ -184,14 +184,32 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
   completeTour() {
   throw new Error('Method not implemented.');
   }
-  abandonTour() {
-  throw new Error('Method not implemented.');
+  abandonTour(): void{
+  if (!this.tourExecution?.id) {
+    console.error('No tour execution selected');
+    return;
+  }
+
+  this.tourExecutionService.abandonTour(this.tourExecution.id).subscribe({
+    next: (updatedExecution) => {
+      console.log('Tour abandoned:', updatedExecution);
+      this.ngOnInit()
+    },
+    error: (err) => console.error('Error abandoning tour:', err)
+  });
   }
 
   private startPositionCheck() {
   if (!this.keyPoints || this.keyPoints.length === 0) return;
+  this.positionCheckSub?.unsubscribe();
 
   this.positionCheckSub = interval(10000).subscribe(() => {
+
+    if (this.tourExecution?.status !== 'active') {
+      console.log('Tour is no longer active, stopping position check.');
+      this.positionCheckSub?.unsubscribe();
+      return;
+    }
     // Uzmi poslednju poziciju iz localStorage
     const storedPos = localStorage.getItem('touristPosition');
     if (!storedPos) return;
