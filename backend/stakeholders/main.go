@@ -100,16 +100,16 @@ func debugMiddleware(next http.Handler) http.Handler {
 }
 
 func startGRPCServer(database *gorm.DB) {
-	log.Println("Starting gRPC server on port 9090...")
+	log.Println("Starting gRPC server on port 9091...")
 	
 	// Create user service for gRPC
 	userRepo := &repo.UserRepository{DatabaseConnection: database}
 	userService := &service.UserService{UserRepo: userRepo}
 
 	// Create gRPC listener
-	lis, err := net.Listen("tcp", ":9090")
+	lis, err := net.Listen("tcp", ":9091")
 	if err != nil {
-		log.Fatalf("Failed to listen on port 9090: %v", err)
+		log.Fatalf("Failed to listen on port 9091: %v", err)
 	}
 
 	// Create gRPC server
@@ -119,7 +119,7 @@ func startGRPCServer(database *gorm.DB) {
 	stakeholderGrpcServer := stakeholderGrpc.NewStakeholderGrpcServer(userService)
 	pb.RegisterStakeholderServiceServer(grpcSrv, stakeholderGrpcServer)
 
-	log.Println("gRPC server ready on port 9090")
+	log.Println("gRPC server ready on port 9091")
 	log.Println("Available gRPC methods:")
 	log.Println("- GetAllUsers")
 	log.Println("- LoginUser")
