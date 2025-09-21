@@ -16,6 +16,7 @@ type ShoppingCartService interface {
 	Checkout(ctx context.Context, userId string) ([]model.TourPurchaseToken, error)
 	GetCartByUser(ctx context.Context, userId string) (*model.ShoppingCart, error)
 	GetTourByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error)
+	GetPurchasedToursByUser(ctx context.Context, userId string) ([]model.TourPurchaseToken, error)
 }
 
 type shoppingCartService struct {
@@ -124,3 +125,10 @@ func (s *shoppingCartService) Checkout(ctx context.Context, userId string) ([]mo
 func (s *shoppingCartService) GetTourByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) {
 	return s.tourRepo.GetByID(ctx, id)
 }
+
+func (s *shoppingCartService) GetPurchasedToursByUser(ctx context.Context, userId string) ([]model.TourPurchaseToken, error) {
+	
+	return s.purchaseRepo.GetTokensByUser(ctx, userId)
+}
+
+

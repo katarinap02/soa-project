@@ -1,0 +1,31 @@
+.cart-container {
+  padding: 20px;
+}
+
+.empty-cart {
+  text-align: center;
+  font-style: italic;
+  margin-top: 30px;
+}
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.tour-card {
+  transition: transform 0.2s;
+}
+
+.tour-card:hover {
+  transform: scale(1.03);
+}
+
+.cart-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}

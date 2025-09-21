@@ -14,13 +14,19 @@ type TourRepo interface {
 	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) 
 }
 
+
+
 type TourService struct {
 	repo TourRepo
+	
 	
 }
 
 func NewTourService(r TourRepo) *TourService {
-	return &TourService{repo: r}
+	return &TourService{
+		repo:         r,
+		
+	}
 }
 
 // Vrati sve ture
@@ -51,17 +57,21 @@ func (s *TourService) GetToursByAuthor(ctx context.Context, authorID string) ([]
 }
 
 
+
+func (s *TourService) GetTourByID(ctx context.Context, tourID primitive.ObjectID) (*model.Tour, error) {
+    // Samo dohvat iz repoa, bez ikakvih korisničkih provera
+    return s.repo.GetByID(ctx, tourID)
+}
+
 func (s *TourService) GetTourForUser(ctx context.Context, tourID primitive.ObjectID, userID string) (*model.Tour, error) {
 	tour, err := s.repo.GetByID(ctx, tourID)
 	if err != nil {
 		return nil, err
 	}
 
-	// // Ako korisnik nije kupio turu → sakrij ključne tačke
-	// purchased := s.purchaseRepo.HasUserPurchasedTour(ctx, userID, tourID)
-	// if !purchased {
-	// 	tour.KeyPoints = nil // ili obriši ostale privatne podatke
+	// Ako korisnik nije kupio turu → sakrij ključne tačke
+	// if !s.purchaseRepo.HasUserPurchasedTour(ctx, userID, tourID) {
+	// 	tour.KeyPoints = nil
 	// }
-
 	return tour, nil
 }

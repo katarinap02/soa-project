@@ -76,6 +76,7 @@ func main() {
 	postRouter.HandleFunc("/tours", toursHandler.CreateTour)
 
 	// GET ruta
+	router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
 
@@ -114,7 +115,7 @@ func main() {
 
 	// GET reviews by tour
 	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
-
+	
 
 	//************SHOPPING*****************
 
@@ -133,8 +134,11 @@ func main() {
 
 	cartHandler := handler.NewShoppingCartHandler(shoppingService)
 
-	// GET /cart?userId=...
+	
 	router.HandleFunc("/cart", cartHandler.GetCart).Methods(http.MethodGet)
+	router.HandleFunc("/cart/purchased", cartHandler.GetPurchasedTours).Methods(http.MethodGet)
+	router.HandleFunc("/cart/remove", cartHandler.RemoveFromCart).Methods(http.MethodDelete)
+
 
 	cartRPC := handler.NewShoppingCartRPC(shoppingService)
 
@@ -153,9 +157,6 @@ func main() {
 			logger.Fatalf("failed to serve gRPC server: %v", err)
 		}
 	}()
-
-	router.HandleFunc("/cart", cartHandler.GetCart).Methods(http.MethodGet)
-
 
 	//************************************
 

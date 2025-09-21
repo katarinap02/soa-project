@@ -16,6 +16,7 @@ import (
 type TourPurchaseRepository interface {
 	SaveToken(ctx context.Context, token *model.TourPurchaseToken) error
 	HasUserPurchasedTour(ctx context.Context, userID string, tourID primitive.ObjectID) bool
+	GetTokensByUser(ctx context.Context, userID string) ([]model.TourPurchaseToken, error)
 }
 
 type tourPurchaseRepository struct {
@@ -60,4 +61,17 @@ func (r *tourPurchaseRepository) HasUserPurchasedTour(ctx context.Context, userI
 		return false
 	}
 	return count > 0
+}
+
+func (r *tourPurchaseRepository) GetTokensByUser(ctx context.Context, userId string) ([]model.TourPurchaseToken, error) {
+	cursor, err := r.coll.Find(ctx, bson.M{"userId": userId})
+	if err != nil {
+		return nil, err
+	}
+
+	var tokens []model.TourPurchaseToken
+	if err := cursor.All(ctx, &tokens); err != nil {
+		return nil, err
+	}
+	return tokens, nil
 }

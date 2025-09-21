@@ -5,6 +5,7 @@ import { ReviewComponent } from '../review/review.component';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ShoppingCartService } from '../service/shopping-cart.service';
+import { ShoppingRpcService } from '../service/rpc-shopping-cart.service';
 
 
 @Component({
@@ -18,7 +19,8 @@ export class ToursOverviewComponent implements OnInit {
   constructor(private tourService: TourService, 
     private dialog: MatDialog, 
     private router: Router,
-    private shoppingCartService: ShoppingCartService,) { }
+    private shoppingCartService: ShoppingCartService,
+    private shoppingRpcService: ShoppingRpcService) { }
 
   ngOnInit(): void {
     this.tourService.getAllTours().subscribe({
@@ -37,26 +39,27 @@ export class ToursOverviewComponent implements OnInit {
     this.router.navigate(['home/view-map-tourist', tourId]);
   }
 
-buyTour(tourId?: string) {
-  if (!tourId) {
-    alert('Tour ID is missing!');
-    return;
-  }
+async buyTour(tourId?: string) {
+    if (!tourId) {
+      alert('Tour ID is missing!');
+      return;
+    }
 
-  const user = JSON.parse(localStorage.getItem('user')!);
-  if (!user) {
-    alert('Please login first');
-    return;
-  }
+    const user = JSON.parse(localStorage.getItem('user')!);
+    if (!user) {
+      alert('Please login first');
+      return;
+    }
 
-  this.shoppingCartService.addToCart(user.id, tourId).subscribe({
-    next: () => {
+    try {
+      await this.shoppingRpcService.addToCart(user.id, tourId);
       alert('Tour added to cart!');
-      //this.router.navigate(['/home/shopping-cart']);
-    },
-    error: err => console.error(err)
-  });
-}
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add tour to cart.');
+    }
+  }
+
 
 goToCart(): void {
   this.router.navigate(['/home/shopping-cart']);

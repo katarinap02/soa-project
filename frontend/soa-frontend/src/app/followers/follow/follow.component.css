@@ -68,3 +68,8 @@
 .mini-profile button[color="primary"]:hover {
   background-color: #843838;
 }
+
+
+.full-width {
+  width: 100%;
+}
