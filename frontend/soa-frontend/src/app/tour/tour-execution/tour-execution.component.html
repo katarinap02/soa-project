@@ -5,7 +5,9 @@
 <div class="tour-info">
   <h3>{{ tour?.name }}</h3>
   <p>Status: {{ tourExecution?.status }}</p>
-  <p>Last Activity: {{ tourExecution?.lastActivity | date:'short' }}</p>
+  <p *ngIf="tourExecution?.status === 'active'">Last Activity: {{ tourExecution?.lastActivity | date:'short' }}</p>
+  <p *ngIf="tourExecution?.status === 'completed'">Completion Time: {{ tourExecution?.lastActivity | date:'short' }}</p>
+  <p *ngIf="tourExecution?.status === 'abandoned'">Abandon Time: {{ tourExecution?.lastActivity | date:'short' }}</p>
   <div class="tour-buttons">
     <button mat-raised-button color="primary" (click)="completeTour()">Complete</button>
     <button mat-raised-button color="warn" (click)="abandonTour()">Abandon</button>
