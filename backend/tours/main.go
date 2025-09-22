@@ -80,7 +80,7 @@ func main() {
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
 	router.HandleFunc("/tour/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
-
+	router.HandleFunc("/tours/{id}/status", toursHandler.UpdateTourStatus).Methods(http.MethodPatch)
 
 	//*****************KeyPoints**********
 	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)

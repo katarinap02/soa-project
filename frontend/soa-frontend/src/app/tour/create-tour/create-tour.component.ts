@@ -15,8 +15,10 @@ export class CreateTourComponent {
     price: 0,
     difficulty: '',
     tags: [],
-    status: 'draft'
+    status: 'draft',
+    durations: {}
   };
+
   difficultyOptions: string[] = ['Lak', 'Srednji', 'Težak'];
   availableTags: string[] = ['Planinarenje', 'Grad', 'Istorija', 'Avantura', 'Priroda', 'Kultura'];
 
@@ -24,10 +26,16 @@ export class CreateTourComponent {
   selectedTags: string[] = [];
 
 
+  transportTypes: string[] = ['Walking', 'Bicycle', 'Car'];
+  durations: { [key: string]: number | null } = {
+    Walking: null,
+    Bicycle: null,
+    Car: null
+  };
 
 
   constructor(private tourService: TourService) { }
-  
+
 createTour() {
   const userStr = localStorage.getItem('user');
   if (!userStr) return;
@@ -46,6 +54,12 @@ createTour() {
   console.log('Selected tags:', this.selectedTags);
   console.log('Selected difficulty:', this.selectedDifficulty);
   // ------------------
+
+  this.tour.durations = {
+    walking: this.durations['Walking'] ?? undefined,
+    bicycle: this.durations['Bicycle'] ?? undefined,
+    car: this.durations['Car'] ?? undefined
+  };
 
   this.tourService.createTour(this.tour).subscribe({
     next: res => {

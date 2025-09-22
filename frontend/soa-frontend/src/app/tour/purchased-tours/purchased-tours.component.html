@@ -9,7 +9,24 @@
       <mat-card-content>
         <p>{{ tour.description }}</p>
         <p><strong>Price:</strong> {{ tour.price | currency:'RSD':'symbol':'1.0-0' }}</p>
+
+        <p *ngIf="tour.status === 'published' && tour.publishDate">
+          Published: {{ tour.publishDate | date:'short' }}
+        </p>
       </mat-card-content>
+
+      <div *ngIf="tour.Durations" class="durations-container">
+
+        <p *ngIf="tour.Durations.walking != null" class="duration-item">
+          🚶 Walking: {{ tour.Durations.walking }} mins
+        </p>
+        <p *ngIf="tour.Durations.bicycle != null" class="duration-item">
+          🚴 Bicycle: {{ tour.Durations.bicycle }} mins
+        </p>
+        <p *ngIf="tour.Durations.car != null" class="duration-item">
+          🚗 Car: {{ tour.Durations.car }} mins
+        </p>
+      </div>
       <mat-card-actions>
         <button mat-raised-button color="primary" (click)="viewMap(tour.id)">View Map</button>
         <button mat-raised-button color="warn"

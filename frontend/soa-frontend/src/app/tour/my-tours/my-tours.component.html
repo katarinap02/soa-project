@@ -1,7 +1,13 @@
 <div class="my-tours">
   <button (click)="createTour()">Create New Tour</button>
 
-  <div *ngFor="let tour of tours" class="tour-card">
+  <div class="toolbar">
+    <label><input type="checkbox" [checked]="showDraft" (change)="toggleFilter('draft')"> Draft</label>
+    <label><input type="checkbox" [checked]="showPublished" (change)="toggleFilter('published')"> Published</label>
+    <label><input type="checkbox" [checked]="showArchived" (change)="toggleFilter('archived')"> Archived</label>
+  </div>
+
+  <div *ngFor="let tour of filteredTours" class="tour-card">
     <h3>{{ tour.name }}</h3>
     <p>{{ tour.description }}</p>
     <p>Status: {{ tour.status }}, Price: {{ tour.price | currency:'RSD' }}</p>
@@ -9,7 +15,47 @@
     <div class="tags">
       <span class="tag" *ngFor="let tag of tour.tags">{{ tag }}</span>
     </div>
+
+    <div *ngIf="tour.Durations" class="durations-container">
+      <p *ngIf="tour.Durations.walking != null" class="duration-item">
+        🚶 Walking: {{ tour.Durations.walking }} mins
+      </p>
+      <p *ngIf="tour.Durations.bicycle != null" class="duration-item">
+        🚴 Bicycle: {{ tour.Durations.bicycle }} mins
+      </p>
+      <p *ngIf="tour.Durations.car != null" class="duration-item">
+        🚗 Car: {{ tour.Durations.car }} mins
+      </p>
+    </div>
     <button (click)="addKeyPoints(tour.id)">Add Key Points</button>
      <button (click)="viewMap(tour.id)">View map</button>
+    <div class="status-buttons">
+
+      <p *ngIf="tour.status === 'published' && tour.publishDate">
+        Published: {{ tour.publishDate | date:'short' }}
+      </p>
+
+      <p *ngIf="tour.status === 'archived' && tour.archiveDate">
+        Archived: {{ tour.archiveDate | date:'short' }}
+      </p>
+      <button *ngIf="tour.status === 'draft'"
+              (click)="changeStatus(tour, 'published')"
+              mat-raised-button color="primary">
+        Publish
+      </button>
+
+      <button *ngIf="tour.status === 'published'"
+              (click)="changeStatus(tour, 'archived')"
+              mat-raised-button color="warn">
+        Archive
+      </button>
+
+      <button *ngIf="tour.status === 'archived'"
+              (click)="changeStatus(tour, 'published')"
+              mat-raised-button color="accent">
+        Activate
+      </button>
+    </div>
+
   </div>
 </div>
