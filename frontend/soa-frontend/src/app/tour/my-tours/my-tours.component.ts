@@ -26,8 +26,15 @@ export class MyToursComponent implements OnInit {
   const authorId = user.id; // ili kako god se zove ID u user objektu
 
   this.tourService.getToursByAuthor(authorId).subscribe({
-    next: (res) => this.tours = res,
-    error: (err) => console.error(err)
+    // next: (res) => this.tours = res,
+    // error: (err) => console.error(err)
+        next: (res) => {
+      console.log("✅ Tours koje sam dobio sa backenda:", res);
+      this.tours = res;
+    },
+    error: (err) => {
+      console.error("❌ Greška sa backenda:", err);
+    }
   });
 }
 

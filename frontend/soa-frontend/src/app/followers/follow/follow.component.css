@@ -1,14 +1,33 @@
-.grid-container {
+/* .grid-container {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin: 40px;
 }
 
-.profile-card {
+.profile-card, .profile-card-posebno {
   border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  width: 100%; /* zauzima kolonu iz grida */
+  /*box-sizing: border-box; /* da padding i border ne probijaju širinu */
+/*} */
+
+.grid-container {
+  display: flex;
+  gap: 20px;
+  margin: 40px;
+  flex-wrap: nowrap; /* ne dozvoljava da se kartice slome u novi red */
+  justify-content: space-between; /* ravnomerno razmakne kartice */
 }
+
+.profile-card, .profile-card-posebno {
+  flex: 1; /* sve kartice zauzimaju jednaku širinu */
+  min-width: 200px; /* minimalna širina da ne budu previše skupljene */
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+
 
 .profile-avatar {
   background-color: #6d2c2c;
@@ -68,3 +87,9 @@
 .mini-profile button[color="primary"]:hover {
   background-color: #843838;
 }
+
+
+.full-width {
+  width: 100%;
+}
+

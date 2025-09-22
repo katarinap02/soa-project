@@ -17,10 +17,13 @@
     <textarea matInput [(ngModel)]="currentKeyPoint.description" name="description"></textarea>
   </mat-form-field>
 
-  <mat-form-field class="full-width">
+  <!-- <mat-form-field class="full-width">
     <mat-label>Image URL</mat-label>
     <input matInput [(ngModel)]="currentKeyPoint.imageUrl" name="imageUrl">
-  </mat-form-field>
+  </mat-form-field> -->
+  <label>Upload Image</label>
+<input type="file" (change)="onFileSelected($event)">
+
 
   <p>Click on the map to {{ editingKeyPoint ? 'update position' : 'select location' }}:</p>
 
@@ -57,6 +60,14 @@
       <td mat-cell *matCellDef="let kp"> {{kp.longitude }} </td>
     </ng-container>
 
+    <ng-container matColumnDef="image">
+  <th mat-header-cell *matHeaderCellDef> Image </th>
+  <td mat-cell *matCellDef="let kp">
+    <img *ngIf="kp.imageUrl" [src]="kp.imageUrl" alt="{{kp.name}}" width="80" height="60" style="object-fit: cover; border-radius: 6px;" />
+  </td>
+</ng-container>
+
+
         <ng-container matColumnDef="edit">
       <th mat-header-cell *matHeaderCellDef>  </th>
    <td mat-cell *matCellDef="let kp">
@@ -71,8 +82,8 @@
 
     
 
-    <tr mat-header-row *matHeaderRowDef="['name', 'description', 'latitude', 'longitude', 'edit', 'delete']"></tr>
-    <tr mat-row *matRowDef="let row; columns: ['name', 'description', 'latitude', 'longitude', 'edit', 'delete'];"></tr>
+    <tr mat-header-row *matHeaderRowDef="['name', 'description', 'latitude', 'longitude', 'image','edit', 'delete']"></tr>
+    <tr mat-row *matRowDef="let row; columns: ['name', 'description', 'latitude', 'longitude', 'image','edit', 'delete'];"></tr>
   </table>
   </div>
   </div>

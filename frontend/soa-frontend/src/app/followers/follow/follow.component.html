@@ -4,7 +4,8 @@
 <div class="grid-container" *ngIf="userProfile">
 
   <!-- Profil -->
-  <mat-card class="profile-card">
+   <div class="profile-row"></div>
+  <mat-card class="profile-card-posebno">
     <mat-card-header>
       <div mat-card-avatar class="profile-avatar">
         <img
@@ -16,11 +17,85 @@
       </div>
       <mat-card-title>{{ userProfile.firstName }} {{ userProfile.lastName }}</mat-card-title>
       <mat-card-subtitle>{{ userProfile.motto }}</mat-card-subtitle>
+
+    <!-- Dugme edit -->
+    <button mat-icon-button (click)="toggleEdit()">
+      <mat-icon>{{ editMode ? 'close' : 'edit' }}</mat-icon>
+    </button>
+
     </mat-card-header>
     <mat-card-content>
       <p>{{ userProfile.biography }}</p>
+
+
+    <!-- Forma za edit (samo kada je editMode = true) -->
+    <form *ngIf="editMode" (ngSubmit)="saveChanges()" style="margin-top: 15px;">
+      <mat-form-field class="full-width">
+        <mat-label>First Name</mat-label>
+        <input
+          matInput
+          [(ngModel)]="editProfile.firstName"
+          name="firstName"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Last Name</mat-label>
+        <input
+          matInput
+          [(ngModel)]="editProfile.lastName"
+          name="lastName"
+          required
+        />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Motto</mat-label>
+        <input
+          matInput
+          [(ngModel)]="editProfile.motto"
+          name="motto"
+        />
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <mat-label>Biography</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="editProfile.biography"
+          name="biography"
+        ></textarea>
+      </mat-form-field>
+
+      <!-- <mat-form-field class="full-width">
+        <mat-label>Profile Picture URL</mat-label>
+        <input
+          matInput
+          [(ngModel)]="editProfile.profilePicture"
+          name="profilePicture"
+        />
+      </mat-form-field> -->
+
+    <!-- Profilna slika -->
+    <label>Profile Picture</label>
+    <input type="file" (change)="onFileSelected($event)">
+
+
+
+      <!-- Dugmad -->
+      <div style="text-align: right; margin-top: 10px;">
+        <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit">
+          Save
+        </button>
+      </div>
+    </form>
+
     </mat-card-content>
   </mat-card>
+
+
 
   <!-- Following -->
   <mat-card class="profile-card">

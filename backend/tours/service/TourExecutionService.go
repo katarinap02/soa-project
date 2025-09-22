@@ -11,6 +11,7 @@ type TourExecutionRepo interface {
 	Create(ctx context.Context, te *model.TourExecution) error
 	GetByID(ctx context.Context, id string) (*model.TourExecution, error)
 	GetByTourAndTouristId(ctx context.Context, tourID, touristID string) ([]*model.TourExecution, error)
+	GetByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
 	GetActiveByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
 	UpdateLastActivity(ctx context.Context, id string) error
 	CompleteExecution(ctx context.Context, id string) error
@@ -58,8 +59,8 @@ func (s *TourExecutionService) GetTourExecution(ctx context.Context, id string) 
 	return s.repo.GetByID(ctx, id)
 }
 
-func (s *TourExecutionService) GetActiveToursByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error) {
-	return s.repo.GetActiveByTouristId(ctx, touristID)
+func (s *TourExecutionService) GetToursByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error) {
+	return s.repo.GetByTouristId(ctx, touristID)
 }
 
 func (s *TourExecutionService) UpdateActivity(ctx context.Context, tourExecutionID string) error {

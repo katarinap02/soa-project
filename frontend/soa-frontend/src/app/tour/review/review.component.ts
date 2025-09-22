@@ -24,12 +24,16 @@ export class ReviewComponent implements OnInit {
     this.loadReviews();
   }
 
-  loadReviews() {
-    this.reviewService.getReviewsByTour(this.data.tourId).subscribe({
-      next: (res) => this.reviews = res,
-      error: (err) => console.error(err)
-    });
-  }
+loadReviews() {
+  this.reviewService.getReviewsByTour(this.data.tourId).subscribe({
+    next: (res) => this.reviews = res ?? [],  // ako je null → []
+    error: (err) => {
+      console.error(err);
+      this.reviews = []; // fallback
+    }
+  });
+}
+
 
   addReview() {
     const dialogRef = this.dialog.open(ReviewDialogComponent, {

@@ -19,8 +19,8 @@ export class UserService {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 
-  getAllUsers(): Observable<UserView[]> {
-    return this.http.get<UserView[]>(this.apiUrl);
+  getAllUsers(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
   getProfile(userId: string): Observable<Profile> {
@@ -29,6 +29,10 @@ export class UserService {
 
   getUserByUsername(username: string): Observable<UserView> {
   return this.http.post<UserView>(`${this.apiUrl}/by-username`, { username });
+}
+
+updateProfile(userId: string, profile: Profile): Observable<any> {
+  return this.http.put(`${this.apiUrl1}/profileUpdate/${userId}`, profile);
 }
 
 }

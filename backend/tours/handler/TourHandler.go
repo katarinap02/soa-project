@@ -8,9 +8,10 @@ import (
 	"io"
 	"log"
 	"net/http"
-
+	"github.com/gorilla/mux"
 	"database-example/model"
 	"database-example/service"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type KeyTour struct{}
@@ -118,11 +119,31 @@ func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Tour created successfully"})
 }
 
-// Ostale metode: GetTourByID, UpdateTour, DeleteTour...
 func (h *ToursHandler) GetTourByID(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Not Implemented"))
+   
+    vars := mux.Vars(r)
+    idStr := vars["id"]
+    if idStr == "" {
+        http.Error(w, "tour ID is required", http.StatusBadRequest)
+        return
+    }
+
+    tourID, err := primitive.ObjectIDFromHex(idStr)
+    if err != nil {
+        http.Error(w, "invalid tour ID", http.StatusBadRequest)
+        return
+    }
+
+    tour, err := h.service.GetTourByID(r.Context(), tourID)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(tour)
 }
+
 func (h *ToursHandler) UpdateTour(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 	w.Write([]byte("Not Implemented"))

@@ -19,6 +19,7 @@ type TourExecutionRepo interface {
 	GetByID(ctx context.Context, id string) (*model.TourExecution, error)
 	GetByTourAndTouristId(ctx context.Context, tourID, touristID string) ([]*model.TourExecution, error)
 	GetActiveByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
+	GetByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
 	UpdateLastActivity(ctx context.Context, id string) error
 	CompleteExecution(ctx context.Context, id string) error
 	AbandonExecution(ctx context.Context, id string) error
@@ -49,7 +50,7 @@ func NewMongoTourExecutionRepo(ctx context.Context, uri string, logger *log.Logg
 	}
 	logger.Println("Connected to MongoDB for TourExecutions")
 
-	db := client.Database("mongoDemo")
+	db := client.Database("soadb")
 	executionColl := db.Collection("tour_executions")
 	completedKeyPointColl := db.Collection("completed_key_points")
 
@@ -281,6 +282,30 @@ func (m *mongoTourExecutionRepo) GetActiveByTouristId(ctx context.Context, touri
 	var executions []*model.TourExecution
 	if err := cursor.All(ctx, &executions); err != nil {
 		m.logger.Println("Error decoding active tour executions:", err)
+		return nil, err
+	}
+
+	return executions, nil
+}
+
+func (m *mongoTourExecutionRepo) GetByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	filter := bson.M{
+		"touristId": touristID, // String UUID
+	}
+
+	cursor, err := m.executionCollection.Find(ctx, filter, options.Find().SetSort(bson.D{{Key: "lastActivity", Value: -1}}))
+	if err != nil {
+		m.logger.Println("Error fetching active tour executions by tourist:", err)
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	var executions []*model.TourExecution
+	if err := cursor.All(ctx, &executions); err != nil {
+		m.logger.Println("Error decoding tour executions:", err)
 		return nil, err
 	}
 

@@ -16,17 +16,17 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-raised-button color="primary">View Details</button>
         <button mat-raised-button color="accent" 
         *ngIf="tour.id" 
         (click)="openReviews(tour.id)">Reviews</button>
          <button mat-raised-button color="primary" (click)="viewMap(tour.id!)">View map</button>
-        <button mat-raised-button color="warn"
-          *ngIf="user?.role === 'Tourist'"
-          (click)="startTour(tour.id!)">
-    Start Tour
-  </button>
+        <button mat-raised-button color="warn" (click)="buyTour(tour.id)">Buy</button>
+
       </mat-card-actions>
     </mat-card>
+
+     <button mat-icon-button color="primary" (click)="goToCart()">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
   </div>
 </div>

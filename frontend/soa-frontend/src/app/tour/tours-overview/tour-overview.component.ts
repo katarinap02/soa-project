@@ -7,6 +7,10 @@ import { Router } from '@angular/router';
 import { UserView } from 'src/app/stakeholders/model/UserView.model';
 import { TourExecutionService } from '../service/tour-execution.service';
 import { TourExecution } from '../model/tourExecution.model';
+import { KeyPoint } from '../model/keyPoint.model';
+import { KeyPointService } from '../service/key-points.service';
+import { ShoppingCartService } from '../service/shopping-cart.service';
+import { ShoppingRpcService } from '../service/rpc-shopping-cart.service';
 
 
 @Component({
@@ -18,18 +22,59 @@ export class ToursOverviewComponent implements OnInit {
   tours: Tour[] = [];
   user: UserView | null = null;
 
-  constructor(private tourService: TourService, private dialog: MatDialog, private router: Router, private tourExecutionService: TourExecutionService) { }
+  constructor(private tourService: TourService,
+     private dialog: MatDialog, 
+     private router: Router, 
+     private tourExecutionService: TourExecutionService, 
+     private keyPointService: KeyPointService,
+     private shoppingCartService: ShoppingCartService,
+     private shoppingRpcService: ShoppingRpcService) { }
 
-  ngOnInit(): void {
+
+// ngOnInit(): void {
+//    this.loadLoggedUser();
+//   this.tourService.getAllTours().subscribe({
+//     next: data => {
+    
+//       this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
+//       //this.tours = data.filter(t => t.status?.toUpperCase() !== 'DRAFT');
+//       this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
+
+//     },
+//     error: err => console.error(err)
+//   });
+// }
+
+ngOnInit(): void {
   this.loadLoggedUser();
+
+  if (!this.user) {
+    return;
+  }
+
   this.tourService.getAllTours().subscribe({
-    next: data => {
-      // filtriraj sve ture osim one koja se zove "Beogradska Tura"
-      this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
+    next: allTours => {
+      this.shoppingCartService.getPurchasedTours(this.user!.id).subscribe({
+        next: purchasedTours => {
+          const purchasedIds = purchasedTours.map((t: any) => t.id);
+
+          this.tours = allTours.filter(t =>
+            t.status?.toUpperCase() !== 'ARCHIVED' &&
+
+            // Ako želiš da sakriješ i DRAFT ture, samo otkomentariši ovu liniju:
+             //t.status?.toUpperCase() !== 'DRAFT' &&
+
+            !purchasedIds.includes(t.id) &&
+            t.name !== "Beogradska Tura"
+          );
+        },
+        error: err => console.error('Error fetching purchased tours', err)
+      });
     },
-    error: err => console.error(err)
+    error: err => console.error('Error fetching tours', err)
   });
 }
+
 
   loadLoggedUser() {
     const token = localStorage.getItem('token');
@@ -44,6 +89,7 @@ export class ToursOverviewComponent implements OnInit {
     this.user = user;
   }
 
+
   openReviews(tourId: string) {
   this.dialog.open(ReviewComponent, {
     width: '600px',
@@ -54,39 +100,34 @@ export class ToursOverviewComponent implements OnInit {
     this.router.navigate(['home/view-map-tourist', tourId]);
   }
 
-  startTour(tourId: string): void {
-  if (!this.user || !tourId) {
-      alert('You must be logged in as a tourist to start a tour.');
+  
+
+
+async buyTour(tourId?: string) {
+    if (!tourId) {
+      alert('Tour ID is missing!');
       return;
     }
 
-    const touristId = this.user.id;
-    this.tourExecutionService.getActiveToursByTourist(touristId).subscribe({
-      next: (executions: TourExecution[]) => {
-        const existing = executions.find(te => te.tourId === tourId && te.status === 'active');
+    const user = JSON.parse(localStorage.getItem('user')!);
+    if (!user) {
+      alert('Please login first');
+      return;
+    }
 
-        if (existing) {
-          console.log("Already active tour execution:", existing);
-          //this.router.navigate(['home/view-map-tourist', existing.tourId]);
-        } else {
-          // ako ne postoji, kreiraj novu
-          this.tourExecutionService.startTour(tourId, touristId).subscribe({
-            next: (newExecution: TourExecution) => {
-              console.log("Started new tour execution:", newExecution);
-             // this.router.navigate(['home/view-map-tourist', newExecution.tourId]);
-            },
-            error: err => {
-              console.error("Error starting tour:", err);
-              alert("Could not start the tour.");
-            }
-          });
-        }
-      },
-      error: err => {
-        console.error("Error fetching active tours:", err);
-      }
-    });
+
+    try {
+      await this.shoppingRpcService.addToCart(user.id, tourId);
+      alert('Tour added to cart!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add tour to cart.');
+    }
   }
 
+
+goToCart(): void {
+  this.router.navigate(['/home/shopping-cart']);
+}
 
 }
