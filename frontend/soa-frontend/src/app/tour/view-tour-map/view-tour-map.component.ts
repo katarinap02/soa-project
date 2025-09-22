@@ -221,6 +221,16 @@ updateKeyPoint() {
   });
 }
 
+onFileSelected(event: any) {
+  const file: File = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.keyPoint.imageUrl = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+}
 
 
 }
