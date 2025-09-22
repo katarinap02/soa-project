@@ -37,7 +37,6 @@ ngOnInit(): void {
     next: data => {
     
       this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
-      this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
 
     },
     error: err => console.error(err)

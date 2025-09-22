@@ -15,10 +15,17 @@ export class ViewUsersComponent implements OnInit {
   ngOnInit(): void {
   this.userService.getAllUsers().subscribe({
     next: (data) => {
-      this.users = data.filter(user => user.role !== 'Admin');
+      console.log(data);
+      this.users = data.users
+        .filter((user: { role: string }) => user.role !== 'Admin')
+        .map((user: any) => ({
+          ...user,          
+          username: user.name 
+        }));
     },
     error: (err) => console.error('Error loading users', err)
   });
 }
+
 
 }

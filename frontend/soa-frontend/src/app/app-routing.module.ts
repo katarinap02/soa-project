@@ -29,7 +29,7 @@ const routes: Routes = [
   { path: 'create-tour', component: CreateTourComponent},
   { path: 'tours-overview', component: ToursOverviewComponent},
   { path: 'register' , component: RegisterComponent},
-  { path: 'view-users', component: ViewUsersComponent},
+  
   { path: '', component: LoginComponent },
   { path: 'home', component: HomeComponent,
     children: [
