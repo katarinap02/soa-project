@@ -20,6 +20,7 @@ type TourRepo interface {
 	Create(ctx context.Context, tour *model.Tour) error
 	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
 	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error)
+	UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
 
 // Mongo implementacija
@@ -114,4 +115,36 @@ func (r *mongoTourRepo) GetByID(ctx context.Context, id primitive.ObjectID) (*mo
 		return nil, err
 	}
 	return &tour, nil
+}
+
+func (r *mongoTourRepo) UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error {
+    ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+    defer cancel()
+
+    filter := bson.M{"_id": id}
+
+    updateFields := bson.M{"status": status}
+    now := time.Now()
+
+    switch status {
+    case "published":
+        updateFields["publishDate"] = now
+    case "archived":
+        updateFields["archiveDate"] = now
+    }
+
+    update := bson.M{"$set": updateFields}
+
+    result, err := r.collection.UpdateOne(ctx, filter, update)
+    if err != nil {
+        r.logger.Println("Error updating tour status:", err)
+        return err
+    }
+
+    if result.MatchedCount == 0 {
+        return mongo.ErrNoDocuments // tour not found
+    }
+
+    r.logger.Printf("Tour %s status updated to %s\n", id.Hex(), status)
+    return nil
 }

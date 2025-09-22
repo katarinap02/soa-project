@@ -40,6 +40,7 @@ func (service *UserService) GetAllUsers() ([]dto.UserDTO, error) {
 			Username: u.Username,
 			Email:    u.Email,
 			Role:     string(u.Role),
+			AccountStatus: string(u.AccountStatus),
 		})
 	}
 	return userDTOs, nil

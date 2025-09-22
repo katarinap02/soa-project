@@ -23,9 +23,9 @@ export class ToursOverviewComponent implements OnInit {
   user: UserView | null = null;
 
   constructor(private tourService: TourService,
-     private dialog: MatDialog, 
-     private router: Router, 
-     private tourExecutionService: TourExecutionService, 
+     private dialog: MatDialog,
+     private router: Router,
+     private tourExecutionService: TourExecutionService,
      private keyPointService: KeyPointService,
      private shoppingCartService: ShoppingCartService,
      private shoppingRpcService: ShoppingRpcService) { }
@@ -35,8 +35,8 @@ ngOnInit(): void {
    this.loadLoggedUser();
   this.tourService.getAllTours().subscribe({
     next: data => {
-    
-      this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
+
+      this.tours = data.filter(t => t.status?.toUpperCase() === 'PUBLISHED');
 
     },
     error: err => console.error(err)
@@ -46,7 +46,7 @@ ngOnInit(): void {
   loadLoggedUser() {
     const token = localStorage.getItem('token');
     console.log(token)
-    
+
     const userStr = localStorage.getItem('user');
     if (!token || !userStr) {
       alert('No user logged in');
@@ -67,7 +67,7 @@ ngOnInit(): void {
     this.router.navigate(['home/view-map-tourist', tourId]);
   }
 
-  
+
 
 
 async buyTour(tourId?: string) {

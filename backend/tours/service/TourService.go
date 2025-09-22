@@ -11,7 +11,8 @@ type TourRepo interface {
 	GetAll(ctx context.Context) ([]*model.Tour, error)
 	Create(ctx context.Context, tour *model.Tour) error
 	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
-	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) 
+	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) 	
+	UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
 
 
@@ -73,4 +74,8 @@ func (s *TourService) GetTourForUser(ctx context.Context, tourID primitive.Objec
 	// 	tour.KeyPoints = nil
 	// }
 	return tour, nil
+}
+
+func (s *TourService) ChangeTourStatus(ctx context.Context, tourID primitive.ObjectID, status string) error {
+    return s.repo.UpdateStatus(ctx, tourID, status)
 }

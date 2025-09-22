@@ -16,6 +16,19 @@
       <mat-card-content>
         <p><mat-icon>email</mat-icon> {{ user.email }}</p>
       </mat-card-content>
+
+      <mat-card-actions>
+        <button *ngIf="user.account_status !== 'Blocked'"
+                mat-raised-button color="warn"
+                (click)="blockUser(user.username)">
+          Block
+        </button>
+
+        <div *ngIf="user.account_status === 'Blocked'" class="blocked-indicator">
+          <mat-icon color="warn">block</mat-icon>
+          Blocked
+        </div>
+      </mat-card-actions>
     </mat-card>
   </div>
 </div>

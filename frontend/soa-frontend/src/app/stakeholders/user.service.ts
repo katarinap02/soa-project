@@ -9,9 +9,9 @@ import { Profile } from '../followers/model/profile.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8085/stakeholders/users'; 
+  private apiUrl = 'http://localhost:8085/stakeholders/users';
   private apiUrl1 = 'http://localhost:8085/stakeholders';
-  
+
 
   constructor(private http: HttpClient) {}
 
@@ -20,7 +20,7 @@ export class UserService {
   }
 
   getAllUsers(): Observable<any> {
-    return this.http.get<any>(this.apiUrl);
+    return this.http.get<any>('http://localhost:8080/users');
   }
 
   getProfile(userId: string): Observable<Profile> {
@@ -34,5 +34,12 @@ export class UserService {
 updateProfile(userId: string, profile: Profile): Observable<any> {
   return this.http.put(`${this.apiUrl1}/profileUpdate/${userId}`, profile);
 }
+
+  blockUser(adminUsername: string, userToBlockUsername: string) {
+    return this.http.post(`${this.apiUrl}/blockuser`, {
+      adminUsername,
+      userToBlock: userToBlockUsername
+    });
+  }
 
 }

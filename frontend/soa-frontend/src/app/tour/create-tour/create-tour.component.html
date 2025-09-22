@@ -27,7 +27,7 @@
     <div class="tags-container">
       <label>Tags:</label>
       <div class="checkboxes">
-        <mat-checkbox 
+        <mat-checkbox
           *ngFor="let tag of availableTags"
           [checked]="selectedTags.includes(tag)"
           (change)="onTagChange($event, tag)">
@@ -36,6 +36,16 @@
       </div>
     </div>
 
+    <div class="durations-container">
+      <label>Estimated Duration per Transport:</label>
+      <div *ngFor="let t of transportTypes" class="transport-duration">
+        <mat-form-field appearance="fill" class="transport-select">
+          <mat-label>{{ t }}</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="durations[t]" name="{{t}}Duration">
+        </mat-form-field>
+        <span class="mins-label">mins</span>
+      </div>
+    </div>
 
     <button mat-raised-button color="primary" type="submit" [disabled]="!tourForm.form.valid">
       Create Tour
