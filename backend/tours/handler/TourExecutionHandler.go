@@ -81,17 +81,17 @@ func (h *TourExecutionHandler) GetTourExecution(w http.ResponseWriter, r *http.R
 }
 
 // GetActiveToursByTourist - GET /tour-executions/active?touristId={touristId}
-func (h *TourExecutionHandler) GetActiveToursByTourist(w http.ResponseWriter, r *http.Request) {
+func (h *TourExecutionHandler) GetToursByTourist(w http.ResponseWriter, r *http.Request) {
 	touristID := r.URL.Query().Get("touristId")
 	if touristID == "" {
 		http.Error(w, "touristId is required", http.StatusBadRequest)
 		return
 	}
 
-	tours, err := h.service.GetActiveToursByTouristId(r.Context(), touristID)
+	tours, err := h.service.GetToursByTouristId(r.Context(), touristID)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		h.logger.Printf("Error getting active tours: %v", err)
+		h.logger.Printf("Error getting tours: %v", err)
 		return
 	}
 
