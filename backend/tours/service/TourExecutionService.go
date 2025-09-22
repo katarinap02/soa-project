@@ -12,6 +12,7 @@ type TourExecutionRepo interface {
 	GetByID(ctx context.Context, id string) (*model.TourExecution, error)
 	GetByTourAndTouristId(ctx context.Context, tourID, touristID string) ([]*model.TourExecution, error)
 	GetByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
+	GetActiveByTouristId(ctx context.Context, touristID string) ([]*model.TourExecution, error)
 	UpdateLastActivity(ctx context.Context, id string) error
 	CompleteExecution(ctx context.Context, id string) error
 	AbandonExecution(ctx context.Context, id string) error
@@ -30,7 +31,7 @@ func NewTourExecutionService(r TourExecutionRepo) *TourExecutionService {
 
 func (s *TourExecutionService) StartTour(ctx context.Context, tourID, touristID string) (*model.TourExecution, error) {
 	// Proveri da li turista već ima aktivnu turu
-	activeTours, err := s.repo.GetByTouristId(ctx, touristID)
+	activeTours, err := s.repo.GetActiveByTouristId(ctx, touristID)
 	if err != nil {
 		return nil, err
 	}

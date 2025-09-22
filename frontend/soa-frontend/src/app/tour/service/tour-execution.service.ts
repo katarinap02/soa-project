@@ -8,7 +8,8 @@ import { CompletedKeyPoint } from '../model/completedKeyPoint.model';
   providedIn: 'root'
 })
 export class TourExecutionService {
-  private apiUrl = 'http://localhost:8085/tours/tour-executions';
+  //private apiUrl = 'http://localhost:8085/tours/tour-executions';
+  private apiUrl = 'http://localhost:8082/tour-executions';
 
   constructor(private http: HttpClient) {}
 
@@ -16,7 +17,7 @@ export class TourExecutionService {
     return this.http.post<TourExecution>(`${this.apiUrl}/start`, { tourId, touristId });
   }
 
-  getActiveToursByTourist(touristId: string): Observable<TourExecution[]> {
+  getToursByTourist(touristId: string): Observable<TourExecution[]> {
     return this.http.get<TourExecution[]>(`${this.apiUrl}/active`, { params: { touristId } });
   }
 
