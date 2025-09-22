@@ -58,7 +58,7 @@ func (h *ToursHandler) MiddlewareTourDeserialization(next http.Handler) http.Han
 			}
 
 			http.Error(w, msg, http.StatusBadRequest)
-			h.logger.Printf(msg)
+			h.logger.Println(msg)
 			return
 		}
 
@@ -84,10 +84,15 @@ func (h *ToursHandler) GetAllTours(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
+
+	_, span := tp.Tracer(serviceName).Start(r.Context(), "CreateTour")
+	defer span.End()
+
 	tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
 	if !ok {
 		http.Error(w, "Tour not found in context", http.StatusInternalServerError)
 		h.logger.Println("Tour object not found in context for creation")
+		span.RecordError(fmt.Errorf("tour object not found in context"))
 		return
 	}
 
@@ -95,14 +100,18 @@ func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
 	if tour.AuthorID == "" {
 		http.Error(w, "AuthorID not provided in tour body", http.StatusBadRequest)
 		h.logger.Println("AuthorID missing in tour creation request body")
+		span.RecordError(fmt.Errorf("authorID missing"))
 		return
 	}
 
+	span.AddEvent("Creating tour in service")
 	if err := h.service.CreateTour(r.Context(), tour, tour.AuthorID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.logger.Printf("Error creating tour: %v", err)
+		span.RecordError(err)
 		return
 	}
+	span.AddEvent("Tour created successfully")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")

@@ -21,6 +21,11 @@ import (
 )
 
 func main() {
+
+	if _, err := handler.InitTracer(); err != nil {
+		log.Fatalf("Failed to initialize tracer: %v", err)
+	}
+
 	// PORT
 	port := os.Getenv("PORT")
 	if port == "" {

@@ -30,7 +30,14 @@ func (h *ReviewHandler) MiddlewareReviewDeserialization(next http.Handler) http.
 		}
 
 		// Dodajemo review u kontekst
-		ctx := context.WithValue(r.Context(), "review", &review)
+		// Define a custom type for context keys
+		type contextKey string
+
+		// Define a constant key of that type
+		const reviewKey contextKey = "review"
+
+		// Store the value in context
+		ctx := context.WithValue(r.Context(), reviewKey, &review)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

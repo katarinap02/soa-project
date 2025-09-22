@@ -28,7 +28,13 @@ func (h *KeyPointsHandler) MiddlewareKeyPointDeserialization(next http.Handler) 
 			h.logger.Printf("Error decoding keypoint JSON: %v", err)
 			return
 		}
-		ctx := context.WithValue(r.Context(), "keypoint", kp)
+		type contextKey string
+
+		// Define a constant key of that type
+		const keypointKey contextKey = "keypoint"
+
+		// Store the value in context
+		ctx := context.WithValue(r.Context(), keypointKey, kp)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
