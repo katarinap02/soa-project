@@ -16,9 +16,10 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 
+	pb "database-example/database-example/proto" // generisani protobuf kod
+	"net"
+
 	"google.golang.org/grpc"
-    pb "database-example/database-example/proto" // generisani protobuf kod
-    "net"
 	//  "go.mongodb.org/mongo-driver/mongo"
 	//  "go.mongodb.org/mongo-driver/mongo/options"
 	//  "go.mongodb.org/mongo-driver/bson/primitive"
@@ -117,7 +118,6 @@ func main() {
 
 	// GET reviews by tour
 	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
-	
 
 	//************SHOPPING*****************
 
@@ -136,15 +136,12 @@ func main() {
 
 	cartHandler := handler.NewShoppingCartHandler(shoppingService)
 
-	
 	router.HandleFunc("/cart", cartHandler.GetCart).Methods(http.MethodGet)
 	router.HandleFunc("/cart/purchased", cartHandler.GetPurchasedTours).Methods(http.MethodGet)
 	router.HandleFunc("/cart/remove", cartHandler.RemoveFromCart).Methods(http.MethodDelete)
 
-
 	cartRPC := handler.NewShoppingCartRPC(shoppingService)
 
-	
 	grpcServer := grpc.NewServer()
 	pb.RegisterShoppingCartServiceServer(grpcServer, cartRPC)
 
@@ -172,7 +169,7 @@ func main() {
 	tourExecutionHandler := handler.NewTourExecutionHandler(logger, tourExecutionService)
 
 	router.HandleFunc("/tour-executions/start", tourExecutionHandler.StartTour).Methods(http.MethodPost)
-	router.HandleFunc("/tour-executions/active", tourExecutionHandler.GetActiveToursByTourist).Methods(http.MethodGet)
+	router.HandleFunc("/tour-executions/active", tourExecutionHandler.GetToursByTourist).Methods(http.MethodGet)
 
 	router.HandleFunc("/tour-executions/{id}", tourExecutionHandler.GetTourExecution).Methods(http.MethodGet)
 	router.HandleFunc("/tour-executions/{id}/activity", tourExecutionHandler.UpdateActivity).Methods(http.MethodPut)

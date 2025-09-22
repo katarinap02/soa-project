@@ -41,7 +41,7 @@ func NewMongoReviewRepo(ctx context.Context, uri string, logger *log.Logger) (Re
 	}
 	logger.Println("Connected to MongoDB for reviews")
 
-	coll := client.Database("mongoDemo").Collection("reviews")
+	coll := client.Database("soadb").Collection("reviews")
 	return &mongoReviewRepo{collection: coll, logger: logger}, nil
 }
 

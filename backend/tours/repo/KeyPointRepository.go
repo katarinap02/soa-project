@@ -42,7 +42,7 @@ func NewMongoKeyPointRepo(ctx context.Context, uri string, logger *log.Logger) (
 	}
 	logger.Println("Connected to MongoDB for KeyPoints")
 
-	coll := client.Database("mongoDemo").Collection("keypoints")
+	coll := client.Database("soadb").Collection("keypoints")
 	return &mongoKeyPointRepo{collection: coll, logger: logger}, nil
 }
 
