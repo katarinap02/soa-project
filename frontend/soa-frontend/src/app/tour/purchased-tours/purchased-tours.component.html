@@ -1,4 +1,4 @@
-<div class="tours-container">
+<!-- <div class="tours-container">
   <h2>My Purchased Tours</h2>
 
   <div class="tours-grid">
@@ -17,6 +17,44 @@
           (click)="startTour(tour.id!)">
     Start Tour
   </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div> -->
+<div class="tours-container">
+  <h2>My Purchased Tours</h2>
+
+  <div class="tours-grid">
+    <mat-card *ngFor="let tour of tours" class="tour-card">
+      <mat-card-header>
+        <mat-card-title>{{ tour.name }}</mat-card-title>
+        <mat-card-subtitle>
+          Purchased • {{ tour.price | currency:'RSD':'symbol':'1.0-0' }}
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <p>{{ tour.description }}</p>
+        <p><strong>Difficulty:</strong> {{ tour.difficulty }}</p>
+        <p><strong>Tags:</strong>
+          <span class="tags" *ngFor="let tag of tour.tags">{{ tag }}</span>
+        </p>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="viewMap(tour.id)">
+          View Map
+        </button>
+
+        <button mat-raised-button color="accent" (click)="openReviews(tour.id)">
+          Reviews
+        </button>
+
+        <button mat-raised-button color="warn"
+                *ngIf="user?.role === 'Tourist'"
+                (click)="startTour(tour.id!)">
+          Start Tour
+        </button>
       </mat-card-actions>
     </mat-card>
   </div>

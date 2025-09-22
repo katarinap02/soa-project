@@ -71,7 +71,7 @@ export class TouristViewTourComponent implements OnInit, AfterViewInit {
             waypoints: waypoints,
             router: L.Routing.mapbox('pk.eyJ1IjoidmVsam9vMDIiLCJhIjoiY20yaGV5OHU4MDFvZjJrc2Q4aGFzMTduNyJ9.vSQUDO5R83hcw1hj70C-RA', { profile: 'mapbox/walking' }),
             lineOptions: {
-              styles: [{ color: '#1E90FF', weight: 5, opacity: 0.9 }]
+              styles: [{ color: '#6ca4ddff', weight: 5, opacity: 0.9 }]
             } as any,
             routeWhileDragging: false,
             showAlternatives: false

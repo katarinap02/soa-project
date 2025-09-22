@@ -6,6 +6,9 @@ import { KeyPointService } from '../service/key-points.service';
 import { KeyPoint } from '../model/keyPoint.model';
 import { TourExecution } from '../model/tourExecution.model';
 import { TourExecutionService } from '../service/tour-execution.service';
+import { ReviewDialogComponent } from '../review-dialog/review-dialog.component';
+import { ReviewComponent } from '../review/review.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-purchased-tours',
@@ -21,7 +24,8 @@ export class PurchasedToursComponent implements OnInit {
     private shoppingCartService: ShoppingCartService,
     private router: Router,
     private keyPointService: KeyPointService,
-    private tourExecutionService: TourExecutionService
+    private tourExecutionService: TourExecutionService,
+    private dialog: MatDialog, 
   ) {}
 
   ngOnInit(): void {
@@ -85,4 +89,11 @@ export class PurchasedToursComponent implements OnInit {
     }
   });
   }
+
+    openReviews(tourId: string) {
+    this.dialog.open(ReviewComponent, {
+      width: '600px',
+      data: { tourId }
+    });}
+  
 }
