@@ -3,7 +3,7 @@ package model
 import (
 	"encoding/json"
 	"io"
-
+	"time"
 	 "go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -16,6 +16,9 @@ type Tour struct {
 	Tags        []string           `bson:"tags,omitempty" json:"tags"`
 	Status      string             `bson:"status,omitempty" json:"status"`
 	AuthorID    string             `bson:"authorId,omitempty" json:"authorId"`
+	ArchiveDate *time.Time `bson:"archiveDate,omitempty" json:"archiveDate,omitempty"`
+	PublishDate *time.Time `bson:"publishDate,omitempty" json:"publishDate,omitempty"`
+	Durations map[string]int `bson:"durations,omitempty"` // walking, bicycle, car
 }
 
 

@@ -74,6 +74,7 @@ func initDB() *gorm.DB {
 	  )
 	`) //sifra je test123
 
+	
 	return database
 }
 
@@ -156,11 +157,11 @@ func main() {
 	router.HandleFunc("/students/{id}", studentHandler.Get).Methods("GET")
 	router.HandleFunc("/students", studentHandler.Create).Methods("POST")
 	router.HandleFunc("/users/register", userHandler.Register).Methods("POST")
-//	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
+	router.HandleFunc("/users", userHandler.GetAllUsers).Methods("GET")
 	router.HandleFunc("/profile/{id}", userInfoHandler.GetProfile).Methods("GET")
 	router.HandleFunc("/profileUpdate/{id}", userInfoHandler.UpdateProfile).Methods("PUT")
 	router.HandleFunc("/users/blockuser", userHandler.BlockUser).Methods("POST")
-//	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
+	router.HandleFunc("/users/login", userHandler.Login).Methods("POST")
 	router.HandleFunc("/users/by-username", userHandler.GetUserByUsername).Methods("POST")
 
 	wrappedRouter := debugMiddleware(router)

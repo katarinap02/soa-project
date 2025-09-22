@@ -7,4 +7,12 @@ export interface Tour {
   tags?: string[];
   status?: string;
   authorId?: string;
+  publishDate?: string;
+  archiveDate?: string;
+
+  durations?: {
+    walking?: number; // in minutes
+    bicycle?: number;
+    car?: number;
+  };
 }

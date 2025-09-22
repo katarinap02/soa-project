@@ -23,9 +23,9 @@ export class ToursOverviewComponent implements OnInit {
   user: UserView | null = null;
 
   constructor(private tourService: TourService,
-     private dialog: MatDialog, 
-     private router: Router, 
-     private tourExecutionService: TourExecutionService, 
+     private dialog: MatDialog,
+     private router: Router,
+     private tourExecutionService: TourExecutionService,
      private keyPointService: KeyPointService,
      private shoppingCartService: ShoppingCartService,
      private shoppingRpcService: ShoppingRpcService) { }
@@ -35,7 +35,7 @@ export class ToursOverviewComponent implements OnInit {
 //    this.loadLoggedUser();
 //   this.tourService.getAllTours().subscribe({
 //     next: data => {
-    
+
 //       this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
 //       //this.tours = data.filter(t => t.status?.toUpperCase() !== 'DRAFT');
 //       this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
@@ -60,9 +60,7 @@ ngOnInit(): void {
 
           this.tours = allTours.filter(t =>
             t.status?.toUpperCase() !== 'ARCHIVED' &&
-
-            // Ako želiš da sakriješ i DRAFT ture, samo otkomentariši ovu liniju:
-             //t.status?.toUpperCase() !== 'DRAFT' &&
+            t.status?.toUpperCase() !== 'DRAFT' &&
 
             !purchasedIds.includes(t.id) &&
             t.name !== "Beogradska Tura"
@@ -79,7 +77,7 @@ ngOnInit(): void {
   loadLoggedUser() {
     const token = localStorage.getItem('token');
     console.log(token)
-    
+
     const userStr = localStorage.getItem('user');
     if (!token || !userStr) {
       alert('No user logged in');
@@ -100,7 +98,7 @@ ngOnInit(): void {
     this.router.navigate(['home/view-map-tourist', tourId]);
   }
 
-  
+
 
 
 async buyTour(tourId?: string) {

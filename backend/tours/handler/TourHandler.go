@@ -174,3 +174,46 @@ func (h *ToursHandler) GetToursByAuthor(w http.ResponseWriter, r *http.Request) 
 	}
 	json.NewEncoder(w).Encode(tours)
 }
+
+
+func (h *ToursHandler) UpdateTourStatus(w http.ResponseWriter, r *http.Request) {
+    vars := mux.Vars(r)
+    idStr := vars["id"]
+    if idStr == "" {
+        http.Error(w, "tour ID is required", http.StatusBadRequest)
+        return
+    }
+
+    tourID, err := primitive.ObjectIDFromHex(idStr)
+    if err != nil {
+        http.Error(w, "invalid tour ID", http.StatusBadRequest)
+        return
+    }
+
+    // Read new status from request body
+    var payload struct {
+        Status string `json:"status"`
+    }
+    if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+        http.Error(w, "invalid request body", http.StatusBadRequest)
+        h.logger.Printf("Error decoding request body: %v", err)
+        return
+    }
+
+    if payload.Status == "" {
+        http.Error(w, "status field is required", http.StatusBadRequest)
+        return
+    }
+
+    // Call service to update status
+    if err := h.service.ChangeTourStatus(r.Context(), tourID, payload.Status); err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        h.logger.Printf("Error updating tour status: %v", err)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(map[string]string{
+        "message": fmt.Sprintf("Tour %s status updated to %s", idStr, payload.Status),
+    })
+}

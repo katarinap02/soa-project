@@ -38,4 +38,10 @@ export class TourService {
     return this.http.get<Tour>(`${this.apiUrl1}/${tourId}`);
   }
 
+
+  updateTourStatus(tourId: string, newStatus: string) {
+    return this.http.patch(`http://localhost:8082/tours/${tourId}/status`, { status: newStatus });
+  }
+
+
 }
