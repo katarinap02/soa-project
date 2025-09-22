@@ -19,8 +19,8 @@ export class UserService {
     return this.http.post<User>(`${this.apiUrl}/register`, user);
   }
 
-  getAllUsers(): Observable<UserView[]> {
-    return this.http.get<UserView[]>(this.apiUrl);
+  getAllUsers(): Observable<any> {
+    return this.http.get<any>(this.apiUrl);
   }
 
   getProfile(userId: string): Observable<Profile> {

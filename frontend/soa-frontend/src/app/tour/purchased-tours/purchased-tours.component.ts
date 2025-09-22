@@ -58,14 +58,21 @@ export class PurchasedToursComponent implements OnInit {
       }
 
     const touristId = this.user!.id;
-      this.tourExecutionService.getActiveToursByTourist(touristId).subscribe({
+      this.tourExecutionService.getToursByTourist(touristId).subscribe({
         next: (executions: TourExecution[]) => {
-          const existing = executions.find(te => te.tourId === tourId && te.status === 'active');
+          const existing = executions.find(te => te.tourId === tourId);
 
           if (existing) {
-            console.log("Already active tour execution:", existing);
+            console.log("Already tour execution:", existing);
            this.router.navigate(['home/tour-execution', existing.id]);
           } else {
+            const hasActiveTour = executions.some(te => te.status === 'active');
+
+          if (hasActiveTour) {
+            alert('You already have an active tour. Finish or abandon it before starting a new one.');
+            return;
+          }
+
             this.tourExecutionService.startTour(tourId, touristId).subscribe({
               next: (newExecution: TourExecution) => {
                 console.log("Started new tour execution:", newExecution);
@@ -79,7 +86,7 @@ export class PurchasedToursComponent implements OnInit {
           }
         },
         error: err => {
-          console.error("Error fetching active tours:", err);
+          console.error("Error fetching tours:", err);
         }
       });
     },
