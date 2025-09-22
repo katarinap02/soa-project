@@ -49,7 +49,7 @@ func NewMongoTourExecutionRepo(ctx context.Context, uri string, logger *log.Logg
 	}
 	logger.Println("Connected to MongoDB for TourExecutions")
 
-	db := client.Database("mongoDemo")
+	db := client.Database("soadb")
 	executionColl := db.Collection("tour_executions")
 	completedKeyPointColl := db.Collection("completed_key_points")
 

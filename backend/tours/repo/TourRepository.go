@@ -45,7 +45,7 @@ func NewMongoTourRepo(ctx context.Context, uri string, logger *log.Logger) (Tour
 	}
 	logger.Println("Connected to MongoDB")
 
-	coll := client.Database("mongoDemo").Collection("tours")
+	coll := client.Database("soadb").Collection("tours")
 	return &mongoTourRepo{collection: coll, logger: logger}, nil
 }
 
