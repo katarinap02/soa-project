@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
 import { Tour } from '../model/tour.model';
 
 
@@ -24,9 +24,14 @@ export class TourService {
     return this.http.post(this.apiUrl, tour, { headers });
   }
 
-  getToursByAuthor(authorId: string): Observable<Tour[]> {
-    return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
-  }
+  // getToursByAuthor(authorId: string): Observable<Tour[]> {
+  //   return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
+  // }
+
+getToursByAuthor(authorId: string): Observable<Tour[]> {
+  const params = new HttpParams().set('authorId', authorId);
+  return this.http.get<Tour[]>(`${this.apiUrl}/by-author`, { params });
+}
 
     getTourById(tourId: string): Observable<Tour> {
     return this.http.get<Tour>(`${this.apiUrl}/${tourId}`);
