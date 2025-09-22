@@ -181,9 +181,21 @@ export class TourExecutionComponent implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
-  completeTour() {
-  throw new Error('Method not implemented.');
+  completeTour(): void {
+  if (!this.tourExecution?.id) {
+    console.error('No tour execution selected');
+    return;
   }
+
+  this.tourExecutionService.completeTour(this.tourExecution.id).subscribe({
+    next: (updatedExecution) => {
+      console.log('Tour completed:', updatedExecution);
+      this.ngOnInit(); // refresh podataka nakon završetka ture
+    },
+    error: (err) => console.error('Error completing tour:', err)
+  });
+}
+
   abandonTour(): void{
   if (!this.tourExecution?.id) {
     console.error('No tour execution selected');

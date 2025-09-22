@@ -68,51 +68,7 @@ ngOnInit(): void {
     this.router.navigate(['home/view-map-tourist', tourId]);
   }
 
-  startTour(tourId: string): void {
-  if (!this.user || !tourId) {
-      alert('You must be logged in as a tourist to start a tour.');
-      return;
-    }
-
-  this.keyPointService.getKeyPointsByTour(tourId).subscribe({
-    next: (keyPoints: KeyPoint[]) => {
-      if (!keyPoints || keyPoints.length === 0) {
-        alert('This tour cannot be started because it has no key points.');
-        return;
-      }
-
-    const touristId = this.user!.id;
-      this.tourExecutionService.getActiveToursByTourist(touristId).subscribe({
-        next: (executions: TourExecution[]) => {
-          const existing = executions.find(te => te.tourId === tourId && te.status === 'active');
-
-          if (existing) {
-            console.log("Already active tour execution:", existing);
-           this.router.navigate(['home/tour-execution', existing.id]);
-          } else {
-            this.tourExecutionService.startTour(tourId, touristId).subscribe({
-              next: (newExecution: TourExecution) => {
-                console.log("Started new tour execution:", newExecution);
-                this.router.navigate(['home/tour-execution', newExecution.id]);
-              },
-              error: err => {
-                console.error("Error starting tour:", err);
-                alert("Could not start the tour.");
-              }
-            });
-          }
-        },
-        error: err => {
-          console.error("Error fetching active tours:", err);
-        }
-      });
-    },
-    error: err => {
-      console.error("Error fetching key points:", err);
-      alert('Could not check tour key points.');
-    }
-  });
-  }
+  
 
 
 async buyTour(tourId?: string) {
