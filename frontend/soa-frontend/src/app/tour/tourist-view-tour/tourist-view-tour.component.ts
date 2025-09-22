@@ -5,6 +5,7 @@ import { KeyPointService } from '../service/key-points.service';
 import * as L from 'leaflet';
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 import 'leaflet-routing-machine';
+import { ShoppingCartService } from '../service/shopping-cart.service';
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
@@ -16,6 +17,9 @@ L.Icon.Default.mergeOptions({
   styleUrls: ['./tourist-view-tour.component.css']
 })
 export class TouristViewTourComponent implements OnInit, AfterViewInit {
+  isTourPurchased: boolean = false;
+userRole: string = '';
+
   keyPoints: KeyPoint[] = [];
      tourId: string = '';
       keyPoint: KeyPoint = {
@@ -27,12 +31,29 @@ export class TouristViewTourComponent implements OnInit, AfterViewInit {
         imageUrl: ''
       };
     map!: L.Map;
-       constructor(private route: ActivatedRoute, private keyPointService: KeyPointService) { }
+       constructor(private route: ActivatedRoute, 
+        private keyPointService: KeyPointService,
+      private shoppingCartService: ShoppingCartService) { }
       
         ngOnInit(): void {
           this.tourId = this.route.snapshot.paramMap.get('id') || '';
           this.keyPoint.tourId = this.tourId;
+
+            const userStr = localStorage.getItem('user');
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    this.userRole = user.role;
+
+
+    this.shoppingCartService.getPurchasedTours(user.id).subscribe({
+      next: (purchasedTours: any[]) => {
+        this.isTourPurchased = purchasedTours.some(t => t.id === this.tourId);
+        this.loadExistingKeyPoints();
+        this.loadKeyPointsTable();
+      }
+    });
         }
+      }
       
         ngAfterViewInit(): void {
           this.initMap();
@@ -52,6 +73,12 @@ export class TouristViewTourComponent implements OnInit, AfterViewInit {
           console.warn('No key points to display.');
           return;
         }
+
+              if (this.userRole === 'Tourist' && !this.isTourPurchased) {
+        keyPoints = [keyPoints[0]];
+      }
+
+      this.keyPoints = keyPoints;
   
         // Add markers
         const waypoints: L.LatLng[] = keyPoints.map(kp => {
@@ -71,7 +98,7 @@ export class TouristViewTourComponent implements OnInit, AfterViewInit {
             waypoints: waypoints,
             router: L.Routing.mapbox('pk.eyJ1IjoidmVsam9vMDIiLCJhIjoiY20yaGV5OHU4MDFvZjJrc2Q4aGFzMTduNyJ9.vSQUDO5R83hcw1hj70C-RA', { profile: 'mapbox/walking' }),
             lineOptions: {
-              styles: [{ color: '#1E90FF', weight: 5, opacity: 0.9 }]
+              styles: [{ color: '#6ca4ddff', weight: 5, opacity: 0.9 }]
             } as any,
             routeWhileDragging: false,
             showAlternatives: false
@@ -94,7 +121,13 @@ export class TouristViewTourComponent implements OnInit, AfterViewInit {
 
   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
     next: (points: KeyPoint[]) => {
-      this.keyPoints = points;
+      //this.keyPoints = points;
+
+            if (this.userRole === 'Tourist' && !this.isTourPurchased) {
+        this.keyPoints = points.length > 0 ? [points[0]] : [];
+      } else {
+        this.keyPoints = points;
+      }
   
       // optionally refresh markers/routes here
     },

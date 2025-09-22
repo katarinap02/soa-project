@@ -31,17 +31,48 @@ export class ToursOverviewComponent implements OnInit {
      private shoppingRpcService: ShoppingRpcService) { }
 
 
+// ngOnInit(): void {
+//    this.loadLoggedUser();
+//   this.tourService.getAllTours().subscribe({
+//     next: data => {
+
+//       this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
+//       //this.tours = data.filter(t => t.status?.toUpperCase() !== 'DRAFT');
+//       this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
+
+//     },
+//     error: err => console.error(err)
+//   });
+// }
+
 ngOnInit(): void {
-   this.loadLoggedUser();
+  this.loadLoggedUser();
+
+  if (!this.user) {
+    return;
+  }
+
   this.tourService.getAllTours().subscribe({
-    next: data => {
+    next: allTours => {
+      this.shoppingCartService.getPurchasedTours(this.user!.id).subscribe({
+        next: purchasedTours => {
+          const purchasedIds = purchasedTours.map((t: any) => t.id);
 
-      this.tours = data.filter(t => t.status?.toUpperCase() === 'PUBLISHED');
+          this.tours = allTours.filter(t =>
+            t.status?.toUpperCase() !== 'ARCHIVED' &&
+            t.status?.toUpperCase() !== 'DRAFT' &&
 
+            !purchasedIds.includes(t.id) &&
+            t.name !== "Beogradska Tura"
+          );
+        },
+        error: err => console.error('Error fetching purchased tours', err)
+      });
     },
-    error: err => console.error(err)
+    error: err => console.error('Error fetching tours', err)
   });
 }
+
 
   loadLoggedUser() {
     const token = localStorage.getItem('token');

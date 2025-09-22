@@ -60,18 +60,41 @@ export class KeyPointsComponent implements OnInit, AfterViewInit {
 //   });
 // }
 
+// loadExistingKeyPoints(): void {
+//   if (!this.tourId) return;
+
+//   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
+//     next: (keyPoints: KeyPoint[]) => {
+//       keyPoints.forEach(kp => {
+//         L.marker([kp.latitude, kp.longitude])
+//           .addTo(this.map)
+//           .bindTooltip(
+//             `<b>${kp.name}</b><br>${kp.description}`, 
+//             { permanent: false, direction: 'top' } // tooltip iznad markera
+//           );
+//       });
+//     },
+//     error: (err) => {
+//       console.error('Error loading key points', err);
+//     }
+//   });
+// }
+
 loadExistingKeyPoints(): void {
   if (!this.tourId) return;
 
   this.keyPointService.getKeyPointsByTour(this.tourId).subscribe({
     next: (keyPoints: KeyPoint[]) => {
       keyPoints.forEach(kp => {
+        const popupContent = `
+          <b>${kp.name}</b><br>
+          ${kp.description}<br>
+          ${kp.imageUrl ? `<img src="${kp.imageUrl}" width="100" style="margin-top:5px;">` : ''}
+        `;
+
         L.marker([kp.latitude, kp.longitude])
           .addTo(this.map)
-          .bindTooltip(
-            `<b>${kp.name}</b><br>${kp.description}`, 
-            { permanent: false, direction: 'top' } // tooltip iznad markera
-          );
+          .bindPopup(popupContent); // popup umesto tooltip-a da može da prikaže HTML sliku
       });
     },
     error: (err) => {
@@ -79,6 +102,7 @@ loadExistingKeyPoints(): void {
     }
   });
 }
+
 
 
   initMap(): void {
@@ -97,25 +121,50 @@ loadExistingKeyPoints(): void {
     });
   }
 
-addKeyPoint(): void {
+  addKeyPoint(): void {
   if (!this.tourId) return;
-
-  // Marker koji je dodat klikom
-  const newMarker = L.marker([this.keyPoint.latitude, this.keyPoint.longitude]).addTo(this.map);
 
   this.keyPointService.addKeyPoint(this.keyPoint).subscribe({
     next: () => {
+      const popupContent = `
+        <b>${this.keyPoint.name}</b><br>
+        ${this.keyPoint.description}<br>
+        ${this.keyPoint.imageUrl ? `<img src="${this.keyPoint.imageUrl}" width="100" style="margin-top:5px;">` : ''}
+      `;
+
+      const newMarker = L.marker([this.keyPoint.latitude, this.keyPoint.longitude])
+        .addTo(this.map)
+        .bindPopup(popupContent);
+
       alert('Key point added successfully');
       this.keyPoint = { tourId: this.tourId, name: '', description: '', latitude: 0, longitude: 0, imageUrl: '' };
     },
     error: (err) => {
       console.error(err);
       alert('Error adding key point');
-      // U slučaju greške ukloni marker
-      this.map.removeLayer(newMarker);
     }
   });
 }
+
+// addKeyPoint(): void {
+//   if (!this.tourId) return;
+
+//   // Marker koji je dodat klikom
+//   const newMarker = L.marker([this.keyPoint.latitude, this.keyPoint.longitude]).addTo(this.map);
+
+//   this.keyPointService.addKeyPoint(this.keyPoint).subscribe({
+//     next: () => {
+//       alert('Key point added successfully');
+//       this.keyPoint = { tourId: this.tourId, name: '', description: '', latitude: 0, longitude: 0, imageUrl: '' };
+//     },
+//     error: (err) => {
+//       console.error(err);
+//       alert('Error adding key point');
+//       // U slučaju greške ukloni marker
+//       this.map.removeLayer(newMarker);
+//     }
+//   });
+// }
 
 
 onFileSelected(event: any) {
