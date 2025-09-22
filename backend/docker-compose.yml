@@ -18,6 +18,18 @@ services:
       - tours
       - followers
   
+  envoy:
+    image: envoyproxy/envoy:v1.25.0
+    container_name: envoy
+    ports:
+      - "8087:8087"   
+    volumes:
+      - ./envoy/envoy.yaml:/etc/envoy/envoy.yaml
+    networks:
+      - servers
+    depends_on:
+      - tours
+
   
   stakeholders:
     build:

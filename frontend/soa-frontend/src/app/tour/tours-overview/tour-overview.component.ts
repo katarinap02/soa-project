@@ -9,6 +9,8 @@ import { TourExecutionService } from '../service/tour-execution.service';
 import { TourExecution } from '../model/tourExecution.model';
 import { KeyPoint } from '../model/keyPoint.model';
 import { KeyPointService } from '../service/key-points.service';
+import { ShoppingCartService } from '../service/shopping-cart.service';
+import { ShoppingRpcService } from '../service/rpc-shopping-cart.service';
 
 
 @Component({
@@ -20,14 +22,23 @@ export class ToursOverviewComponent implements OnInit {
   tours: Tour[] = [];
   user: UserView | null = null;
 
-  constructor(private tourService: TourService, private dialog: MatDialog, private router: Router, private tourExecutionService: TourExecutionService, private keyPointService: KeyPointService) { }
+  constructor(private tourService: TourService,
+     private dialog: MatDialog, 
+     private router: Router, 
+     private tourExecutionService: TourExecutionService, 
+     private keyPointService: KeyPointService,
+     private shoppingCartService: ShoppingCartService,
+     private shoppingRpcService: ShoppingRpcService) { }
 
-  ngOnInit(): void {
-  this.loadLoggedUser();
+
+ngOnInit(): void {
+   this.loadLoggedUser();
   this.tourService.getAllTours().subscribe({
     next: data => {
-      // filtriraj sve ture osim one koja se zove "Beogradska Tura"
+    
+      this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
       this.tours = data.filter(tour => tour.name !== "Beogradska Tura");
+
     },
     error: err => console.error(err)
   });
@@ -45,6 +56,7 @@ export class ToursOverviewComponent implements OnInit {
     const user = JSON.parse(userStr);
     this.user = user;
   }
+
 
   openReviews(tourId: string) {
   this.dialog.open(ReviewComponent, {
@@ -102,5 +114,32 @@ export class ToursOverviewComponent implements OnInit {
   });
   }
 
+
+async buyTour(tourId?: string) {
+    if (!tourId) {
+      alert('Tour ID is missing!');
+      return;
+    }
+
+    const user = JSON.parse(localStorage.getItem('user')!);
+    if (!user) {
+      alert('Please login first');
+      return;
+    }
+
+
+    try {
+      await this.shoppingRpcService.addToCart(user.id, tourId);
+      alert('Tour added to cart!');
+    } catch (err) {
+      console.error(err);
+      alert('Failed to add tour to cart.');
+    }
+  }
+
+
+goToCart(): void {
+  this.router.navigate(['/home/shopping-cart']);
+}
 
 }

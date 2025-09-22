@@ -39,6 +39,8 @@ import { TouristViewTourComponent } from './tour/tourist-view-tour/tourist-view-
 import { PositionSimulatorComponent } from './tour/position-simulator/position-simulator.component';
 import { ToursOverviewComponent } from './tour/tours-overview/tour-overview.component';
 import { TourExecutionComponent } from './tour/tour-execution/tour-execution.component';
+import { PurchasedToursComponent } from './tour/purchased-tours/purchased-tours.component';
+import { ShoppingCartComponent } from './tour/shopping-cart/shopping-cart.component';
 
 @NgModule({
   declarations: [
@@ -63,7 +65,9 @@ import { TourExecutionComponent } from './tour/tour-execution/tour-execution.com
     ViewTourMapComponent,
     TouristViewTourComponent,
     PositionSimulatorComponent,
-    TourExecutionComponent
+    TourExecutionComponent,
+    PurchasedToursComponent,
+    ShoppingCartComponent,
  
   ],
   imports: [

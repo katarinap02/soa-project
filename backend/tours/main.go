@@ -15,6 +15,10 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+
+	"google.golang.org/grpc"
+    pb "database-example/database-example/proto" // generisani protobuf kod
+    "net"
 	//  "go.mongodb.org/mongo-driver/mongo"
 	//  "go.mongodb.org/mongo-driver/mongo/options"
 	//  "go.mongodb.org/mongo-driver/bson/primitive"
@@ -72,13 +76,11 @@ func main() {
 	postRouter.HandleFunc("/tours", toursHandler.CreateTour)
 
 	// GET ruta
+	router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
-	// router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
-	// router.HandleFunc("/tours/{id}", toursHandler.UpdateTour).Methods(http.MethodPatch)
-	// router.HandleFunc("/tours/{id}", toursHandler.DeleteTour).Methods(http.MethodDelete)
 
-	//KeyPoints
+	//*****************KeyPoints**********
 	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
 	if err != nil {
 		logger.Fatalf("Cannot initialize KeyPoint repo: %v", err)
@@ -98,7 +100,7 @@ func main() {
 	router.HandleFunc("/keypoints", keyPointsHandler.DeleteKeyPoint).Methods(http.MethodDelete)
 	router.HandleFunc("/keypoints/closest", keyPointsHandler.GetClosestKeyPoint).Methods(http.MethodGet)
 
-	//review
+	//************REVIEW******************
 
 	reviewRepo, err := repo.NewMongoReviewRepo(ctx, mongoURI, logger)
 	if err != nil {
@@ -114,6 +116,50 @@ func main() {
 
 	// GET reviews by tour
 	router.HandleFunc("/reviews/by-tour", reviewHandler.GetReviewsByTour).Methods(http.MethodGet)
+	
+
+	//************SHOPPING*****************
+
+	cartRepo, err := repo.NewMongoShoppingCartRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize ShoppingCart repo: %v", err)
+	}
+
+	purchaseRepo, err := repo.NewMongoTourPurchaseRepo(ctx, mongoURI, logger)
+	if err != nil {
+		logger.Fatalf("Cannot initialize TourPurchase repo: %v", err)
+	}
+
+	// Servis za korpu
+	shoppingService := service.NewShoppingCartService(cartRepo, purchaseRepo, tourRepo)
+
+	cartHandler := handler.NewShoppingCartHandler(shoppingService)
+
+	
+	router.HandleFunc("/cart", cartHandler.GetCart).Methods(http.MethodGet)
+	router.HandleFunc("/cart/purchased", cartHandler.GetPurchasedTours).Methods(http.MethodGet)
+	router.HandleFunc("/cart/remove", cartHandler.RemoveFromCart).Methods(http.MethodDelete)
+
+
+	cartRPC := handler.NewShoppingCartRPC(shoppingService)
+
+	
+	grpcServer := grpc.NewServer()
+	pb.RegisterShoppingCartServiceServer(grpcServer, cartRPC)
+
+	// start gRPC server u go-rutini
+	go func() {
+		listener, err := net.Listen("tcp", ":50051")
+		if err != nil {
+			logger.Fatalf("failed to listen: %v", err)
+		}
+		logger.Println("gRPC server running on :50051")
+		if err := grpcServer.Serve(listener); err != nil {
+			logger.Fatalf("failed to serve gRPC server: %v", err)
+		}
+	}()
+
+	//************************************
 
 	//tour-execution
 
@@ -163,5 +209,6 @@ func main() {
 	if err := server.Shutdown(ctx); err != nil {
 		logger.Fatal("Server shutdown failed:", err)
 	}
+	grpcServer.GracefulStop()
 	logger.Println("Server stopped")
 }

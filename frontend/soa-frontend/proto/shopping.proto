@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "database-example/database-example/proto";
+
+service ShoppingCartService {
+  // 1. Dodavanje ture u korpu
+  rpc AddToCart(AddToCartRequest) returns (ShoppingCartResponse);
+
+  // 2. Checkout (generisanje tokena)
+  rpc Checkout(CheckoutRequest) returns (CheckoutResponse);
+}
+
+message AddToCartRequest {
+  string userId = 1;
+  string tourId = 2;
+}
+
+message ShoppingCartResponse {
+  string userId = 1;
+  repeated OrderItem items = 2;
+  double totalPrice = 3;
+}
+
+message OrderItem {
+  string tourId = 1;
+  string tourName = 2;
+  double price = 3;
+}
+
+message CheckoutRequest {
+  string userId = 1;
+}
+
+message CheckoutResponse {
+  string userId = 1;
+  repeated TourPurchaseToken tokens = 2;
+}
+
+message TourPurchaseToken {
+  string tourId = 1;
+  string token = 2;
+}

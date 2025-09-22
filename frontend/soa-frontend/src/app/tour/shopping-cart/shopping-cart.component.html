@@ -1,0 +1,29 @@
+<div class="cart-container">
+  <h2>Your Shopping Cart</h2>
+
+  <div *ngIf="cartTours.length === 0" class="empty-cart">
+    <p>Your cart is empty.</p>
+  </div>
+
+  <div *ngIf="cartTours.length > 0">
+    <div class="cart-grid">
+      <mat-card *ngFor="let tour of cartTours" class="tour-card">
+        <mat-card-header>
+          <mat-card-title>{{ tour.tourName }}</mat-card-title>
+        </mat-card-header>
+        <!-- <img mat-card-image src="assets/tours/{{tour.tourId}}.jpg" alt="{{ tour.tourName }}"> -->
+        <mat-card-content> 
+          <p><strong>Price:</strong> {{ tour.price | currency:'RSD':'symbol':'1.0-0' }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="warn" (click)="removeFromCart(tour.tourId)">Remove</button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div class="cart-footer">
+      <p><strong>Total Price:</strong> {{ totalPrice | currency:'RSD':'symbol':'1.0-0' }}</p>
+      <button mat-raised-button color="primary" (click)="checkout()">Checkout</button>
+    </div>
+  </div>
+</div>

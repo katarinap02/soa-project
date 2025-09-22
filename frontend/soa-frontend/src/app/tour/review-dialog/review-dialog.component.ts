@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Review } from '../model/review.model';
 import { ReviewService } from '../service/review.service';
@@ -9,7 +9,8 @@ import { ReviewComponent } from '../review/review.component';
 @Component({
   selector: 'app-review-dialog',
   templateUrl: './review-dialog.component.html',
-  styleUrls: ['./review-dialog.component.css']
+  styleUrls: ['./review-dialog.component.css'],
+   encapsulation: ViewEncapsulation.None
 })
 export class ReviewDialogComponent implements OnInit {
   reviews: Review[] = [];       // lista svih recenzija
@@ -81,4 +82,17 @@ export class ReviewDialogComponent implements OnInit {
       this.loadReviews();
     });
   }
+
+  onFileSelected(event: any) {
+  const files: FileList = event.target.files;
+  this.review.images = []; // resetuj prethodne slike
+  for (let i = 0; i < files.length; i++) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.review.images!.push(e.target.result); // base64 string
+    };
+    reader.readAsDataURL(files[i]);
+  }
+}
+
 }

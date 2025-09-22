@@ -6,6 +6,14 @@ require (
 	github.com/gorilla/handlers v1.5.2
 	github.com/gorilla/mux v1.8.0
 	go.mongodb.org/mongo-driver v1.15.1
+	google.golang.org/protobuf v1.28.1
+)
+
+require (
+	github.com/golang/protobuf v1.5.3 // indirect
+	golang.org/x/net v0.22.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
 )
 
 require (
@@ -21,4 +29,5 @@ require (
 	golang.org/x/crypto v0.33.0 // indirect
 	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
+	google.golang.org/grpc v1.55.0-dev
 )

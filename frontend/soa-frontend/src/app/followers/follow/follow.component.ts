@@ -18,6 +18,18 @@ export class FollowComponent implements OnInit {
   recommendations: Profile[] = [];
   DEFAULT_AVATAR = 'https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small_2x/profile-icon-design-free-vector.jpg';
 
+  editMode = false;
+ 
+  editProfile: Profile = {
+  id: '',
+  firstName: '',
+  lastName: '',
+  profilePicture: '',
+  biography: '',
+  motto: ''
+};
+
+
   constructor(
     private profileService: UserService,
     private followService: FollowService
@@ -33,6 +45,9 @@ export class FollowComponent implements OnInit {
   this.profileService.getProfile(userId).subscribe({
     next: (data) => {
       this.userProfile = { ...data, id: userId }; // dodaj id
+       console.log('Id:', userId);
+      console.log('Fetched profile:', data);
+
       this.refreshAllData();
     },
     error: (err) => console.error('Error fetching user profile', err)
@@ -120,6 +135,59 @@ refreshAllData() {
 // Helper funkcija
 isFollowing(userId: string): boolean {
   return this.following.some(f => f.id === userId);
+}
+
+
+toggleEdit() {
+  this.editMode = !this.editMode;
+  if (this.editMode && this.userProfile) {
+    // pravi kopiju da ne menjaš original odmah
+    this.editProfile = { ...this.userProfile };
+  }
+}
+
+cancelEdit() {
+  this.editMode = false;
+  this.editProfile = {
+    id: '',
+    firstName: '',
+    lastName: '',
+    profilePicture: '',
+    biography: '',
+    motto: ''
+  };
+}
+
+
+saveChanges() {
+  if (!this.editProfile) return;
+  const userId = this.userProfile?.id;
+  if (!userId) return;
+
+  this.profileService.updateProfile(userId, this.editProfile).subscribe({
+    next: () => {
+      this.userProfile = { ...this.editProfile! };
+      this.editMode = false;
+
+      // ✅ Običan alert
+      alert('Profile updated successfully');
+    },
+    error: (err) => {
+      console.error('Update failed', err);
+      alert('Failed to update profile');
+    },
+  });
+}
+
+onFileSelected(event: any) {
+  const file: File = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.editProfile.profilePicture = e.target.result; // Base64 string
+  };
+  reader.readAsDataURL(file);
 }
 
 

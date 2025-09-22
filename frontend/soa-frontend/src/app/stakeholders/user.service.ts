@@ -31,4 +31,8 @@ export class UserService {
   return this.http.post<UserView>(`${this.apiUrl}/by-username`, { username });
 }
 
+updateProfile(userId: string, profile: Profile): Observable<any> {
+  return this.http.put(`${this.apiUrl1}/profileUpdate/${userId}`, profile);
+}
+
 }

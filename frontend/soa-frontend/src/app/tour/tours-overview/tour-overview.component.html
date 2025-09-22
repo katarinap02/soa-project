@@ -26,7 +26,14 @@
           (click)="startTour(tour.id!)">
     Start Tour
   </button>
+
+        <button mat-raised-button color="warn" (click)="buyTour(tour.id)">Buy</button>
+
       </mat-card-actions>
     </mat-card>
+
+     <button mat-icon-button color="primary" (click)="goToCart()">
+    <mat-icon>shopping_cart</mat-icon>
+  </button>
   </div>
 </div>

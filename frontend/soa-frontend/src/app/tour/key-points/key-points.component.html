@@ -12,10 +12,13 @@
       <textarea matInput [(ngModel)]="keyPoint.description" name="description"></textarea>
     </mat-form-field>
 
-    <mat-form-field class="full-width">
+    <!-- <mat-form-field class="full-width">
       <mat-label>Image URL</mat-label>
       <input matInput [(ngModel)]="keyPoint.imageUrl" name="imageUrl">
-    </mat-form-field>
+    </mat-form-field> -->
+<label>Upload Image</label>
+<input type="file" (change)="onFileSelected($event)">
+
 
     <p>Click on the map to select location:</p>
     <div id="map" style="height: 400px; margin-bottom: 20px;"></div>

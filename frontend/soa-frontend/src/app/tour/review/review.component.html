@@ -1,13 +1,14 @@
 <h2>Reviews</h2>
-<div *ngIf="reviews.length === 0">No reviews yet.</div>
+<div *ngIf="reviews?.length === 0">No reviews yet.</div>
 <div *ngFor="let r of reviews" class="review-card">
   <p><strong>Rating:</strong> {{ r.rating }} / 5</p>
   <p><strong>Comment:</strong> {{ r.comment }}</p>
   <p><strong>Visit Date:</strong> {{ r.visitDate | date:'mediumDate' }}</p>
   <p><strong>Comment Date:</strong> {{ r.commentDate | date:'mediumDate' }}</p>
-  <div *ngIf="r.images?.length">
-    <img *ngFor="let img of r.images" [src]="img" style="width: 100px; margin-right:5px;">
-  </div>
+<div *ngIf="r.images?.length">
+  <img *ngFor="let img of r.images" [src]="img" style="width: 100px; margin-right:5px;">
+</div>
+
   <hr>
 </div>
 <button mat-raised-button color="primary" (click)="addReview()">Add Review</button>
