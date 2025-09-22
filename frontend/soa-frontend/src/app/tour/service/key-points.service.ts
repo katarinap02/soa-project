@@ -31,4 +31,13 @@ export class KeyPointService {
   deleteKeyPoint(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}?id=${id}`);
   }
+
+  getClosestKeyPoint(tourId: string, latitude: number, longitude: number): Observable<{keyPoint: KeyPoint | null, message?: string}> {
+    const params = new HttpParams()
+      .set('tourId', tourId)
+      .set('latitude', latitude.toString())
+      .set('longitude', longitude.toString());
+    
+    return this.http.get<{keyPoint: KeyPoint | null, message?: string}>(`${this.apiUrl}/closest`, { params });
+  }
 }

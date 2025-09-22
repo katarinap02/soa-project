@@ -38,6 +38,7 @@ import { MatTableModule } from '@angular/material/table';
 import { TouristViewTourComponent } from './tour/tourist-view-tour/tourist-view-tour.component';
 import { PositionSimulatorComponent } from './tour/position-simulator/position-simulator.component';
 import { ToursOverviewComponent } from './tour/tours-overview/tour-overview.component';
+import { TourExecutionComponent } from './tour/tour-execution/tour-execution.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { ToursOverviewComponent } from './tour/tours-overview/tour-overview.comp
     ViewTourMapComponent,
     TouristViewTourComponent,
     PositionSimulatorComponent,
+    TourExecutionComponent
  
   ],
   imports: [

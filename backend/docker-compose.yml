@@ -30,6 +30,7 @@ services:
       - servers
     ports:
       - 8080:8080
+      - 9091:9091
     depends_on:
       database:
         condition: service_healthy
@@ -87,7 +88,56 @@ services:
     depends_on:
       neo4j:
         condition: service_healthy
+  
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - servers
 
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - servers
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+      - "8086:8080"
+    networks:
+      - servers
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    networks:
+      - servers
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($|/)'
+  
 
   database:
     image: mysql:8.0
@@ -192,6 +242,7 @@ volumes:
   mongo_express_data:
   neo4j_data:
   neo4j_logs:
+  grafana-storage:
 
 networks:
   servers:

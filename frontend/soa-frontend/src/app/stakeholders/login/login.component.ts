@@ -12,7 +12,7 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  private apiUrl = 'http://localhost:8085/stakeholders/users/login'; 
+  private apiUrl = 'http://localhost:8085/stakeholders/users/login';
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -21,7 +21,7 @@ export class LoginComponent {
 
     this.http.post<any>(this.apiUrl, body).subscribe({
       next: (res) => {
-        
+
         localStorage.setItem('token', res.token);
         localStorage.setItem('user', JSON.stringify(res.user));
 
