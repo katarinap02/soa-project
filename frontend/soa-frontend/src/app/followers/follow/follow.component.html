@@ -4,7 +4,8 @@
 <div class="grid-container" *ngIf="userProfile">
 
   <!-- Profil -->
-  <mat-card class="profile-card">
+   <div class="profile-row"></div>
+  <mat-card class="profile-card-posebno">
     <mat-card-header>
       <div mat-card-avatar class="profile-avatar">
         <img
@@ -67,14 +68,20 @@
         ></textarea>
       </mat-form-field>
 
-      <mat-form-field class="full-width">
+      <!-- <mat-form-field class="full-width">
         <mat-label>Profile Picture URL</mat-label>
         <input
           matInput
           [(ngModel)]="editProfile.profilePicture"
           name="profilePicture"
         />
-      </mat-form-field>
+      </mat-form-field> -->
+
+    <!-- Profilna slika -->
+    <label>Profile Picture</label>
+    <input type="file" (change)="onFileSelected($event)">
+
+
 
       <!-- Dugmad -->
       <div style="text-align: right; margin-top: 10px;">
@@ -87,6 +94,8 @@
 
     </mat-card-content>
   </mat-card>
+
+
 
   <!-- Following -->
   <mat-card class="profile-card">

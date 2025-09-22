@@ -22,13 +22,17 @@ export class ToursOverviewComponent implements OnInit {
     private shoppingCartService: ShoppingCartService,
     private shoppingRpcService: ShoppingRpcService) { }
 
-  ngOnInit(): void {
-    this.tourService.getAllTours().subscribe({
-      next: data => this.tours = data,
-      error: err => console.error(err)
-    });
- 
-  }
+ngOnInit(): void {
+  this.tourService.getAllTours().subscribe({
+    next: data => {
+    
+      this.tours = data.filter(t => t.status?.toUpperCase() !== 'ARCHIVED');
+
+    },
+    error: err => console.error(err)
+  });
+}
+
   openReviews(tourId: string) {
   this.dialog.open(ReviewComponent, {
     width: '600px',
@@ -50,6 +54,7 @@ async buyTour(tourId?: string) {
       alert('Please login first');
       return;
     }
+
 
     try {
       await this.shoppingRpcService.addToCart(user.id, tourId);

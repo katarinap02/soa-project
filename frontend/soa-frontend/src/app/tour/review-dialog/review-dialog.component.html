@@ -1,4 +1,4 @@
-<h2>Add Review</h2>
+<h2>Add Review</h2> 
 <form (ngSubmit)="submit()">
   <mat-form-field class="full-width" appearance="outline">
     <mat-label>Rating</mat-label>
@@ -23,6 +23,10 @@
     <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
     <mat-datepicker #picker2></mat-datepicker>
   </mat-form-field>
+
+  <!-- Ovde ne koristi mat-form-field za file input -->
+  <label>Upload Images</label>
+  <input type="file" (change)="onFileSelected($event)" multiple>
 
   <button mat-raised-button color="primary" type="submit">Submit</button>
 </form>

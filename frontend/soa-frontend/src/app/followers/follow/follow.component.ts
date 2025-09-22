@@ -179,4 +179,16 @@ saveChanges() {
   });
 }
 
+onFileSelected(event: any) {
+  const file: File = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e: any) => {
+    this.editProfile.profilePicture = e.target.result; // Base64 string
+  };
+  reader.readAsDataURL(file);
+}
+
+
  }
