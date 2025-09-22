@@ -3,14 +3,15 @@ package handler
 import (
 	"bytes"
 	"context"
+	"database-example/model"
+	"database-example/service"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
+
 	"github.com/gorilla/mux"
-	"database-example/model"
-	"database-example/service"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -85,10 +86,15 @@ func (h *ToursHandler) GetAllTours(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
+
+	_, span := tp.Tracer(serviceName).Start(r.Context(), "CreateTour")
+	defer span.End()
+
 	tour, ok := r.Context().Value(KeyTour{}).(*model.Tour)
 	if !ok {
 		http.Error(w, "Tour not found in context", http.StatusInternalServerError)
 		h.logger.Println("Tour object not found in context for creation")
+		span.RecordError(fmt.Errorf("tour object not found in context"))
 		return
 	}
 
@@ -96,14 +102,18 @@ func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
 	if tour.AuthorID == "" {
 		http.Error(w, "AuthorID not provided in tour body", http.StatusBadRequest)
 		h.logger.Println("AuthorID missing in tour creation request body")
+		span.RecordError(fmt.Errorf("authorID missing"))
 		return
 	}
 
+	span.AddEvent("Creating tour in service")
 	if err := h.service.CreateTour(r.Context(), tour, tour.AuthorID); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		h.logger.Printf("Error creating tour: %v", err)
+		span.RecordError(err)
 		return
 	}
+	span.AddEvent("Tour created successfully")
 
 	w.WriteHeader(http.StatusCreated)
 	w.Header().Set("Content-Type", "application/json")
@@ -111,28 +121,28 @@ func (h *ToursHandler) CreateTour(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ToursHandler) GetTourByID(w http.ResponseWriter, r *http.Request) {
-   
-    vars := mux.Vars(r)
-    idStr := vars["id"]
-    if idStr == "" {
-        http.Error(w, "tour ID is required", http.StatusBadRequest)
-        return
-    }
 
-    tourID, err := primitive.ObjectIDFromHex(idStr)
-    if err != nil {
-        http.Error(w, "invalid tour ID", http.StatusBadRequest)
-        return
-    }
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	if idStr == "" {
+		http.Error(w, "tour ID is required", http.StatusBadRequest)
+		return
+	}
 
-    tour, err := h.service.GetTourByID(r.Context(), tourID)
-    if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
-    }
+	tourID, err := primitive.ObjectIDFromHex(idStr)
+	if err != nil {
+		http.Error(w, "invalid tour ID", http.StatusBadRequest)
+		return
+	}
 
-    w.Header().Set("Content-Type", "application/json")
-    json.NewEncoder(w).Encode(tour)
+	tour, err := h.service.GetTourByID(r.Context(), tourID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(tour)
 }
 
 func (h *ToursHandler) UpdateTour(w http.ResponseWriter, r *http.Request) {

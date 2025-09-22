@@ -26,6 +26,11 @@ import (
 )
 
 func main() {
+
+	if _, err := handler.InitTracer(); err != nil {
+		log.Fatalf("Failed to initialize tracer: %v", err)
+	}
+
 	// PORT
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -80,7 +85,6 @@ func main() {
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
 	router.HandleFunc("/tour/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
-
 
 	//*****************KeyPoints**********
 	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
