@@ -46,7 +46,6 @@ func (s *TourService) CreateTour(ctx context.Context, tour *model.Tour, authorID
 	return s.repo.Create(ctx, tour)
 }
 
-// Vrati ture po authorID
 func (s *TourService) GetToursByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error) {
 	if repo, ok := s.repo.(interface {
 		GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)

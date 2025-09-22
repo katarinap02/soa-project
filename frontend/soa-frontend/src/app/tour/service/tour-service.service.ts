@@ -10,6 +10,7 @@ import { Tour } from '../model/tour.model';
 export class TourService {
   private apiUrl = 'http://localhost:8082/tours';
   //private apiUrl = 'http://localhost:8085/tours/tours';
+   private apiUrl1 = 'http://localhost:8082/tour';
 
   constructor(private http: HttpClient) { }
 
@@ -24,17 +25,17 @@ export class TourService {
     return this.http.post(this.apiUrl, tour, { headers });
   }
 
-  // getToursByAuthor(authorId: string): Observable<Tour[]> {
-  //   return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
-  // }
+  getToursByAuthor(authorId: string): Observable<Tour[]> {
+    return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
+  }
+//   getToursByAuthor(authorId: string): Observable<Tour[]> {
+//   const params = new HttpParams().set('authorId', authorId);
+//   return this.http.get<Tour[]>(`${this.apiUrl}/by-author`, { params });
+// }
 
-getToursByAuthor(authorId: string): Observable<Tour[]> {
-  const params = new HttpParams().set('authorId', authorId);
-  return this.http.get<Tour[]>(`${this.apiUrl}/by-author`, { params });
-}
 
     getTourById(tourId: string): Observable<Tour> {
-    return this.http.get<Tour>(`${this.apiUrl}/${tourId}`);
+    return this.http.get<Tour>(`${this.apiUrl1}/${tourId}`);
   }
 
 }

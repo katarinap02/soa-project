@@ -76,9 +76,10 @@ func main() {
 	postRouter.HandleFunc("/tours", toursHandler.CreateTour)
 
 	// GET ruta
-	router.HandleFunc("/tours/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
-	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
 	router.HandleFunc("/tours/by-author", toursHandler.GetToursByAuthor).Methods(http.MethodGet)
+	router.HandleFunc("/tour/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
+	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
+
 
 	//*****************KeyPoints**********
 	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
