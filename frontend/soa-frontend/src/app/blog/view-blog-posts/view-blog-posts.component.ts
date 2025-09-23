@@ -32,7 +32,7 @@ export class ViewBlogPostsComponent implements OnInit {
         this.posts = [];
         console.log(this.username);
 
-        this.posts = data;
+        //this.posts = data;
         console.log(this.posts)
         data.forEach((post) => {
           post.likesCount = post.Likes?.length || 0;
@@ -40,7 +40,7 @@ export class ViewBlogPostsComponent implements OnInit {
 
           //moj post
         
-          if (post.username === this.loggedUser.username) {
+          if (post.username === this.username) {
             this.posts.push(post);
           } else {
             // da li pratim autora
