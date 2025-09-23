@@ -3,7 +3,10 @@ package service
 import (
 	"context"
 	"database-example/model"
+	orchestrator "database-example/saga"
+
 	"errors"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -11,22 +14,19 @@ type TourRepo interface {
 	GetAll(ctx context.Context) ([]*model.Tour, error)
 	Create(ctx context.Context, tour *model.Tour) error
 	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
-	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error) 	
+	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error)
 	UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error
 }
 
-
-
 type TourService struct {
-	repo TourRepo
-	
-	
+	repo         TourRepo
+	orchestrator *orchestrator.CreateTourOrchestrator
 }
 
-func NewTourService(r TourRepo) *TourService {
+func NewTourService(r TourRepo, orchestrator *orchestrator.CreateTourOrchestrator) *TourService {
 	return &TourService{
 		repo:         r,
-		
+		orchestrator: orchestrator,
 	}
 }
 
@@ -47,6 +47,10 @@ func (s *TourService) CreateTour(ctx context.Context, tour *model.Tour, authorID
 	return s.repo.Create(ctx, tour)
 }
 
+func (s *TourService) CreateTourSaga(ctx context.Context, tour *model.Tour, authorID string) error {
+	return s.orchestrator.Execute(ctx, tour, authorID)
+}
+
 func (s *TourService) GetToursByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error) {
 	if repo, ok := s.repo.(interface {
 		GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
@@ -56,11 +60,9 @@ func (s *TourService) GetToursByAuthor(ctx context.Context, authorID string) ([]
 	return nil, errors.New("repository does not support GetByAuthor")
 }
 
-
-
 func (s *TourService) GetTourByID(ctx context.Context, tourID primitive.ObjectID) (*model.Tour, error) {
-    // Samo dohvat iz repoa, bez ikakvih korisničkih provera
-    return s.repo.GetByID(ctx, tourID)
+	// Samo dohvat iz repoa, bez ikakvih korisničkih provera
+	return s.repo.GetByID(ctx, tourID)
 }
 
 func (s *TourService) GetTourForUser(ctx context.Context, tourID primitive.ObjectID, userID string) (*model.Tour, error) {
@@ -77,5 +79,5 @@ func (s *TourService) GetTourForUser(ctx context.Context, tourID primitive.Objec
 }
 
 func (s *TourService) ChangeTourStatus(ctx context.Context, tourID primitive.ObjectID, status string) error {
-    return s.repo.UpdateStatus(ctx, tourID, status)
+	return s.repo.UpdateStatus(ctx, tourID, status)
 }

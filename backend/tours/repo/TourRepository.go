@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -21,6 +22,7 @@ type TourRepo interface {
 	GetByAuthor(ctx context.Context, authorID string) ([]*model.Tour, error)
 	GetByID(ctx context.Context, id primitive.ObjectID) (*model.Tour, error)
 	UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error
+	Delete(ctx context.Context, id primitive.ObjectID) error
 }
 
 // Mongo implementacija
@@ -118,33 +120,50 @@ func (r *mongoTourRepo) GetByID(ctx context.Context, id primitive.ObjectID) (*mo
 }
 
 func (r *mongoTourRepo) UpdateStatus(ctx context.Context, id primitive.ObjectID, status string) error {
-    ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-    defer cancel()
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
 
-    filter := bson.M{"_id": id}
+	filter := bson.M{"_id": id}
 
-    updateFields := bson.M{"status": status}
-    now := time.Now()
+	updateFields := bson.M{"status": status}
+	now := time.Now()
 
-    switch status {
-    case "published":
-        updateFields["publishDate"] = now
-    case "archived":
-        updateFields["archiveDate"] = now
-    }
+	switch status {
+	case "published":
+		updateFields["publishDate"] = now
+	case "archived":
+		updateFields["archiveDate"] = now
+	}
 
-    update := bson.M{"$set": updateFields}
+	update := bson.M{"$set": updateFields}
 
-    result, err := r.collection.UpdateOne(ctx, filter, update)
-    if err != nil {
-        r.logger.Println("Error updating tour status:", err)
-        return err
-    }
+	result, err := r.collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		r.logger.Println("Error updating tour status:", err)
+		return err
+	}
 
-    if result.MatchedCount == 0 {
-        return mongo.ErrNoDocuments // tour not found
-    }
+	if result.MatchedCount == 0 {
+		return mongo.ErrNoDocuments // tour not found
+	}
 
-    r.logger.Printf("Tour %s status updated to %s\n", id.Hex(), status)
-    return nil
+	r.logger.Printf("Tour %s status updated to %s\n", id.Hex(), status)
+	return nil
+}
+
+func (m *mongoTourRepo) Delete(ctx context.Context, id primitive.ObjectID) error {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	result, err := m.collection.DeleteOne(ctx, bson.M{"_id": id})
+	if err != nil {
+		m.logger.Println("Error deleting tour:", err)
+		return err
+	}
+	if result.DeletedCount == 0 {
+		return fmt.Errorf("tour %s not found", id.Hex())
+	}
+
+	m.logger.Printf("Tour %s deleted successfully", id.Hex())
+	return nil
 }
