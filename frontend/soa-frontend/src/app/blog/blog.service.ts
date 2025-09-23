@@ -39,5 +39,20 @@ getCommentsByPostId(postId: string): Observable<Comment[]> {
   return this.http.get<Comment[]>(`${this.apiUrl}/comments?postId=${postId}`);
 }
 
+likeBlog(username: string, blogId: string): Observable<any> {
+  return this.http.post<any>(this.apiUrl + '/like-blog', {
+    username: username,
+    blogId: blogId
+  });
+}
+
+unlikeBlog(username: string, blogId: string): Observable<any> {
+  return this.http.post(
+    this.apiUrl + '/unlike-blog',
+    { username, blogId },
+    { responseType: 'text' } // avoids JSON parsing
+  );
+}
+
 
 }

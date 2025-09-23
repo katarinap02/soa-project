@@ -4,5 +4,8 @@ export interface BlogPost {
   title: string;
   description: string;
   date: string;
-  likes?: any[];
+  Likes?: any[];
+
+  likesCount?: number;
+  likedByCurrentUser?: boolean;
 }

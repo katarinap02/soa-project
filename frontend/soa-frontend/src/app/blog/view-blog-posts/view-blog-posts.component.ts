@@ -16,6 +16,7 @@ export class ViewBlogPostsComponent implements OnInit {
 
     @Input() posts: BlogPost[] = [];
     loggedUser!: UserView;
+    username!: string;
     constructor(private blogService: BlogService, private router: Router, private userService: UserService, private followService: FollowService) {}
 
     ngOnInit(): void {
@@ -23,15 +24,20 @@ export class ViewBlogPostsComponent implements OnInit {
     if (userStr) {
       const user = JSON.parse(userStr);
       this.loggedUser = user;
-     console.log(this.loggedUser.username);
-          
+      this.username = user.name;
     }
 
     this.blogService.getAllBlogPosts().subscribe({
       next: (data) => {
         this.posts = [];
+        console.log(this.username);
 
+        this.posts = data;
+        console.log(this.posts)
         data.forEach((post) => {
+          post.likesCount = post.Likes?.length || 0;
+          post.likedByCurrentUser = post.Likes?.some((like: any) => like.username === this.username) || false;
+
           //moj post
         
           if (post.username === this.loggedUser.username) {
@@ -64,6 +70,28 @@ export class ViewBlogPostsComponent implements OnInit {
 
      goToDetails(id?: string): void {
     this.router.navigate(['/post-details', id]);
+  }
+
+  likeBlog(post: any): void {
+    this.blogService.likeBlog(this.username, post.id).subscribe({
+      next: () => {
+        if (!post.likesCount) post.likesCount = 0;
+        post.likesCount++;
+        post.likedByCurrentUser = true;
+      },
+      error: err => console.error("Error liking post:", err)
+    });
+  }
+
+  unlikeBlog(post: any): void {
+    this.blogService.unlikeBlog(this.username, post.id).subscribe({
+      next: () => {
+        if (!post.likesCount) post.likesCount = 0;
+        post.likesCount--;
+        post.likedByCurrentUser = false;
+      },
+      error: err => console.error("Error unliking post:", err)
+    });
   }
 
 }

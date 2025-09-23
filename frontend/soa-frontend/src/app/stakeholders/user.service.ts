@@ -28,8 +28,8 @@ export class UserService {
   }
 
   getUserByUsername(username: string): Observable<UserView> {
-  return this.http.post<UserView>(`${this.apiUrl}/by-username`, { username });
-}
+    return this.http.post<UserView>(`http://localhost:8080/users/by-username`, { username });
+  }
 
 updateProfile(userId: string, profile: Profile): Observable<any> {
   return this.http.put(`${this.apiUrl1}/profileUpdate/${userId}`, profile);

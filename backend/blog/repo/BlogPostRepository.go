@@ -72,7 +72,7 @@ func (repo *BlogPostRepository) DeleteBlogLike(username string, blogId uuid.UUID
 
 func (repo *BlogPostRepository) GetAllBlogPosts() ([]model.BlogPost, error) {
 	var posts []model.BlogPost
-	result := repo.DatabaseConnection.Find(&posts)
+    result := repo.DatabaseConnection.Preload("Likes").Find(&posts)
 	if result.Error != nil {
 		return nil, result.Error
 	}
