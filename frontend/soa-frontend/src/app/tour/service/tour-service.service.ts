@@ -25,6 +25,13 @@ export class TourService {
     return this.http.post(this.apiUrl, tour, { headers });
   }
 
+    createTourSaga(tour: Tour): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    return this.http.post(this.apiUrl + "/saga", tour, { headers });
+  }
+
   getToursByAuthor(authorId: string): Observable<Tour[]> {
     return this.http.get<Tour[]>(`${this.apiUrl}/by-author?authorId=${authorId}`);
   }

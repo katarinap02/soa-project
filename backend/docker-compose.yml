@@ -83,6 +83,7 @@ services:
       - PORT=8082
       - MONGO_DB_URI=mongodb://root:pass@mongo:27017/soadb?authSource=admin
       - JAEGER_ENDPOINT=jaeger:4318
+      - BLOG_BASE_URL=http://blog:8081
     depends_on:
       mongo:
         condition: service_healthy

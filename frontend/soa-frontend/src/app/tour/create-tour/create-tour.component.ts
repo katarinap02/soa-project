@@ -74,6 +74,20 @@ createTour() {
       alert('Error creating tour');
     }
   });
+
+ /*  this.tourService.createTourSaga(this.tour).subscribe({
+    next: res => {
+      console.log('Response from backend:', res);
+      alert('Tour created successfully');
+      this.tour = { name: '', description: '', price: 0, difficulty: '', tags: [], status: 'draft' };
+      this.selectedTags = [];
+      this.selectedDifficulty = '';
+    },
+    error: err => {
+      console.error('Error creating tour:', err);
+      alert('Error creating tour');
+    }
+  });*/
 }
 
 

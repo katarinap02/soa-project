@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"database-example/clients"
 	"database-example/handler"
+	orchestrator "database-example/saga"
 
 	//"database-example/model"
 	"database-example/repo"
@@ -58,7 +60,11 @@ func main() {
 		logger.Fatalf("Cannot initialize Mongo repository: %v", err) // Promena Fatal u Fatalf
 	}
 
-	tourService := service.NewTourService(tourRepo)
+	blogBaseURL := os.Getenv("BLOG_BASE_URL")
+	blogClient := clients.NewHTTPBlogClient(blogBaseURL, nil)
+	createTourOrchestrator := orchestrator.NewCreateTourOrchestrator(tourRepo, blogClient, logger)
+
+	tourService := service.NewTourService(tourRepo, createTourOrchestrator)
 	toursHandler := handler.NewToursHandler(logger, tourService)
 
 	//OTKOMENTARISI AKO TI TREBA JEDNA TURA AUTOMATSKI DA SE NAPRAVI, KAD TI SE JEDNOM NAPRAVI ZAKOMENTARISI POSTO CE SE PRAVITI PONOVO DUPLIKAT SVAKI PUT KAD POKRENES
@@ -86,7 +92,7 @@ func main() {
 	router.HandleFunc("/tour/{id}", toursHandler.GetTourByID).Methods(http.MethodGet)
 	router.HandleFunc("/tours", toursHandler.GetAllTours).Methods(http.MethodGet)
 	router.HandleFunc("/tours/{id}/status", toursHandler.UpdateTourStatus).Methods(http.MethodPatch)
-
+	router.HandleFunc("/tours/saga", toursHandler.CreateTourSaga).Methods(http.MethodPost)
 	//*****************KeyPoints**********
 	keyPointRepo, err := repo.NewMongoKeyPointRepo(ctx, mongoURI, logger)
 	if err != nil {
