@@ -5,6 +5,7 @@ import { Route, Router } from '@angular/router';
 import { UserService } from 'src/app/stakeholders/user.service';
 import { FollowService } from 'src/app/followers/follow.service';
 import { UserView } from 'src/app/stakeholders/model/UserView.model';
+import { User } from 'src/app/stakeholders/model/User.model';
 
 @Component({
   selector: 'app-view-blog-posts',
@@ -15,7 +16,6 @@ export class ViewBlogPostsComponent implements OnInit {
 
     @Input() posts: BlogPost[] = [];
     loggedUser!: UserView;
-
     constructor(private blogService: BlogService, private router: Router, private userService: UserService, private followService: FollowService) {}
 
     ngOnInit(): void {
@@ -23,6 +23,8 @@ export class ViewBlogPostsComponent implements OnInit {
     if (userStr) {
       const user = JSON.parse(userStr);
       this.loggedUser = user;
+     console.log(this.loggedUser.username);
+          
     }
 
     this.blogService.getAllBlogPosts().subscribe({
@@ -31,6 +33,7 @@ export class ViewBlogPostsComponent implements OnInit {
 
         data.forEach((post) => {
           //moj post
+        
           if (post.username === this.loggedUser.username) {
             this.posts.push(post);
           } else {

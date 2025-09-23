@@ -17,10 +17,11 @@ export class MyBlogPostsComponent implements OnInit {
       ngOnInit(): void {
 
           const currentUser = localStorage.getItem('user');
+          
        if (currentUser) {
             const userObj = JSON.parse(currentUser);   
-          const username = userObj.username;    
-          
+          const username = userObj.name;    
+        //  alert(username);
           this.blogService.getBlogPostsByUsername(username).subscribe({
         next: (data) => {
      

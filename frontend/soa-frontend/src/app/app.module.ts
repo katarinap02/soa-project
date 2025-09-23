@@ -41,6 +41,8 @@ import { ToursOverviewComponent } from './tour/tours-overview/tour-overview.comp
 import { TourExecutionComponent } from './tour/tour-execution/tour-execution.component';
 import { PurchasedToursComponent } from './tour/purchased-tours/purchased-tours.component';
 import { ShoppingCartComponent } from './tour/shopping-cart/shopping-cart.component';
+import { MarkdownModule } from 'ngx-markdown';
+import { ViewPostsNewComponent } from './blog/view-posts-new/view-posts-new.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,7 @@ import { ShoppingCartComponent } from './tour/shopping-cart/shopping-cart.compon
     TourExecutionComponent,
     PurchasedToursComponent,
     ShoppingCartComponent,
+    ViewPostsNewComponent,
  
   ],
   imports: [
@@ -97,7 +100,8 @@ import { ShoppingCartComponent } from './tour/shopping-cart/shopping-cart.compon
      MatCheckboxModule,
      MatCardModule,
      MatButtonModule,
-     MatTableModule
+     MatTableModule,
+     MarkdownModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

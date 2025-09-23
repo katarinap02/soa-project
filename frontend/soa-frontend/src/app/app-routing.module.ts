@@ -20,6 +20,7 @@ import { PositionSimulatorComponent } from './tour/position-simulator/position-s
 import { TourExecutionComponent } from './tour/tour-execution/tour-execution.component';
 import { PurchasedToursComponent } from './tour/purchased-tours/purchased-tours.component';
 import { ShoppingCartComponent } from './tour/shopping-cart/shopping-cart.component';
+import { ViewPostsNewComponent } from './blog/view-posts-new/view-posts-new.component';
 
 
 
@@ -54,6 +55,7 @@ const routes: Routes = [
   { path: '', component: LoginComponent },
   {path: 'home', component: HomeComponent},
   { path: 'view-blogposts', component: ViewBlogPostsComponent},
+  { path: 'view-blogposts-new', component: ViewPostsNewComponent},
   { path: 'view-my-blogposts', component: MyBlogPostsComponent},
   { path: 'post-details/:id', component: BlogPostDetailsComponent }
 

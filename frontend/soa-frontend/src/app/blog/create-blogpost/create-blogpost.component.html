@@ -1,22 +1,29 @@
 <div class="container mt-4">
-  <h2>Kreiraj novi blog post</h2>
+  <h2>Create new post</h2>
 
   <form [formGroup]="blogPostForm" (ngSubmit)="onSubmit()">
 
     <div class="form-group mb-3">
-      <label for="title">Naslov</label>
-      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Unesi naslov" />
+      <label for="title">Title</label>
+      <input type="text" id="title" formControlName="title" class="form-control" placeholder="Enter title" />
     </div>
 
     <div class="form-group mb-3">
-      <label for="description">Opis</label>
-      <textarea id="description" formControlName="description" class="form-control" rows="5" placeholder="Unesi opis posta"></textarea>
+      <label for="description">Description</label>
+      <textarea id="description" formControlName="description" class="form-control" rows="5" placeholder="Enter description"></textarea>
     </div>
 
-    <button type="submit" class="btn btn-primary" [disabled]="!blogPostForm.valid">Kreiraj</button>
+    <button type="submit" class="btn btn-primary" [disabled]="!blogPostForm.valid">Create</button>
   </form>
 
   <div *ngIf="message" class="alert alert-info mt-3">
     {{ message }}
   </div>
+
+  <div class="mt-3">
+  <h5>Preview:</h5>
+  <markdown [data]="blogPostForm.get('description')?.value"></markdown>
 </div>
+
+</div>
+
