@@ -44,16 +44,12 @@ func (handler *BlogHandler) CreateBlogLike(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	//Za sada verujemo na rec da je username validan
-	// TODO: pogoditi endpoint stakeholder servisa da se dobije username
-
 	/*
 	   user, err := handler.UserService.GetUserByUsername(req.Username)
 	   if err != nil {
 	       http.Error(w, "User not found", http.StatusNotFound)
 	       return
 	   }*/
-	// Isto treba validirati i za blogId ali je za sada ovako ok
 
 	blogLike := model.BlogLike{
 		Id:        uuid.New(),
@@ -81,8 +77,6 @@ func (handler *BlogHandler) DeleteBlogLike(w http.ResponseWriter, r *http.Reques
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-
-	// TODO: isto kao gore
 
 	err := handler.BlogPostService.DeleteBlogLike(req.Username, req.BlogId)
 	if err != nil {

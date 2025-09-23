@@ -86,6 +86,7 @@ func main() {
 		AllowedMethods: []string{"GET", "POST", "OPTIONS", "PUT", "DELETE"},
 		AllowedHeaders: []string{"Content-Type"},
 	})*/
+	
 	//handler := c.Handler(router)
 	log.Println("Server pokrenut na portu 8081")
 	log.Fatal(http.ListenAndServe(":8081", router))
